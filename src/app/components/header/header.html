@@ -1,0 +1,47 @@
+<header class="flex items-center justify-between border-b border-gray-200 bg-white px-10 py-4">
+
+    <!-- Logo -->
+    <div class="flex items-center gap-2">
+        <span class="text-2xl">🚌</span>
+
+        <h1 class="text-2xl font-bold text-gray-800">
+            Trayec<span class="text-blue-600">Tico</span>
+        </h1>
+    </div>
+
+    <!-- Navegación -->
+    <nav class="flex items-center gap-2">
+
+        <a routerLink="/" routerLinkActive="bg-blue-50 text-blue-600" [routerLinkActiveOptions]="{ exact: true }"
+            class="rounded-lg px-4 py-2 font-medium text-gray-600 transition hover:bg-gray-100 hover:text-blue-600">
+            Inicio
+        </a>
+
+        <a routerLink="/login" routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 font-medium text-gray-600 transition hover:bg-gray-100 hover:text-blue-600">
+            Iniciar sesión
+        </a>
+
+        <a routerLink="/planificar" routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 font-medium text-gray-600 transition hover:bg-gray-100 hover:text-blue-600">
+            Planificar
+        </a>
+
+        <a routerLink="/rutas" routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 font-medium text-gray-600 transition hover:bg-gray-100 hover:text-blue-600">
+            Rutas
+        </a>
+
+        <a routerLink="/avisos" routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 font-medium text-gray-600 transition hover:bg-gray-100 hover:text-blue-600">
+            Avisos
+        </a>
+
+        <a routerLink="/admin" routerLinkActive="bg-blue-50 text-blue-600"
+            class="rounded-lg px-4 py-2 font-medium text-gray-600 transition hover:bg-gray-100 hover:text-blue-600">
+            Admin
+        </a>
+
+    </nav>
+
+</header>
