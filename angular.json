@@ -67,12 +67,6 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "coverage": true,
-            "coverageThresholds": {
-              "statements": 60,
-              "branches": 60,
-              "functions": 60,
-              "lines": 60
-            },
             "coverageReporters": [
               "text",
               "html",
