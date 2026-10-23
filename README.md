@@ -69,7 +69,7 @@ Instalar las siguientes herramientas antes de iniciar:
 - **Git**
 - **Angular 22.2.0**
 - **NodeJS 24.15.0**
-- **NPM 11.12.1npm&#xA0;**
+- **npm 11.12.1**
 
 ## 2. Clonar el repositorio
 
