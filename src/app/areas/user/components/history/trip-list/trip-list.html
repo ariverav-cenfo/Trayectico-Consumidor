@@ -1,0 +1,18 @@
+<div class="stack">
+  @for (trip of visible(); track trip.id) {
+    <app-trip-card [trip]="trip" (remove)="remove.emit($event)" />
+  } @empty {
+    <p class="muted" role="status">
+      Todavía no tiene viajes guardados. Planifique uno para verlo aquí.
+    </p>
+  }
+</div>
+@if (visible().length < trips().length) {
+  <button
+    type="button"
+    appButton
+    text="Cargar más viajes"
+    class="load"
+    (click)="loadMore()"
+  ></button>
+}

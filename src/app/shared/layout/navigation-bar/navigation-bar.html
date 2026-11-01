@@ -1,0 +1,64 @@
+<nav
+  aria-label="Navegación principal"
+  class="fixed inset-x-0 bottom-0 z-50 grid grid-cols-5 border-t border-trayectico-primary/25 bg-white text-[#5d6e68]"
+>
+  <a
+    routerLink="/planificar"
+    routerLinkActive="text-trayectico-primary"
+    ariaCurrentWhenActive="page"
+    class="navigation-item"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2Z" />
+      <path d="M9 3v16M15 5v16" />
+    </svg>
+    <span>Planificar</span>
+  </a>
+  <a
+    routerLink="/rutas"
+    routerLinkActive="text-trayectico-primary"
+    ariaCurrentWhenActive="page"
+    class="navigation-item"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <rect x="4" y="2" width="16" height="16" rx="3" />
+      <path d="M4 11h16M7 18l-1 4M17 18l1 4M7 15h.01M17 15h.01" />
+    </svg>
+    <span>Rutas</span>
+  </a>
+  <a
+    routerLink="/avisos"
+    routerLinkActive="text-trayectico-primary"
+    ariaCurrentWhenActive="page"
+    class="navigation-item"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9M10 21h4" />
+    </svg>
+    <span>Avisos</span>
+  </a>
+  <a
+    routerLink="/historial"
+    routerLinkActive="text-trayectico-primary"
+    ariaCurrentWhenActive="page"
+    class="navigation-item"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 6v6l4 2" />
+    </svg>
+    <span>Historial</span>
+  </a>
+  <a
+    routerLink="/perfil"
+    routerLinkActive="text-trayectico-primary"
+    ariaCurrentWhenActive="page"
+    class="navigation-item"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="7" r="4" />
+      <path d="M4 22v-3a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v3" />
+    </svg>
+    <span>Perfil</span>
+  </a>
+</nav>

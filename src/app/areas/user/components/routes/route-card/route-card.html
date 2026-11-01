@@ -1,0 +1,25 @@
+<a class="card route-card" [routerLink]="['/rutas', route().id]">
+  <h3>{{ route().id }} · {{ route().name }}</h3>
+  <div class="row between">
+    <div class="grow">
+      <p class="muted">
+        {{ route().price ? 'Tarifa desde ' + route().price : 'Tarifa no disponible' }}
+      </p>
+      <div class="badges">
+        @if (!route().price) {
+          <span class="badge"><app-ui-icon class="info" name="info" />Sin tarifa en la ARESEP</span>
+        } @else {
+          <span class="badge"
+            ><app-ui-icon [name]="route().electronic ? 'card' : 'cash'" />{{
+              route().electronic ? 'Pago electrónico' : 'Solo efectivo'
+            }}</span
+          >
+        }
+        @if (route().alert) {
+          <span class="badge warning"><app-ui-icon name="warning" />Aviso activo</span>
+        }
+      </div>
+    </div>
+    <app-ui-icon class="muted" name="chevron" />
+  </div>
+</a>

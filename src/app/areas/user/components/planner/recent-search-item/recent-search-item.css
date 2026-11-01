@@ -1,0 +1,61 @@
+:host {
+  display: block;
+}
+button {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  width: 100%;
+  min-height: 112px;
+  text-align: left;
+  padding: 24px 28px;
+  font-size: 32px;
+  cursor: pointer;
+}
+button:hover,
+.selected {
+  background: #ecf2ef;
+}
+.selected::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 8px;
+  background: var(--color-trayectico-primary);
+}
+svg {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  fill: none;
+  stroke: #5d6e68;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+span {
+  overflow-wrap: anywhere;
+}
+.chevron {
+  margin-left: auto;
+}
+button:focus-visible {
+  outline: 3px solid var(--color-trayectico-primary);
+  outline-offset: -4px;
+}
+@media (max-width: 600px) {
+  button {
+    min-height: 72px;
+    padding: 16px;
+    gap: 16px;
+    font-size: 20px;
+  }
+  svg {
+    width: 26px;
+    height: 26px;
+  }
+  .selected::before {
+    width: 5px;
+  }
+}

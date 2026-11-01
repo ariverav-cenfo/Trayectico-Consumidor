@@ -1,0 +1,6 @@
+<app-assistant-header />
+<app-assistant-notice />
+<main aria-label="Asistente de viajes">
+  <app-assistant-conversation [messages]="messages()" (suggestion)="send($event)" />
+</main>
+<app-assistant-composer (send)="send($event)" />

@@ -1,0 +1,18 @@
+<section aria-labelledby="recent-title">
+  <h2 id="recent-title">Búsquedas recientes</h2>
+  @if (searches().length) {
+    <div class="searches">
+      @for (search of searches(); track $index) {
+        <app-recent-search-item
+          [search]="search"
+          [selected]="
+            selected()?.origin === search.origin && selected()?.destination === search.destination
+          "
+          (choose)="choose.emit($event)"
+        />
+      }
+    </div>
+  } @else {
+    <p>Todavía no tiene búsquedas recientes.</p>
+  }
+</section>

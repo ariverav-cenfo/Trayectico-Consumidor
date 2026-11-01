@@ -1,0 +1,44 @@
+.step {
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+  padding-block: 24px;
+}
+.number {
+  display: grid;
+  place-items: center;
+  flex: 0 0 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: white;
+  background: var(--color-trayectico-primary);
+  font-size: 28px;
+}
+h3 {
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-bottom: 6px;
+}
+p {
+  color: #5d6e68;
+  font-size: 28px;
+  line-height: 1.25;
+}
+@media (max-width: 600px) {
+  .step {
+    gap: 16px;
+    padding-block: 16px;
+  }
+  .number {
+    flex-basis: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+  h3 {
+    font-size: 22px;
+  }
+  p {
+    font-size: 18px;
+  }
+}

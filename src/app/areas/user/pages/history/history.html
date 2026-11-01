@@ -1,0 +1,14 @@
+<main>
+  <h1>Historial de viajes</h1>
+  <p class="intro">
+    Sus viajes planificados se guardan automáticamente, del más reciente al más antiguo.
+  </p>
+  <p class="example">
+    Historial de demostración guardado en este navegador. Los recorridos y tarifas son ejemplos.
+  </p>
+  <app-trip-list [trips]="history.trips()" (remove)="history.remove($event)" /><app-history-actions
+    [hasTrips]="history.trips().length > 0"
+    (clear)="history.clear()"
+  />
+</main>
+<app-ai-message />

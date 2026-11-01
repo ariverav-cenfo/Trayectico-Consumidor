@@ -1,0 +1,7 @@
+<label for="route-search">Buscar ruta</label
+><input
+  id="route-search"
+  type="search"
+  placeholder="Ejemplo: código o nombre de la ruta"
+  (input)="search.emit($any($event.target).value)"
+/>

@@ -1,0 +1,35 @@
+figure {
+  position: relative;
+  background: #ecf2ef;
+  border: 2px solid #c7d5d0;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 0;
+}
+span {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  border: 1px solid #c7d5d0;
+  border-radius: 12px;
+  background: white;
+  color: #5d6e68;
+  padding: 2px 16px;
+  font-size: 28px;
+}
+svg {
+  display: block;
+  width: 100%;
+}
+@media (max-width: 600px) {
+  figure {
+    border-radius: 10px;
+  }
+  span {
+    font-size: 18px;
+    top: 8px;
+    left: 8px;
+    padding-inline: 10px;
+    border-radius: 8px;
+  }
+}

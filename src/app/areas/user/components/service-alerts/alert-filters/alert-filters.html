@@ -1,0 +1,20 @@
+<div class="filter-grid">
+  <div>
+    <label for="alert-route">Ruta</label
+    ><select id="alert-route" [(ngModel)]="route" (ngModelChange)="emit()">
+      <option value="">Todas las rutas</option>
+      @for (item of routes; track item.id) {
+        <option [value]="item.id">Ruta {{ item.id }}</option>
+      }
+    </select>
+  </div>
+  <div>
+    <label for="alert-type">Tipo de aviso</label
+    ><select id="alert-type" [(ngModel)]="type" (ngModelChange)="emit()">
+      <option value="">Todos los tipos</option>
+      <option>Cierre de vía</option>
+      <option>Avería</option>
+      <option>Bloqueo</option>
+    </select>
+  </div>
+</div>

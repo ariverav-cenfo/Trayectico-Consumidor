@@ -1,0 +1,33 @@
+<article class="card trip-card">
+  <div class="row" style="align-items: flex-start">
+    <div class="grow">
+      <h3>{{ trip().origin }} a {{ trip().destination }}</h3>
+      <p class="muted" style="margin-top: 8px">
+        {{ trip().summary }} ·
+        {{
+          trip().savedAt ? (trip().savedAt | date: 'dd/MM/yyyy HH:mm' : '-0600') : '[fecha y hora]'
+        }}
+      </p>
+      <p>{{ trip().price ? 'Tarifa desde ' + trip().price : 'Tarifa no disponible' }}</p>
+    </div>
+    <button
+      type="button"
+      class="remove"
+      [attr.aria-label]="'Borrar viaje de ' + trip().origin + ' a ' + trip().destination"
+      (click)="remove.emit(trip().id)"
+    >
+      <app-ui-icon name="trash" />
+    </button>
+  </div>
+  <a
+    class="link"
+    routerLink="/planificar/resultado"
+    [queryParams]="{
+      origin: trip().origin,
+      destination: trip().destination,
+      option: trip().option,
+      tripId: trip().id,
+    }"
+    >Ver resultado</a
+  >
+</article>
