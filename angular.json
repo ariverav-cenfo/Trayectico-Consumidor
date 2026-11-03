@@ -73,6 +73,13 @@
               "functions": 60,
               "lines": 60
             },
+            "coverageInclude": ["src/**/*.ts"],
+            "coverageExclude": [
+                                "src/main.ts",
+                                "src/app/app.config.ts",
+                                "src/environments/**",
+                                "**/*.spec.ts"
+              ],
             "coverageReporters": [
               "text",
               "html",
