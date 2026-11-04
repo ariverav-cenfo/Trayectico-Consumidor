@@ -20,7 +20,7 @@ describe('Area navigation', () => {
     ['/historial', 'Historial de viajes'],
     ['/asistente', 'Asistente'],
     ['/perfil', 'Perfil'],
-    ['/admin', 'admin-dashboard works!'],
+    ['/admin', 'admin-panel works!'],
     ['/admin/rutas', 'admin-routes works!'],
     ['/admin/rutas/nueva', 'admin-route-form works!'],
     ['/admin/rutas/1', 'admin-route-form works!'],

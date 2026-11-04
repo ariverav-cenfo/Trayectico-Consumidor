@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { AdminDashboard } from './pages/admin-dashboard/admin-dashboard';
+import { AdminPanel } from './pages/admin-panel/admin-panel';
 import { AdminRoutes } from './pages/admin-routes/admin-routes';
 import { AdminRouteForm } from './pages/admin-route-form/admin-route-form';
 import { AdminStops } from './pages/admin-stops/admin-stops';
@@ -10,7 +10,7 @@ import { AdminFares } from './pages/admin-fares/admin-fares';
 import { AdminUsers } from './pages/admin-users/admin-users';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', component: AdminDashboard },
+  { path: '', pathMatch: 'full', component: AdminPanel },
   { path: 'rutas', component: AdminRoutes },
   { path: 'rutas/nueva', component: AdminRouteForm },
   { path: 'rutas/:id', component: AdminRouteForm },
