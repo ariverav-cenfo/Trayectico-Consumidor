@@ -1,5 +1,5 @@
-import type { SavedTrip } from '../interfaces/saved-trip.interface';
-export const DEMO_HISTORY: SavedTrip[] = [
+import type { ViajeGuardado } from '../interfaces/viaje-guardado';
+export const DEMO_HISTORY: ViajeGuardado[] = [
   {
     id: 'example-1',
     origin: '[Origen]',

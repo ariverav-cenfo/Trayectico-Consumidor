@@ -1,4 +1,4 @@
-import type { SavedTrip } from '../../../../../interfaces/saved-trip.interface';
+import type { ViajeGuardado } from '../../../../../interfaces/viaje-guardado';
 import { Button } from '../../../../../shared/ui/button/button';
 import { Component, input, output, signal, computed } from '@angular/core';
 
@@ -10,7 +10,7 @@ import { TripCard } from '../trip-card/trip-card';
   styles: ':host { display: block; }',
 })
 export class TripList {
-  readonly trips = input.required<SavedTrip[]>();
+  readonly trips = input.required<ViajeGuardado[]>();
   readonly remove = output<string>();
   protected readonly limit = signal(3);
   protected readonly visible = computed(() => this.trips().slice(0, this.limit()));

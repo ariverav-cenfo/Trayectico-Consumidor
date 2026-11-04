@@ -1,5 +1,5 @@
 import { TransportService } from '../../../../services/transport.service';
-import type { AlertFiltersValue } from '../../../../interfaces/alert-filters.interface';
+import type { ValorFiltrosAvisos } from '../../../../interfaces/valor-filtros-avisos';
 import { Component, inject, signal, computed } from '@angular/core';
 import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
 import { AlertFilters } from '../../components/service-alerts/alert-filters/alert-filters';
@@ -13,6 +13,6 @@ import { DataFooter } from '../../../../shared/layout/data-footer/data-footer';
 })
 export class ServiceAlerts {
   private readonly transport = inject(TransportService);
-  protected readonly filters = signal<AlertFiltersValue>({ route: '', type: '' });
+  protected readonly filters = signal<ValorFiltrosAvisos>({ route: '', type: '' });
   protected readonly alerts = computed(() => this.transport.getAlerts(this.filters()));
 }

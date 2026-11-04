@@ -1,4 +1,4 @@
-import type { RouteData } from '../../../../../interfaces/route.interface';
+import type { Ruta } from '../../../../../interfaces/ruta';
 import { Component, input } from '@angular/core';
 
 import { PaymentMethod } from '../../../../../shared/ui/payment-method/payment-method';
@@ -9,6 +9,6 @@ import { PaymentMethod } from '../../../../../shared/ui/payment-method/payment-m
   styles: ':host { display: block; }',
 })
 export class RouteFares {
-  readonly route = input.required<RouteData>();
+  readonly route = input.required<Ruta>();
 }
 

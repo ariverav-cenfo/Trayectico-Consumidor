@@ -1,4 +1,4 @@
-import type { TripOption } from '../interfaces/trip-option.interface';
+import type { TripOption } from '../interfaces/trip-option';
 // Layout examples until the route planning service supplies actual trips.
 export const EXAMPLE_OPTIONS: TripOption[] = [
   {

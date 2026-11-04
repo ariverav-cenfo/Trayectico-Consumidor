@@ -1,4 +1,4 @@
-import type { RecentSearch } from '../../../../../interfaces/recent-search.interface';
+import type { BusquedaReciente } from '../../../../../interfaces/busqueda-reciente';
 import { Component, input, output } from '@angular/core';
 
 @Component({
@@ -7,7 +7,7 @@ import { Component, input, output } from '@angular/core';
   styleUrl: './recent-search-item.css',
 })
 export class RecentSearchItem {
-  readonly search = input.required<RecentSearch>();
+  readonly search = input.required<BusquedaReciente>();
   readonly selected = input(false);
-  readonly choose = output<RecentSearch>();
+  readonly choose = output<BusquedaReciente>();
 }

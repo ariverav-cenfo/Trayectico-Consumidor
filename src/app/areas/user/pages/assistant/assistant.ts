@@ -1,5 +1,5 @@
 import { AssistantService } from '../../../../services/assistant.service';
-import type { AssistantMessage } from '../../../../interfaces/assistant-message.interface';
+import type { MensajeAsistente } from '../../../../interfaces/mensaje-asistente';
 import { Component, inject, signal } from '@angular/core';
 import { AssistantHeader } from '../../components/IA/assistant-header/assistant-header';
 import { AssistantNotice } from '../../components/IA/assistant-notice/assistant-notice';
@@ -14,7 +14,7 @@ import { AssistantComposer } from '../../components/IA/assistant-composer/assist
 })
 export class Assistant {
   private readonly assistant = inject(AssistantService);
-  protected readonly messages = signal<AssistantMessage[]>(this.assistant.initialMessages());
+  protected readonly messages = signal<MensajeAsistente[]>(this.assistant.initialMessages());
   protected send(text: string) {
     const reply = this.assistant.reply(text);
     this.messages.update((messages) => [

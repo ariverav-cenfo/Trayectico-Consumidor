@@ -1,4 +1,4 @@
-import type { SavedTrip } from '../../../../../interfaces/saved-trip.interface';
+import type { ViajeGuardado } from '../../../../../interfaces/viaje-guardado';
 import { Component, input, output } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -11,7 +11,7 @@ import { UiIcon } from '../../../../../shared/ui/ui-icon/ui-icon';
   styles: ':host { display: block; }',
 })
 export class TripCard {
-  readonly trip = input.required<SavedTrip>();
+  readonly trip = input.required<ViajeGuardado>();
   readonly remove = output<string>();
 }
 

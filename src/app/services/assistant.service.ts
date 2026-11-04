@@ -1,18 +1,18 @@
 import { Injectable, inject } from '@angular/core';
 import { DEMO_MESSAGES } from '../data/demo-assistant';
-import type { AssistantMessage, AssistantReply } from '../interfaces/assistant-message.interface';
+import type { MensajeAsistente, RespuestaAsistente } from '../interfaces/mensaje-asistente';
 import { TransportService } from './transport.service';
 @Injectable({ providedIn: 'root' })
 export class AssistantService {
   private readonly transport = inject(TransportService);
-  initialMessages(): AssistantMessage[] {
+  initialMessages(): MensajeAsistente[] {
     return DEMO_MESSAGES.map((message) => ({ ...message }));
   }
-  reply(text: string): AssistantReply {
+  reply(text: string): RespuestaAsistente {
     const normalized = text.toLocaleLowerCase('es');
     const routeId = text.match(/\b\d{4}\b/)?.[0] ?? '0002';
     const route = this.transport.getRoute(routeId);
-    let reply: AssistantReply;
+    let reply: RespuestaAsistente;
     if (/cuesta|tarifa|precio/.test(normalized)) {
       reply = {
         text: route

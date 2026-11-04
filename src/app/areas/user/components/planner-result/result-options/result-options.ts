@@ -1,4 +1,4 @@
-import type { TripOption } from '../../../../../interfaces/trip-option.interface';
+import type { TripOption } from '../../../../../interfaces/trip-option';
 import { Component, input, output } from '@angular/core';
 
 @Component({ selector: 'app-result-options', templateUrl: './result-options.html', styleUrl: './result-options.css' })

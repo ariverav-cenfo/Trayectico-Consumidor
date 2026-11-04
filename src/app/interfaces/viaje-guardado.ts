@@ -1,4 +1,4 @@
-export interface SavedTrip {
+export interface ViajeGuardado {
   id: string;
   origin: string;
   destination: string;

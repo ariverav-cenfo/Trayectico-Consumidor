@@ -1,4 +1,4 @@
-import type { NavigationLink } from '../../../../interfaces/navigation-link.interface';
+import type { NavigationLink } from '../../../../interfaces/navigation-link';
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LogoutButton } from '../../../../shared/ui/logout-button/logout-button';

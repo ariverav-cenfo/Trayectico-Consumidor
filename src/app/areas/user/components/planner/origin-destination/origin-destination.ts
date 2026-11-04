@@ -1,4 +1,4 @@
-import type { RecentSearch } from '../../../../../interfaces/recent-search.interface';
+import type { BusquedaReciente } from '../../../../../interfaces/busqueda-reciente';
 import { Component, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -10,8 +10,8 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './origin-destination.css',
 })
 export class OriginDestination {
-  readonly initialSearch = input<RecentSearch | null>(null);
-  readonly search = output<RecentSearch>();
+  readonly initialSearch = input<BusquedaReciente | null>(null);
+  readonly search = output<BusquedaReciente>();
   protected origin = '';
   protected destination = '';
   ngOnChanges() {

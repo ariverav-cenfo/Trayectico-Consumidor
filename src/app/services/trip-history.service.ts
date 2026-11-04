@@ -1,13 +1,13 @@
 import { DEMO_HISTORY } from '../data/demo-history';
-import type { SavedTrip } from '../interfaces/saved-trip.interface';
+import type { ViajeGuardado } from '../interfaces/viaje-guardado';
 import { Injectable, signal } from '@angular/core';
 const STORAGE_KEY = 'trayectico-trip-history';
 @Injectable({ providedIn: 'root' })
 export class TripHistoryService {
-  private readonly state = signal<SavedTrip[]>(this.load());
+  private readonly state = signal<ViajeGuardado[]>(this.load());
   readonly trips = this.state.asReadonly();
   save(origin: string, destination: string, option: string): string {
-    const trip: SavedTrip = {
+    const trip: ViajeGuardado = {
       id: crypto.randomUUID(),
       origin,
       destination,
@@ -38,7 +38,7 @@ export class TripHistoryService {
   clear() {
     this.commit([]);
   }
-  private commit(trips: SavedTrip[]) {
+  private commit(trips: ViajeGuardado[]) {
     this.state.set(trips);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
@@ -46,7 +46,7 @@ export class TripHistoryService {
       /* Keep the in-memory history if storage is unavailable. */
     }
   }
-  private load(): SavedTrip[] {
+  private load(): ViajeGuardado[] {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw === null) return DEMO_HISTORY.map((trip) => ({ ...trip }));
@@ -54,7 +54,7 @@ export class TripHistoryService {
       return Array.isArray(data)
         ? data
             .filter(
-              (trip): trip is SavedTrip =>
+              (trip): trip is ViajeGuardado =>
                 !!trip &&
                 typeof trip.id === 'string' &&
                 typeof trip.origin === 'string' &&

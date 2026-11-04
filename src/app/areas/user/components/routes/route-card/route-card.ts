@@ -1,4 +1,4 @@
-import type { RouteData } from '../../../../../interfaces/route.interface';
+import type { Ruta } from '../../../../../interfaces/ruta';
 import { Component, input } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -10,6 +10,6 @@ import { UiIcon } from '../../../../../shared/ui/ui-icon/ui-icon';
   styles: ':host { display: block; }',
 })
 export class RouteCard {
-  readonly route = input.required<RouteData>();
+  readonly route = input.required<Ruta>();
 }
 

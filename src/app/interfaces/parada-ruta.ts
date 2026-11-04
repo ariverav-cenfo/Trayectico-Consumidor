@@ -1,4 +1,4 @@
-export interface RouteStop {
+export interface ParadaRuta {
   id: number;
   name: string;
 }

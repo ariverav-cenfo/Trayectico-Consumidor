@@ -1,4 +1,4 @@
-import type { ButtonSize, ButtonVariant } from '../../../interfaces/button.interface';
+import type { ButtonSize, ButtonVariant } from '../../../interfaces/button';
 import { Component, input } from '@angular/core';
 
 /** Native buttons and links retain their click, disabled, form and router behavior. */

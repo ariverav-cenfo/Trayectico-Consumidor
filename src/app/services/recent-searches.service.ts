@@ -1,11 +1,11 @@
 import { Injectable, signal } from '@angular/core';
-import type { RecentSearch } from '../interfaces/recent-search.interface';
+import type { BusquedaReciente } from '../interfaces/busqueda-reciente';
 const STORAGE_KEY = 'trayectico-recent-searches';
 @Injectable({ providedIn: 'root' })
 export class RecentSearchesService {
-  private readonly state = signal<RecentSearch[]>(this.load());
+  private readonly state = signal<BusquedaReciente[]>(this.load());
   readonly searches = this.state.asReadonly();
-  save(search: RecentSearch): void {
+  save(search: BusquedaReciente): void {
     const recent = [
       { ...search },
       ...this.searches().filter(
@@ -19,13 +19,13 @@ export class RecentSearchesService {
       /* Keep the current session usable without browser storage. */
     }
   }
-  private load(): RecentSearch[] {
+  private load(): BusquedaReciente[] {
     try {
       const stored: unknown = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]');
       return Array.isArray(stored)
         ? stored
             .filter(
-              (item): item is RecentSearch =>
+              (item): item is BusquedaReciente =>
                 !!item && typeof item.origin === 'string' && typeof item.destination === 'string',
             )
             .slice(0, 5)

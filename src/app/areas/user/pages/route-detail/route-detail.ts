@@ -1,5 +1,5 @@
 import { TransportService } from '../../../../services/transport.service';
-import type { RouteControlsValue } from '../../../../interfaces/route-controls.interface';
+import type { ValorControlesRuta } from '../../../../interfaces/valor-controles-ruta';
 import { Button } from '../../../../shared/ui/button/button';
 import { Component, inject, signal, computed } from '@angular/core';
 import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
@@ -35,7 +35,7 @@ export class RouteDetail {
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
   });
-  protected readonly controls = signal<RouteControlsValue>({ branch: '', direction: 'Ida' });
+  protected readonly controls = signal<ValorControlesRuta>({ branch: '', direction: 'Ida' });
   protected readonly current = computed(() => this.transport.getRoute(this.params().get('id')));
   protected readonly activeAlert = computed(() =>
     this.transport.getActiveAlert(this.params().get('id')),

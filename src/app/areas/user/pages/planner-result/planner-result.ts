@@ -1,5 +1,5 @@
 import { TransportService } from '../../../../services/transport.service';
-import type { TripOption } from '../../../../interfaces/trip-option.interface';
+import type { TripOption } from '../../../../interfaces/trip-option';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';

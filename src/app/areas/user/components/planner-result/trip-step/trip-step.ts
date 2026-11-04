@@ -1,4 +1,4 @@
-import type { TripStepData } from '../../../../../interfaces/trip-option.interface';
+import type { TripStepData } from '../../../../../interfaces/trip-option';
 import { Component, input } from '@angular/core';
 
 @Component({

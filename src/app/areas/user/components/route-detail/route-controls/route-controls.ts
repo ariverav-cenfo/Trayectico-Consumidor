@@ -1,7 +1,7 @@
 import type {
-  RouteControlsValue,
-  RouteDirection,
-} from '../../../../../interfaces/route-controls.interface';
+  ValorControlesRuta,
+  SentidoRecorrido,
+} from '../../../../../interfaces/valor-controles-ruta';
 import { Component, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 @Component({
@@ -11,9 +11,9 @@ import { FormsModule } from '@angular/forms';
   styles: ':host { display: block; }',
 })
 export class RouteControls {
-  readonly change = output<RouteControlsValue>();
+  readonly change = output<ValorControlesRuta>();
   protected branch = '';
-  protected direction: RouteDirection = 'Ida';
+  protected direction: SentidoRecorrido = 'Ida';
   protected emit() {
     this.change.emit({ branch: this.branch, direction: this.direction });
   }

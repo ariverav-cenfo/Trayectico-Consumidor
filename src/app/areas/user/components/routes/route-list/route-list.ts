@@ -1,4 +1,4 @@
-import type { RouteData } from '../../../../../interfaces/route.interface';
+import type { Ruta } from '../../../../../interfaces/ruta';
 import { Button } from '../../../../../shared/ui/button/button';
 import { Component, input, signal, computed } from '@angular/core';
 
@@ -10,7 +10,7 @@ import { RouteCard } from '../route-card/route-card';
   styles: ':host { display: block; }',
 })
 export class RouteList {
-  readonly routes = input.required<RouteData[]>();
+  readonly routes = input.required<Ruta[]>();
   protected readonly limit = signal(4);
 
   protected readonly visible = computed(() => this.routes().slice(0, this.limit()));

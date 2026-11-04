@@ -1,5 +1,5 @@
 import { TransportService } from '../../../../../services/transport.service';
-import type { AlertFiltersValue } from '../../../../../interfaces/alert-filters.interface';
+import type { ValorFiltrosAvisos } from '../../../../../interfaces/valor-filtros-avisos';
 import { Component, inject, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 @Component({
@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
   styles: ':host { display: block; }',
 })
 export class AlertFilters {
-  readonly change = output<AlertFiltersValue>();
+  readonly change = output<ValorFiltrosAvisos>();
   protected readonly routes = inject(TransportService).getRoutes();
   protected route = '';
   protected type = '';

@@ -1,4 +1,4 @@
-import type { AssistantMessage } from '../../../../../interfaces/assistant-message.interface';
+import type { MensajeAsistente } from '../../../../../interfaces/mensaje-asistente';
 import { Component, input, output } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { UiIcon } from '../../../../../shared/ui/ui-icon/ui-icon';
@@ -39,6 +39,6 @@ import { UiIcon } from '../../../../../shared/ui/ui-icon/ui-icon';
   styleUrl: './assistant-conversation.css',
 })
 export class AssistantConversation {
-  readonly messages = input.required<AssistantMessage[]>();
+  readonly messages = input.required<MensajeAsistente[]>();
   readonly suggestion = output<string>();
 }

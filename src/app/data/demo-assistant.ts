@@ -1,5 +1,5 @@
-import type { AssistantMessage } from '../interfaces/assistant-message.interface';
-export const DEMO_MESSAGES: AssistantMessage[] = [
+import type { MensajeAsistente } from '../interfaces/mensaje-asistente';
+export const DEMO_MESSAGES: MensajeAsistente[] = [
   { id: 1, role: 'user', text: '¿Cómo llego de [Origen] a [Destino]?' },
   {
     id: 2,

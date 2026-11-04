@@ -1,4 +1,4 @@
-import type { RouteStop } from '../../../../../interfaces/route-stop.interface';
+import type { ParadaRuta } from '../../../../../interfaces/parada-ruta';
 import { Component, input, signal, computed } from '@angular/core';
 
 @Component({
@@ -8,7 +8,7 @@ import { Component, input, signal, computed } from '@angular/core';
   styles: ':host { display: block; }',
 })
 export class RouteStops {
-  readonly stops = input.required<RouteStop[]>();
+  readonly stops = input.required<ParadaRuta[]>();
   protected readonly expanded = signal(false);
   protected readonly visible = computed(() =>
     this.expanded() ? this.stops() : this.stops().slice(0, 4),

@@ -1,5 +1,5 @@
 import { RecentSearchesService } from '../../../../services/recent-searches.service';
-import type { RecentSearch } from '../../../../interfaces/recent-search.interface';
+import type { BusquedaReciente } from '../../../../interfaces/busqueda-reciente';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OriginDestination } from '../../components/planner/origin-destination/origin-destination';
@@ -20,11 +20,11 @@ export class Planner {
   private readonly route = inject(ActivatedRoute);
   private readonly recentSearches = inject(RecentSearchesService);
   protected readonly searches = this.recentSearches.searches;
-  protected readonly selected = signal<RecentSearch | null>(this.initialSearch());
-  protected select(search: RecentSearch) {
+  protected readonly selected = signal<BusquedaReciente | null>(this.initialSearch());
+  protected select(search: BusquedaReciente) {
     this.selected.set({ ...search });
   }
-  protected search(search: RecentSearch) {
+  protected search(search: BusquedaReciente) {
     this.selected.set(search);
     this.recentSearches.save(search);
     this.showResults();
@@ -36,7 +36,7 @@ export class Planner {
       void this.router.navigate(['/planificar/resultado'], { queryParams: { ...search, tripId } });
     }
   }
-  private initialSearch(): RecentSearch | null {
+  private initialSearch(): BusquedaReciente | null {
     const params = this.route.snapshot.queryParamMap;
     const origin = params.get('origin');
     const destination = params.get('destination');

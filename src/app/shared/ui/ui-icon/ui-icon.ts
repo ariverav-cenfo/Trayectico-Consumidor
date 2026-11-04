@@ -1,4 +1,4 @@
-import type { IconPaths } from '../../../interfaces/ui-icon.interface';
+import type { IconPaths } from '../../../interfaces/ui-icon';
 import { Component, input } from '@angular/core';
 @Component({
   selector: 'app-ui-icon',

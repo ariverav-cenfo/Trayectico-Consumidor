@@ -1,4 +1,4 @@
-export interface RouteData {
+export interface Ruta {
   id: string;
   name: string;
   price: string | null;

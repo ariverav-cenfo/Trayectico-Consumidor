@@ -1,4 +1,4 @@
-import type { HomeFeature } from '../../../../interfaces/home-feature.interface';
+import type { HomeFeature } from '../../../../interfaces/home-feature';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
