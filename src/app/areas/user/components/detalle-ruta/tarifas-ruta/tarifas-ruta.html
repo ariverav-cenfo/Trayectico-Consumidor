@@ -1,34 +1,4 @@
 <section>
   <h2>Tarifas</h2>
-  @if (route().price) {
-    <div class="table-wrap">
-      <table>
-        <caption class="sr-only">
-          Tarifas regulares por tramo
-        </caption>
-        <thead>
-          <tr>
-            <th scope="col">Tramo</th>
-            <th scope="col">Tarifa regular</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of [1, 2]; track row) {
-            <tr>
-              <td>[Origen] a [Destino]</td>
-              <td>
-                <span class="price">{{ route().price }}</span>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
-    </div>
-    <p class="muted small" style="margin: 12px 0">Fuente: ARESEP · actualizada el [fecha]</p>
-  } @else {
-    <p class="muted" style="margin-bottom: 20px">
-      Tarifa no disponible. Esta ruta no tiene tarifa registrada en la ARESEP.
-    </p>
-  }
-  <app-payment-method [method]="route().electronic ? 'pago electrónico' : 'solo efectivo'" />
+  <p class="muted" style="margin-bottom: 20px">Tarifa no disponible.</p>
 </section>

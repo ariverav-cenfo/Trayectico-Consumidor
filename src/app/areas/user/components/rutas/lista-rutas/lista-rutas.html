@@ -1,5 +1,5 @@
 <div class="stack">
-  @for (route of visible(); track route.id) {
+  @for (route of visible(); track route.codigo_ruta) {
     <app-tarjeta-ruta [route]="route" />
   } @empty {
     <p class="muted" role="status">No se encontraron rutas con esa búsqueda.</p>

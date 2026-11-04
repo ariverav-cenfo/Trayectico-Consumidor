@@ -9,12 +9,12 @@ describe('Demo application services', () => {
 
   it('filters routes and alerts without exposing mutable fixtures', () => {
     const transport = TestBed.inject(RutaService);
-    expect(transport.buscarRutas(' 0003 ').map((route) => route.id)).toEqual(['0003']);
+    expect(transport.buscarRutas(' 0003 ').map((route) => route.codigo_ruta)).toEqual(['0003']);
     expect(transport.buscarAvisos({ route: '0002', type: 'Cierre de vía' })).toHaveLength(1);
     expect(transport.obtenerAvisoActivo('0004')).toBeUndefined();
-    transport.buscarRutas()[0].name = 'changed';
+    transport.buscarRutas()[0].nombre_ruta = 'changed';
     transport.getTripOptions()[0].steps[0].title = 'changed';
-    expect(transport.buscarRutas()[0].name).not.toBe('changed');
+    expect(transport.buscarRutas()[0].nombre_ruta).not.toBe('changed');
     expect(transport.getTripOptions()[0].steps[0].title).not.toBe('changed');
   });
 

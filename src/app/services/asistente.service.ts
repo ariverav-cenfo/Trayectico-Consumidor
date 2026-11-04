@@ -16,10 +16,10 @@ export class AsistenteService {
     if (/cuesta|tarifa|precio/.test(normalized)) {
       reply = {
         text: route
-          ? `La ruta ${route.id}: ${route.price ?? 'tarifa no disponible'}. Tarifa de demostración.`
+          ? `La ruta ${route.codigo_ruta}: tarifa no disponible.`
           : `No encontré la ruta ${routeId} en los datos de demostración.`,
-        action: route ? `Consulté la tarifa de la ruta ${route.id}.` : undefined,
-        link: route ? `/rutas/${route.id}` : undefined,
+        action: route ? `Consulté la tarifa de la ruta ${route.codigo_ruta}.` : undefined,
+        link: route ? `/rutas/${route.codigo_ruta}` : undefined,
       };
     } else if (/aviso|alerta|servicio/.test(normalized)) {
       reply = {

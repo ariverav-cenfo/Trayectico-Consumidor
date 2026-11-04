@@ -14,7 +14,7 @@ describe('User page interactions', () => {
   beforeEach(() => localStorage.removeItem(historyKey));
   afterEach(() => localStorage.removeItem(historyKey));
 
-  it('expands stops and refreshes the alert and payment for another route', async () => {
+  it('expands stops and refreshes the alert and fare for another route', async () => {
     TestBed.configureTestingModule({ providers: [provideRouter([{ path: 'rutas/:id', component: DetalleRuta }])] });
     const harness = await RouterTestingHarness.create('/rutas/0002');
     let element = harness.routeNativeElement!;
@@ -31,7 +31,7 @@ describe('User page interactions', () => {
     await harness.navigateByUrl('/rutas/0003');
     element = harness.routeNativeElement!;
     expect(element.querySelector('app-aviso-ruta')!.textContent).toContain('Avería');
-    expect(element.querySelector('app-payment-method')!.textContent).toContain('pago electrónico');
+    expect(element.querySelector('app-tarifas-ruta')!.textContent).toContain('Tarifa no disponible');
     await harness.navigateByUrl('/rutas/0004');
     expect(harness.routeNativeElement!.querySelector('app-aviso-ruta')).toBeNull();
     expect(harness.routeNativeElement!.textContent).toContain('Tarifa no disponible');

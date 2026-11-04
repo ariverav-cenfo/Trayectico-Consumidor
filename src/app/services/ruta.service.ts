@@ -13,12 +13,12 @@ import type { TripOption } from '../interfaces/trip-option';
 export class RutaService {
   buscarRutas(query = ''): Ruta[] {
     const term = query.trim().toLocaleLowerCase('es');
-    return RUTAS_DEMO.filter((route) =>
-      `${route.id} ${route.name}`.toLocaleLowerCase('es').includes(term),
-    ).map((route) => ({ ...route }));
+    return RUTAS_DEMO.filter((ruta) =>
+      `${ruta.codigo_ruta} ${ruta.nombre_ruta}`.toLocaleLowerCase('es').includes(term),
+    ).map((ruta) => ({ ...ruta }));
   }
-  obtenerRuta(id: string | null): Ruta | undefined {
-    return this.buscarRutas().find((route) => route.id === id);
+  obtenerRuta(codigo: string | null): Ruta | undefined {
+    return this.buscarRutas().find((ruta) => ruta.codigo_ruta === codigo);
   }
   buscarAvisos(filters?: ValorFiltrosAvisos): Aviso[] {
     return AVISOS_DEMO.filter(
