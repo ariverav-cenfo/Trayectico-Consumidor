@@ -1,17 +1,17 @@
 import { Injectable, inject } from '@angular/core';
-import { DEMO_MESSAGES } from '../data/demo-assistant';
+import { MENSAJES_DEMO } from '../data/asistente-demo';
 import type { MensajeAsistente, RespuestaAsistente } from '../interfaces/mensaje-asistente';
-import { TransportService } from './transport.service';
+import { RutaService } from './ruta.service';
 @Injectable({ providedIn: 'root' })
-export class AssistantService {
-  private readonly transport = inject(TransportService);
-  initialMessages(): MensajeAsistente[] {
-    return DEMO_MESSAGES.map((message) => ({ ...message }));
+export class AsistenteService {
+  private readonly transport = inject(RutaService);
+  mensajesIniciales(): MensajeAsistente[] {
+    return MENSAJES_DEMO.map((message) => ({ ...message }));
   }
-  reply(text: string): RespuestaAsistente {
+  responder(text: string): RespuestaAsistente {
     const normalized = text.toLocaleLowerCase('es');
     const routeId = text.match(/\b\d{4}\b/)?.[0] ?? '0002';
-    const route = this.transport.getRoute(routeId);
+    const route = this.transport.obtenerRuta(routeId);
     let reply: RespuestaAsistente;
     if (/cuesta|tarifa|precio/.test(normalized)) {
       reply = {
@@ -23,7 +23,7 @@ export class AssistantService {
       };
     } else if (/aviso|alerta|servicio/.test(normalized)) {
       reply = {
-        text: `Hay ${this.transport.getAlerts().filter((alert) => !alert.resolved).length} avisos de servicio activos en los datos de demostración.`,
+        text: `Hay ${this.transport.buscarAvisos().filter((alert) => !alert.resolved).length} avisos de servicio activos en los datos de demostración.`,
         action: 'Busqué los avisos de servicio.',
         link: '/avisos',
       };

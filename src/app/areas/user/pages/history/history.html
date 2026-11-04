@@ -6,9 +6,9 @@
   <p class="example">
     Historial de demostración guardado en este navegador. Los recorridos y tarifas son ejemplos.
   </p>
-  <app-trip-list [trips]="history.trips()" (remove)="history.remove($event)" /><app-history-actions
+  <app-trip-list [trips]="history.trips()" (remove)="history.eliminar($event)" /><app-history-actions
     [hasTrips]="history.trips().length > 0"
-    (clear)="history.clear()"
+    (clear)="history.limpiar()"
   />
 </main>
 <app-ai-message />

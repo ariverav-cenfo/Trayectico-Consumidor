@@ -1,11 +1,11 @@
-import { RecentSearchesService } from '../../../../services/recent-searches.service';
+import { BusquedasRecientesService } from '../../../../services/busquedas-recientes.service';
 import type { BusquedaReciente } from '../../../../interfaces/busqueda-reciente';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { OriginDestination } from '../../components/planner/origin-destination/origin-destination';
 import { RecentSearches } from '../../components/planner/recent-searches/recent-searches';
 
-import { TripHistoryService } from '../../../../services/trip-history.service';
+import { HistorialViajesService } from '../../../../services/historial-viajes.service';
 import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
 
 @Component({
@@ -16,9 +16,9 @@ import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
 })
 export class Planner {
   private readonly router = inject(Router);
-  private readonly history = inject(TripHistoryService);
+  private readonly history = inject(HistorialViajesService);
   private readonly route = inject(ActivatedRoute);
-  private readonly recentSearches = inject(RecentSearchesService);
+  private readonly recentSearches = inject(BusquedasRecientesService);
   protected readonly searches = this.recentSearches.searches;
   protected readonly selected = signal<BusquedaReciente | null>(this.initialSearch());
   protected select(search: BusquedaReciente) {
@@ -26,13 +26,13 @@ export class Planner {
   }
   protected search(search: BusquedaReciente) {
     this.selected.set(search);
-    this.recentSearches.save(search);
+    this.recentSearches.guardar(search);
     this.showResults();
   }
   protected showResults() {
     const search = this.selected();
     if (search) {
-      const tripId = this.history.save(search.origin, search.destination, 'direct');
+      const tripId = this.history.guardar(search.origin, search.destination, 'direct');
       void this.router.navigate(['/planificar/resultado'], { queryParams: { ...search, tripId } });
     }
   }

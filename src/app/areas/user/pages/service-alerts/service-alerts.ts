@@ -1,4 +1,4 @@
-import { TransportService } from '../../../../services/transport.service';
+import { RutaService } from '../../../../services/ruta.service';
 import type { ValorFiltrosAvisos } from '../../../../interfaces/valor-filtros-avisos';
 import { Component, inject, signal, computed } from '@angular/core';
 import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
@@ -12,7 +12,7 @@ import { DataFooter } from '../../../../shared/layout/data-footer/data-footer';
   styleUrl: './service-alerts.css',
 })
 export class ServiceAlerts {
-  private readonly transport = inject(TransportService);
+  private readonly transport = inject(RutaService);
   protected readonly filters = signal<ValorFiltrosAvisos>({ route: '', type: '' });
-  protected readonly alerts = computed(() => this.transport.getAlerts(this.filters()));
+  protected readonly alerts = computed(() => this.transport.buscarAvisos(this.filters()));
 }

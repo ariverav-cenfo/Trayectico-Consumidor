@@ -1,4 +1,4 @@
-import { TransportService } from '../../../../services/transport.service';
+import { RutaService } from '../../../../services/ruta.service';
 import type { ValorControlesRuta } from '../../../../interfaces/valor-controles-ruta';
 import { Button } from '../../../../shared/ui/button/button';
 import { Component, inject, signal, computed } from '@angular/core';
@@ -30,16 +30,16 @@ import { DataFooter } from '../../../../shared/layout/data-footer/data-footer';
   styleUrl: './route-detail.css',
 })
 export class RouteDetail {
-  private readonly transport = inject(TransportService);
+  private readonly transport = inject(RutaService);
   private readonly route = inject(ActivatedRoute);
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
   });
   protected readonly controls = signal<ValorControlesRuta>({ branch: '', direction: 'Ida' });
-  protected readonly current = computed(() => this.transport.getRoute(this.params().get('id')));
+  protected readonly current = computed(() => this.transport.obtenerRuta(this.params().get('id')));
   protected readonly activeAlert = computed(() =>
-    this.transport.getActiveAlert(this.params().get('id')),
+    this.transport.obtenerAvisoActivo(this.params().get('id')),
   );
-  protected readonly stops = computed(() => this.transport.getStops(this.controls()));
-  protected readonly points = computed(() => this.transport.getMapPoints(this.controls()));
+  protected readonly stops = computed(() => this.transport.obtenerParadas(this.controls()));
+  protected readonly points = computed(() => this.transport.obtenerPuntosMapa(this.controls()));
 }

@@ -6,7 +6,7 @@ import { vi } from 'vitest';
 import { RoutesPage } from './pages/routes/routes';
 import { ServiceAlerts } from './pages/service-alerts/service-alerts';
 import { History } from './pages/history/history';
-import { TripHistoryService } from '../../services/trip-history.service';
+import { HistorialViajesService } from '../../services/historial-viajes.service';
 
 const historyKey = 'trayectico-trip-history';
 
@@ -85,7 +85,7 @@ describe('User page interactions', () => {
     const dialog = element.querySelector<HTMLDialogElement>('dialog')!;
     dialog.showModal = vi.fn();
     dialog.close = vi.fn();
-    const store = TestBed.inject(TripHistoryService);
+    const store = TestBed.inject(HistorialViajesService);
     const clearButton = element.querySelector<HTMLButtonElement>('app-history-actions [data-variant="danger"]')!;
     clearButton.click();
     expect(dialog.showModal).toHaveBeenCalledOnce();
@@ -97,19 +97,19 @@ describe('User page interactions', () => {
     await fixture.whenStable();
     expect(store.trips()).toHaveLength(0);
     expect(element.textContent).toContain('Todavía no tiene viajes guardados');
-    expect(new TripHistoryService().trips()).toEqual([]);
+    expect(new HistorialViajesService().trips()).toEqual([]);
   });
 
   it('saves newest trips first, updates the selected option and removes individual trips', () => {
-    const store = new TripHistoryService();
-    store.clear();
-    const first = store.save('San José', 'Heredia', 'direct');
-    const second = store.save('Heredia', 'Alajuela', 'transfer');
+    const store = new HistorialViajesService();
+    store.limpiar();
+    const first = store.guardar('San José', 'Heredia', 'direct');
+    const second = store.guardar('Heredia', 'Alajuela', 'transfer');
     expect(store.trips().map(trip => trip.id)).toEqual([second, first]);
-    store.updateOption(first, 'transfer');
+    store.actualizarOpcion(first, 'transfer');
     expect(store.trips()[1].option).toBe('transfer');
-    store.remove(second);
-    expect(new TripHistoryService().trips().map(trip => trip.id)).toEqual([first]);
+    store.eliminar(second);
+    expect(new HistorialViajesService().trips().map(trip => trip.id)).toEqual([first]);
   });
 });
 

@@ -2,10 +2,10 @@ import { Injectable, signal } from '@angular/core';
 import type { BusquedaReciente } from '../interfaces/busqueda-reciente';
 const STORAGE_KEY = 'trayectico-recent-searches';
 @Injectable({ providedIn: 'root' })
-export class RecentSearchesService {
+export class BusquedasRecientesService {
   private readonly state = signal<BusquedaReciente[]>(this.load());
   readonly searches = this.state.asReadonly();
-  save(search: BusquedaReciente): void {
+  guardar(search: BusquedaReciente): void {
     const recent = [
       { ...search },
       ...this.searches().filter(

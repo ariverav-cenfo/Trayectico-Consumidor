@@ -1,7 +1,7 @@
 import type { ParadaRuta } from '../interfaces/parada-ruta';
 import type { Aviso } from '../interfaces/aviso';
 import type { Ruta } from '../interfaces/ruta';
-export const DEMO_ROUTES: Ruta[] = [
+export const RUTAS_DEMO: Ruta[] = [
   { id: '0002', name: '[Nombre de la ruta]', price: '₡ 000', electronic: false, alert: true },
   { id: '0003', name: '[Nombre de la ruta]', price: '₡ 000', electronic: true, alert: true },
   { id: '0004', name: '[Nombre de la ruta]', price: null, electronic: false, alert: false },
@@ -9,7 +9,7 @@ export const DEMO_ROUTES: Ruta[] = [
   { id: '0006', name: '[Nombre de la ruta]', price: '₡ 000', electronic: true, alert: false },
   { id: '0007', name: '[Nombre de la ruta]', price: null, electronic: false, alert: false },
 ];
-export const DEMO_ALERTS: Aviso[] = [
+export const AVISOS_DEMO: Aviso[] = [
   {
     id: 'closure',
     routeId: '0002',
@@ -35,7 +35,7 @@ export const DEMO_ALERTS: Aviso[] = [
     resolved: true,
   },
 ];
-export const DEMO_STOPS: ParadaRuta[] = Array.from({ length: 8 }, (_, index) => ({
+export const PARADAS_DEMO: ParadaRuta[] = Array.from({ length: 8 }, (_, index) => ({
   id: index + 1,
   name: '[Nombre de la parada]',
 }));

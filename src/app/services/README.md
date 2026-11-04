@@ -1,9 +1,9 @@
 # Servicios de la aplicación
 
-- `TransportService`: consulta de rutas y tarifas, filtros de avisos, paradas, recorridos y opciones de viaje.
-- `TripHistoryService`: estado del historial mediante signals y persistencia local.
-- `RecentSearchesService`: búsquedas recientes, deduplicación, límite y persistencia local.
-- `AssistantService`: respuestas de demostración basadas en las consultas de transporte.
+- `RutaService`: consulta de rutas y tarifas, filtros de avisos, paradas, recorridos y opciones de viaje.
+- `HistorialViajesService`: estado del historial mediante signals y persistencia local.
+- `BusquedasRecientesService`: búsquedas recientes, deduplicación, límite y persistencia local.
+- `AsistenteService`: respuestas de demostración basadas en las consultas de transporte.
 
 Los datos de ejemplo están en `app/data`. Solo los servicios los importan; las pantallas consumen los servicios mediante `inject()`. Cada servicio tiene una responsabilidad concreta y se registra con `providedIn: 'root'`. El estado compartido se expone mediante signals de solo lectura y los datos de transporte se devuelven como copias para proteger los ejemplos originales.
 

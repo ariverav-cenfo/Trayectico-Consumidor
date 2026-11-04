@@ -1,5 +1,5 @@
 import type { ViajeGuardado } from '../interfaces/viaje-guardado';
-export const DEMO_HISTORY: ViajeGuardado[] = [
+export const HISTORIAL_DEMO: ViajeGuardado[] = [
   {
     id: 'example-1',
     origin: '[Origen]',
