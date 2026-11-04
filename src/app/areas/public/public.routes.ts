@@ -1,12 +1,12 @@
 import { Routes } from '@angular/router';
-import { SignIn } from './pages/sign-in/sign-in';
-import { Home } from './pages/home/home';
-import { AccessDenied } from './pages/access-denied/access-denied';
-import { NotFound } from './pages/not-found/not-found';
+import { InicioSesion } from './pages/inicio-sesion/inicio-sesion';
+import { Inicio } from './pages/inicio/inicio';
+import { AccesoDenegado } from './pages/acceso-denegado/acceso-denegado';
+import { PaginaNoEncontrada } from './pages/pagina-no-encontrada/pagina-no-encontrada';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', component: Home },
-  { path: 'iniciar-sesion', component: SignIn },
-  { path: 'acceso-denegado', component: AccessDenied },
-  { path: 'pagina-no-encontrada', component: NotFound },
+  { path: '', pathMatch: 'full', component: Inicio },
+  { path: 'iniciar-sesion', component: InicioSesion },
+  { path: 'acceso-denegado', component: AccesoDenegado },
+  { path: 'pagina-no-encontrada', component: PaginaNoEncontrada },
 ];

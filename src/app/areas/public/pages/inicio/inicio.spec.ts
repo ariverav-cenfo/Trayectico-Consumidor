@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { Inicio } from './inicio';
 import { provideRouter } from '@angular/router';
-import { AccessDenied } from './access-denied';
 
-describe('AccessDenied', () => {
-  let component: AccessDenied;
-  let fixture: ComponentFixture<AccessDenied>;
+describe('Home', () => {
+  let component: Inicio;
+  let fixture: ComponentFixture<Inicio>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [Inicio],
       providers: [provideRouter([])],
-      imports: [AccessDenied],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(AccessDenied);
+    fixture = TestBed.createComponent(Inicio);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });

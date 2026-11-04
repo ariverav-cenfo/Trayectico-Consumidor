@@ -4,8 +4,8 @@ import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
 
 @Component({
   imports: [TopBar, RouterLink],
-  selector: 'app-access-denied',
-  styleUrl: './access-denied.css',
-  templateUrl: './access-denied.html',
+  selector: 'app-acceso-denegado',
+  styleUrl: './acceso-denegado.css',
+  templateUrl: './acceso-denegado.html',
 })
-export class AccessDenied {}
+export class AccesoDenegado {}

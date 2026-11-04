@@ -4,8 +4,8 @@ import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
 
 @Component({
   imports: [TopBar, RouterLink],
-  selector: 'app-not-found',
-  styleUrl: './not-found.css',
-  templateUrl: './not-found.html',
+  selector: 'app-pagina-no-encontrada',
+  styleUrl: './pagina-no-encontrada.css',
+  templateUrl: './pagina-no-encontrada.html',
 })
-export class NotFound {}
+export class PaginaNoEncontrada {}

@@ -5,11 +5,11 @@ import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
 
 @Component({
   imports: [TopBar, RouterLink],
-  selector: 'app-home',
-  styleUrl: './home.css',
-  templateUrl: './home.html',
+  selector: 'app-inicio',
+  styleUrl: './inicio.css',
+  templateUrl: './inicio.html',
 })
-export class Home {
+export class Inicio {
   protected readonly features: HomeFeature[] = [
     {
       title: 'Planificar un viaje',

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { Home } from './home';
 import { provideRouter } from '@angular/router';
+import { PaginaNoEncontrada } from './pagina-no-encontrada';
 
-describe('Home', () => {
-  let component: Home;
-  let fixture: ComponentFixture<Home>;
+describe('PaginaNoEncontrada', () => {
+  let component: PaginaNoEncontrada;
+  let fixture: ComponentFixture<PaginaNoEncontrada>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [Home],
       providers: [provideRouter([])],
+      imports: [PaginaNoEncontrada],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(Home);
+    fixture = TestBed.createComponent(PaginaNoEncontrada);
     component = fixture.componentInstance;
     await fixture.whenStable();
   });
