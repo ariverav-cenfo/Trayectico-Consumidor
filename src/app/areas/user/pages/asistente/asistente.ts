@@ -16,11 +16,15 @@ export class Asistente {
   private readonly assistant = inject(AsistenteService);
   protected readonly messages = signal<MensajeAsistente[]>(this.assistant.mensajesIniciales());
   protected send(text: string) {
-    const reply = this.assistant.responder(text);
     this.messages.update((messages) => [
       ...messages,
       { id: messages.length + 1, role: 'user', text },
-      { id: messages.length + 2, role: 'assistant', ...reply },
     ]);
+    this.assistant.responder(text).subscribe((reply) => {
+      this.messages.update((messages) => [
+        ...messages,
+        { id: messages.length + 1, role: 'assistant', ...reply },
+      ]);
+    });
   }
 }

@@ -12,6 +12,8 @@ import { ParadasRuta } from '../../components/detalle-ruta/paradas-ruta/paradas-
 import { TarifasRuta } from '../../components/detalle-ruta/tarifas-ruta/tarifas-ruta';
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
 import { DataFooter } from '../../../../shared/layout/data-footer/data-footer';
+import { switchMap } from 'rxjs';
+
 @Component({
   selector: 'app-detalle-ruta',
   imports: [
@@ -36,7 +38,9 @@ export class DetalleRuta {
     initialValue: this.route.snapshot.paramMap,
   });
   protected readonly controls = signal<ValorControlesRuta>({ ramal: '', sentidoRecorrido: '1-2' });
-  protected readonly current = computed(() => this.transport.obtenerRuta(this.params().get('id')));
+  protected readonly current = toSignal(
+    this.route.paramMap.pipe(switchMap((params) => this.transport.obtenerRuta(params.get('id')))),
+  );
   protected readonly activeAlert = computed(() =>
     this.transport.obtenerAvisoActivo(this.params().get('id')),
   );

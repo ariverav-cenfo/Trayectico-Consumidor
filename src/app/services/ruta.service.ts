@@ -7,18 +7,23 @@ import type { Ruta } from '../interfaces/ruta';
 import type { ParadaRuta } from '../interfaces/parada-ruta';
 import type { Aviso } from '../interfaces/aviso';
 import type { TripOption } from '../interfaces/trip-option';
+import { Observable, map, of } from 'rxjs';
 
 /** Data access for the demo. Components do not import the fixtures directly. */
 @Injectable({ providedIn: 'root' })
 export class RutaService {
-  buscarRutas(query = ''): Ruta[] {
+  buscarRutas(query = ''): Observable<Ruta[]> {
     const term = query.trim().toLocaleLowerCase('es');
-    return RUTAS_DEMO.filter((ruta) =>
-      `${ruta.codigo_ruta} ${ruta.nombre_ruta}`.toLocaleLowerCase('es').includes(term),
-    ).map((ruta) => ({ ...ruta }));
+    return of(
+      RUTAS_DEMO.filter((ruta) =>
+        `${ruta.codigo_ruta} ${ruta.nombre_ruta}`.toLocaleLowerCase('es').includes(term),
+      ).map((ruta) => ({ ...ruta })),
+    );
   }
-  obtenerRuta(codigo: string | null): Ruta | undefined {
-    return this.buscarRutas().find((ruta) => ruta.codigo_ruta === codigo);
+  obtenerRuta(codigo: string | null): Observable<Ruta | undefined> {
+    return this.buscarRutas().pipe(
+      map((rutas) => rutas.find((ruta) => ruta.codigo_ruta === codigo)),
+    );
   }
   buscarAvisos(filters?: ValorFiltrosAvisos): Aviso[] {
     return AVISOS_DEMO.filter(

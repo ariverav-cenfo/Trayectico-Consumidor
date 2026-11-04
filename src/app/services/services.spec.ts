@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { firstValueFrom } from 'rxjs';
 import { RutaService } from './ruta.service';
 import { AsistenteService } from './asistente.service';
 import { BusquedasRecientesService } from './busquedas-recientes.service';
@@ -7,14 +8,17 @@ describe('Demo application services', () => {
   beforeEach(() => localStorage.removeItem('trayectico-recent-searches'));
   afterEach(() => localStorage.removeItem('trayectico-recent-searches'));
 
-  it('filters routes and alerts without exposing mutable fixtures', () => {
+  it('filters routes and alerts without exposing mutable fixtures', async () => {
     const transport = TestBed.inject(RutaService);
-    expect(transport.buscarRutas(' 0003 ').map((route) => route.codigo_ruta)).toEqual(['0003']);
+    const filtradas = await firstValueFrom(transport.buscarRutas(' 0003 '));
+    expect(filtradas.map((ruta) => ruta.codigo_ruta)).toEqual(['0003']);
     expect(transport.buscarAvisos({ route: '0002', type: 'Cierre de vía' })).toHaveLength(1);
     expect(transport.obtenerAvisoActivo('0004')).toBeUndefined();
-    transport.buscarRutas()[0].nombre_ruta = 'changed';
+    const primeraVez = await firstValueFrom(transport.buscarRutas());
+    primeraVez[0].nombre_ruta = 'changed';
     transport.getTripOptions()[0].steps[0].title = 'changed';
-    expect(transport.buscarRutas()[0].nombre_ruta).not.toBe('changed');
+    const segundaVez = await firstValueFrom(transport.buscarRutas());
+    expect(segundaVez[0].nombre_ruta).not.toBe('changed');
     expect(transport.getTripOptions()[0].steps[0].title).not.toBe('changed');
   });
 
@@ -27,12 +31,16 @@ describe('Demo application services', () => {
     expect(transport.obtenerParadas({ ramal: '', sentidoRecorrido: '1-2' })[0].id).toBe(1);
   });
 
-  it('uses the requested route for demo fares and handles missing routes', () => {
+  it('uses the requested route for demo fares and handles missing routes', async () => {
     const assistant = TestBed.inject(AsistenteService);
-    expect(assistant.responder('¿Cuánto cuesta la ruta 0003?').link).toBe('/rutas/0003');
-    expect(assistant.responder('Precio de la ruta 0004').text).toContain('tarifa no disponible');
-    expect(assistant.responder('Precio de la ruta 9999').link).toBeUndefined();
-    expect(assistant.responder('Avisos de servicio').text).toContain('2 avisos');
+    const tarifa = await firstValueFrom(assistant.responder('¿Cuánto cuesta la ruta 0003?'));
+    expect(tarifa.link).toBe('/rutas/0003');
+    const sinTarifa = await firstValueFrom(assistant.responder('Precio de la ruta 0004'));
+    expect(sinTarifa.text).toContain('tarifa no disponible');
+    const noExiste = await firstValueFrom(assistant.responder('Precio de la ruta 9999'));
+    expect(noExiste.link).toBeUndefined();
+    const avisos = await firstValueFrom(assistant.responder('Avisos de servicio'));
+    expect(avisos.text).toContain('2 avisos');
   });
 
   it('deduplicates recent searches, limits them to five, and persists them', () => {

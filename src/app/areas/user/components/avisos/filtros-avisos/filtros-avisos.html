@@ -3,7 +3,7 @@
     <label for="alert-route">Ruta</label
     ><select id="alert-route" [(ngModel)]="route" (ngModelChange)="emit()">
       <option value="">Todas las rutas</option>
-      @for (item of routes; track item.codigo_ruta) {
+      @for (item of routes(); track item.codigo_ruta) {
       <option [value]="item.codigo_ruta">Ruta {{ item.codigo_ruta }}</option>
       }
     </select>
