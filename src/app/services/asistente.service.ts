@@ -3,12 +3,20 @@ import { Observable, map, of } from 'rxjs';
 import { MENSAJES_DEMO } from '../data/asistente-demo';
 import type { MensajeAsistente, RespuestaAsistente } from '../interfaces/mensaje-asistente';
 import { RutaService } from './ruta.service';
+
+/** Respuestas de demostración del asistente; todavía no usa inteligencia artificial. */
 @Injectable({ providedIn: 'root' })
 export class AsistenteService {
   private readonly transport = inject(RutaService);
+  /** Devuelve copias de los mensajes con los que empieza la conversación. */
   mensajesIniciales(): MensajeAsistente[] {
     return MENSAJES_DEMO.map((message) => ({ ...message }));
   }
+  /**
+   * Arma la respuesta del asistente según las palabras clave del mensaje.
+   * @param text Mensaje escrito por la persona.
+   * @returns La respuesta, con la acción realizada y un enlace cuando aplica.
+   */
   responder(text: string): Observable<RespuestaAsistente> {
     const normalized = text.toLocaleLowerCase('es');
     const routeId = text.match(/\b\d{4}\b/)?.[0] ?? '0002';

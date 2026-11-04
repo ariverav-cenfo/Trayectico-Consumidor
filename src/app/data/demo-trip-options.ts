@@ -1,5 +1,5 @@
 import type { TripOption } from '../interfaces/trip-option';
-// Layout examples until the route planning service supplies actual trips.
+// Ejemplos para el diseño mientras el servicio de planificación no devuelva viajes reales.
 export const EXAMPLE_OPTIONS: TripOption[] = [
   {
     id: 'direct',

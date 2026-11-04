@@ -1,10 +1,18 @@
 import { Injectable, signal } from '@angular/core';
 import type { BusquedaReciente } from '../interfaces/busqueda-reciente';
 const STORAGE_KEY = 'trayectico-recent-searches';
+
+/** Guarda las últimas cinco búsquedas del planificador en el navegador. */
 @Injectable({ providedIn: 'root' })
 export class BusquedasRecientesService {
   private readonly state = signal<BusquedaReciente[]>(this.load());
+  /** Búsquedas recientes, de la más nueva a la más antigua. */
   readonly searches = this.state.asReadonly();
+  /**
+   * Guarda una búsqueda al inicio de la lista, sin repetir el mismo origen y destino.
+   * Mantiene solo las cinco más recientes.
+   * @param search Origen y destino buscados.
+   */
   guardar(search: BusquedaReciente): void {
     const recent = [
       { ...search },
@@ -16,7 +24,7 @@ export class BusquedasRecientesService {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(recent));
     } catch {
-      /* Keep the current session usable without browser storage. */
+      /* Si el navegador no permite guardar, la búsqueda sigue disponible en esta sesión. */
     }
   }
   private load(): BusquedaReciente[] {

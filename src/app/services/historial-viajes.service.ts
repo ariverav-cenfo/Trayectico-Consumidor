@@ -2,10 +2,20 @@ import { HISTORIAL_DEMO } from '../data/historial-demo';
 import type { ViajeGuardado } from '../interfaces/viaje-guardado';
 import { Injectable, signal } from '@angular/core';
 const STORAGE_KEY = 'trayectico-trip-history';
+
+/** Historial de viajes guardados en el navegador; empieza con viajes de ejemplo. */
 @Injectable({ providedIn: 'root' })
 export class HistorialViajesService {
   private readonly state = signal<ViajeGuardado[]>(this.load());
+  /** Viajes guardados, del más reciente al más antiguo. */
   readonly trips = this.state.asReadonly();
+  /**
+   * Guarda un viaje al inicio del historial. Mantiene como máximo 100 viajes.
+   * @param origin Lugar de origen.
+   * @param destination Lugar de destino.
+   * @param option Opción elegida: `'direct'` o `'transfer'`.
+   * @returns El identificador del viaje guardado.
+   */
   guardar(origin: string, destination: string, option: string): string {
     const trip: ViajeGuardado = {
       id: crypto.randomUUID(),
@@ -19,6 +29,11 @@ export class HistorialViajesService {
     this.commit([trip, ...this.trips()].slice(0, 100));
     return trip.id;
   }
+  /**
+   * Cambia la opción elegida de un viaje guardado.
+   * @param id Identificador del viaje.
+   * @param option Nueva opción: `'direct'` o `'transfer'`.
+   */
   actualizarOpcion(id: string, option: string) {
     this.commit(
       this.trips().map((trip) =>
@@ -32,9 +47,14 @@ export class HistorialViajesService {
       ),
     );
   }
+  /**
+   * Borra un viaje del historial.
+   * @param id Identificador del viaje.
+   */
   eliminar(id: string) {
     this.commit(this.trips().filter((trip) => trip.id !== id));
   }
+  /** Borra todo el historial. */
   limpiar() {
     this.commit([]);
   }
@@ -43,7 +63,7 @@ export class HistorialViajesService {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(trips));
     } catch {
-      /* Keep the in-memory history if storage is unavailable. */
+      /* Si el navegador no permite guardar, el historial se mantiene en memoria. */
     }
   }
   private load(): ViajeGuardado[] {
