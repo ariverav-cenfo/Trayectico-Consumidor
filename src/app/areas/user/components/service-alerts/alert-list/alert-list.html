@@ -1,7 +1,0 @@
-<div class="stack">
-  @for (alert of alerts(); track alert.id) {
-    <app-alert-card [alert]="alert" />
-  } @empty {
-    <p class="muted" role="status">No hay avisos para los filtros seleccionados.</p>
-  }
-</div>

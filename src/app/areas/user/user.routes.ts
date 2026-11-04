@@ -1,27 +1,27 @@
 import { Routes } from '@angular/router';
 import { UserLayout } from '../../shared/layout/user-layout/user-layout';
-import { Planner } from './pages/planner/planner';
-import { PlannerResult } from './pages/planner-result/planner-result';
-import { RoutesPage } from './pages/routes/routes';
-import { RouteDetail } from './pages/route-detail/route-detail';
-import { ServiceAlerts } from './pages/service-alerts/service-alerts';
-import { History } from './pages/history/history';
-import { Assistant } from './pages/assistant/assistant';
-import { Profile } from './pages/profile/profile';
+import { Planificador } from './pages/planificador/planificador';
+import { ResultadoPlanificador } from './pages/resultado-planificador/resultado-planificador';
+import { Rutas } from './pages/rutas/rutas';
+import { DetalleRuta } from './pages/detalle-ruta/detalle-ruta';
+import { Avisos } from './pages/avisos/avisos';
+import { Historial } from './pages/historial/historial';
+import { Asistente } from './pages/asistente/asistente';
+import { Perfil } from './pages/perfil/perfil';
 
 export const routes: Routes = [
-  { path: 'asistente', component: Assistant },
+  { path: 'asistente', component: Asistente },
   {
     path: '',
     component: UserLayout,
     children: [
-      { path: 'planificar', component: Planner },
-      { path: 'planificar/resultado', component: PlannerResult },
-      { path: 'rutas', component: RoutesPage },
-      { path: 'rutas/:id', component: RouteDetail },
-      { path: 'avisos', component: ServiceAlerts },
-      { path: 'historial', component: History },
-      { path: 'perfil', component: Profile },
+      { path: 'planificar', component: Planificador },
+      { path: 'planificar/resultado', component: ResultadoPlanificador },
+      { path: 'rutas', component: Rutas },
+      { path: 'rutas/:id', component: DetalleRuta },
+      { path: 'avisos', component: Avisos },
+      { path: 'historial', component: Historial },
+      { path: 'perfil', component: Perfil },
     ],
   },
 ];

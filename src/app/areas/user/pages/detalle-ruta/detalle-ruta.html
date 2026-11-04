@@ -1,0 +1,22 @@
+<main>
+  @if (current(); as route) {
+    <app-encabezado-ruta [route]="route" />
+    <p class="example">Recorrido, paradas y tarifas de ejemplo.</p>
+    @if (activeAlert(); as alert) {
+      <app-aviso-ruta [alert]="alert" />
+    }
+    <app-controles-ruta (change)="controls.set($event)" /><app-mapa-resultado
+      [points]="points()"
+    /><app-paradas-ruta [stops]="stops()" /><app-tarifas-ruta [route]="route" /><a
+      appButton
+      variant="primary"
+      routerLink="/planificar"
+      >Planificar un viaje</a
+    ><app-data-footer />
+  } @else {
+    <h1>Ruta no encontrada</h1>
+    <p class="muted">No hay información para esta ruta.</p>
+    <a routerLink="/rutas" appButton>Volver a rutas</a>
+  }
+</main>
+<app-ai-message />
