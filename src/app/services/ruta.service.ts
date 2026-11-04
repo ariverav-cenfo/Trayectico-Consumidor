@@ -32,13 +32,13 @@ export class RutaService {
     return this.buscarAvisos().find((alert) => !alert.resolved && alert.routeId === routeId);
   }
   obtenerParadas(controls: ValorControlesRuta): ParadaRuta[] {
-    const stops = (controls.branch === 'alterno' ? PARADAS_DEMO.slice(0, 6) : PARADAS_DEMO).map(
+    const stops = (controls.ramal === 'alterno' ? PARADAS_DEMO.slice(0, 6) : PARADAS_DEMO).map(
       (stop) => ({ ...stop }),
     );
-    return controls.direction === 'Regreso' ? stops.reverse() : stops;
+    return controls.sentidoRecorrido === '2-1' ? stops.reverse() : stops;
   }
   obtenerPuntosMapa(controls: ValorControlesRuta): string {
-    return controls.branch === 'alterno'
+    return controls.ramal === 'alterno'
       ? '40,180 100,140 160,96 220,96 280,60 322,48'
       : '40,180 100,140 160,146 220,96 280,105 322,65';
   }

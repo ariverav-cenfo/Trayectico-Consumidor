@@ -35,7 +35,7 @@ export class DetalleRuta {
   private readonly params = toSignal(this.route.paramMap, {
     initialValue: this.route.snapshot.paramMap,
   });
-  protected readonly controls = signal<ValorControlesRuta>({ branch: '', direction: 'Ida' });
+  protected readonly controls = signal<ValorControlesRuta>({ ramal: '', sentidoRecorrido: '1-2' });
   protected readonly current = computed(() => this.transport.obtenerRuta(this.params().get('id')));
   protected readonly activeAlert = computed(() =>
     this.transport.obtenerAvisoActivo(this.params().get('id')),

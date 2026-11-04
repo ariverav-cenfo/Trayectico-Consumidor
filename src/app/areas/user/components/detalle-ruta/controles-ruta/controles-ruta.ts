@@ -1,7 +1,5 @@
-import type {
-  ValorControlesRuta,
-  SentidoRecorrido,
-} from '../../../../../interfaces/valor-controles-ruta';
+import type { ValorControlesRuta } from '../../../../../interfaces/valor-controles-ruta';
+import type { SentidoRecorrido } from '../../../../../interfaces/recorrido';
 import { Component, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 @Component({
@@ -12,9 +10,9 @@ import { FormsModule } from '@angular/forms';
 })
 export class ControlesRuta {
   readonly change = output<ValorControlesRuta>();
-  protected branch = '';
-  protected direction: SentidoRecorrido = 'Ida';
+  protected ramal = '';
+  protected sentidoRecorrido: SentidoRecorrido = '1-2';
   protected emit() {
-    this.change.emit({ branch: this.branch, direction: this.direction });
+    this.change.emit({ ramal: this.ramal, sentidoRecorrido: this.sentidoRecorrido });
   }
 }

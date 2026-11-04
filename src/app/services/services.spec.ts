@@ -18,13 +18,13 @@ describe('Demo application services', () => {
     expect(transport.getTripOptions()[0].steps[0].title).not.toBe('changed');
   });
 
-  it('reverses the selected branch without changing the outbound stops', () => {
+  it('reverses the selected ramal without changing the outbound stops', () => {
     const transport = TestBed.inject(RutaService);
-    const outbound = transport.obtenerParadas({ branch: 'alterno', direction: 'Ida' });
-    const inbound = transport.obtenerParadas({ branch: 'alterno', direction: 'Regreso' });
+    const outbound = transport.obtenerParadas({ ramal: 'alterno', sentidoRecorrido: '1-2' });
+    const inbound = transport.obtenerParadas({ ramal: 'alterno', sentidoRecorrido: '2-1' });
     expect(outbound).toHaveLength(6);
     expect(inbound.map((stop) => stop.id)).toEqual(outbound.map((stop) => stop.id).reverse());
-    expect(transport.obtenerParadas({ branch: '', direction: 'Ida' })[0].id).toBe(1);
+    expect(transport.obtenerParadas({ ramal: '', sentidoRecorrido: '1-2' })[0].id).toBe(1);
   });
 
   it('uses the requested route for demo fares and handles missing routes', () => {

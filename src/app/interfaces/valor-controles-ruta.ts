@@ -1,5 +1,7 @@
-export type SentidoRecorrido = 'Ida' | 'Regreso';
+import type { SentidoRecorrido } from './recorrido';
+
+/** Ramal y sentido elegidos en los controles del detalle de una ruta. */
 export interface ValorControlesRuta {
-  branch: string;
-  direction: SentidoRecorrido;
+  ramal: string;
+  sentidoRecorrido: SentidoRecorrido;
 }

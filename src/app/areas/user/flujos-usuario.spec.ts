@@ -23,9 +23,9 @@ describe('User page interactions', () => {
     element.querySelector<HTMLButtonElement>('app-paradas-ruta button')!.click();
     await harness.fixture.whenStable();
     expect(element.querySelectorAll('app-paradas-ruta tbody tr')).toHaveLength(8);
-    const branch = element.querySelector<HTMLSelectElement>('#route-branch')!;
-    branch.value = 'alterno';
-    branch.dispatchEvent(new Event('change'));
+    const ramal = element.querySelector<HTMLSelectElement>('#ramal-ruta')!;
+    ramal.value = 'alterno';
+    ramal.dispatchEvent(new Event('change'));
     await harness.fixture.whenStable();
     expect(element.querySelectorAll('app-paradas-ruta tbody tr')).toHaveLength(6);
     await harness.navigateByUrl('/rutas/0003');
