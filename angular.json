@@ -67,6 +67,19 @@
           "builder": "@angular/build:unit-test",
           "options": {
             "coverage": true,
+            "coverageThresholds": {
+              "statements": 60,
+              "branches": 60,
+              "functions": 60,
+              "lines": 60
+            },
+            "coverageInclude": ["src/**/*.{ts,html}"],
+            "coverageExclude": [
+                                "src/main.ts",
+                                "src/app/app.config.ts",
+                                "src/environments/**",
+                                "**/*.spec.ts"
+              ],
             "coverageReporters": [
               "text",
               "html",
