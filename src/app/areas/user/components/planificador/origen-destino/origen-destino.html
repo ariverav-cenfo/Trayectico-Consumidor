@@ -1,30 +1,61 @@
-<form (ngSubmit)="submit()">
+<form [formGroup]="formulario" (ngSubmit)="buscar()">
   <div class="fields">
     <div class="places">
-      <label for="trip-origin">Origen</label>
+      <label for="txtOrigen">Origen</label>
       <input
-        id="trip-origin"
-        name="origin"
-        [(ngModel)]="origin"
-        placeholder="Ejemplo: parada o lugar de salida"
-        required
+        id="txtOrigen"
+        autocomplete="off"
+        placeholder="Ejemplo: Hospital México"
+        [value]="texto('origen')"
+        (input)="escribir('origen', $event)"
       />
-      <label for="trip-destination">Destino</label>
+      @if (!tieneLugar('origen') && sugerenciasOrigen().lugares.length) {
+      <ul id="lstSugerenciasOrigen" class="sugerencias">
+        @for (lugar of sugerenciasOrigen().lugares; track $index) {
+        <li>
+          <button type="button" (click)="elegir('origen', lugar)">
+            <span>{{ lugar.nombre }}</span>
+            <span class="detalle">{{ lugar.detalle }}</span>
+          </button>
+        </li>
+        }
+      </ul>
+      }
+
+      <label for="txtDestino">Destino</label>
       <input
-        id="trip-destination"
-        name="destination"
-        [(ngModel)]="destination"
-        placeholder="Ejemplo: parada o lugar de llegada"
-        required
+        id="txtDestino"
+        autocomplete="off"
+        placeholder="Ejemplo: Mall San Pedro"
+        [value]="texto('destino')"
+        (input)="escribir('destino', $event)"
       />
+      @if (!tieneLugar('destino') && sugerenciasDestino().lugares.length) {
+      <ul id="lstSugerenciasDestino" class="sugerencias">
+        @for (lugar of sugerenciasDestino().lugares; track $index) {
+        <li>
+          <button type="button" (click)="elegir('destino', lugar)">
+            <span>{{ lugar.nombre }}</span>
+            <span class="detalle">{{ lugar.detalle }}</span>
+          </button>
+        </li>
+        }
+      </ul>
+      }
     </div>
-    <button type="button" class="swap" aria-label="Intercambiar origen y destino" (click)="swap()">
+    <button
+      id="btnIntercambiar"
+      type="button"
+      class="swap"
+      aria-label="Intercambiar origen y destino"
+      (click)="intercambiar()"
+    >
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M7 18V3M3 7l4-4 4 4M17 6v15M13 17l4 4 4-4" />
       </svg>
     </button>
   </div>
-  <button type="submit" class="search">
+  <button id="btnBuscarRuta" type="submit" class="search">
     <svg viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="10" cy="10" r="8" />
       <path d="m16 16 6 6" /></svg
