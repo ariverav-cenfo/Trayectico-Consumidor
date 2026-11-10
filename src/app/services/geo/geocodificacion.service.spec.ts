@@ -65,6 +65,35 @@ describe('GeocodificacionService', () => {
     ]);
   });
 
+  it('quita los lugares repetidos y deja el primero', () => {
+    let resultado: ResultadoBusqueda | undefined;
+    servicio.buscar('Hospital México').subscribe((r) => (resultado = r));
+    const repetido = {
+      geometry: { coordinates: [-84.1141, 9.9502] },
+      properties: { name: 'Hospital México', district: 'La Uruca', city: 'San José', state: 'San José' },
+    };
+    http
+      .expectOne((req) => req.url === PHOTON_URL)
+      .flush({ features: [...RESPUESTA_HOSPITAL.features, repetido] });
+
+    expect(resultado?.lugares.length).toBe(1);
+    expect(resultado?.lugares[0].coordenada).toEqual({ lat: 9.9497, lon: -84.1137 });
+  });
+
+  it('descarta las líneas de bus', () => {
+    let resultado: ResultadoBusqueda | undefined;
+    servicio.buscar('Hospital México').subscribe((r) => (resultado = r));
+    const lineaDeBus = {
+      geometry: { coordinates: [-84.1, 9.94] },
+      properties: { osm_key: 'route', name: 'Bus to Mexico Hospital', city: 'San José' },
+    };
+    http
+      .expectOne((req) => req.url === PHOTON_URL)
+      .flush({ features: [lineaDeBus, ...RESPUESTA_HOSPITAL.features] });
+
+    expect(resultado?.lugares.map((lugar) => lugar.nombre)).toEqual(['Hospital México']);
+  });
+
   it('devuelve lista vacía sin error cuando no encuentra nada', () => {
     let resultado: ResultadoBusqueda | undefined;
     servicio.buscar('xyzxyz').subscribe((r) => (resultado = r));

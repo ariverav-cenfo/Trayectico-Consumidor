@@ -24,6 +24,7 @@ import { Lugar, ResultadoBusqueda } from '../../interfaces/lugar';
 interface FeaturePhoton {
   geometry: { coordinates: [number, number] };
   properties: {
+    osm_key?: string;
     name?: string;
     street?: string;
     housenumber?: string;
@@ -42,6 +43,14 @@ interface RespuestaPhoton {
 const SIN_RESULTADOS: ResultadoBusqueda = { lugares: [], error: false };
 
 /**
+ * Indica si el resultado es un lugar al que se puede ir.
+ * Descarta las líneas de bus de OpenStreetMap (osm_key "route"): son recorridos, no lugares.
+ */
+function esLugarValido(feature: FeaturePhoton): boolean {
+  return feature.properties.osm_key !== 'route';
+}
+
+/**
  * Convierte un resultado de Photon en un Lugar.
  * Ojo: GeoJSON trae las coordenadas como [lon, lat], al revés de nuestro formato.
  */
@@ -55,6 +64,22 @@ function aLugar(feature: FeaturePhoton): Lugar {
 }
 
 /**
+ * Quita los lugares repetidos (mismo nombre y detalle) y deja el primero.
+ * Photon puede devolver el mismo lugar dos veces, como punto y como edificio.
+ */
+function sinRepetidos(lugares: Lugar[]): Lugar[] {
+  const vistos = new Set<string>();
+  return lugares.filter((lugar) => {
+    const clave = `${lugar.nombre}|${lugar.detalle}`;
+    if (vistos.has(clave)) {
+      return false;
+    }
+    vistos.add(clave);
+    return true;
+  });
+}
+
+/**
  * Busca direcciones dentro de la GAM con Photon (autocompletado).
  * Si se cambia de proveedor (plan B: Geoapify), solo cambia este archivo.
  */
@@ -63,7 +88,7 @@ export class GeocodificacionService {
   private readonly http = inject(HttpClient);
 
   /**
-   * Busca lugares que coincidan con el texto.
+   * Busca lugares que coincidan con el texto, sin repetidos ni líneas de bus.
    * Con menos de 3 letras no consulta y devuelve una lista vacía.
    * Si Photon falla, devuelve { lugares: [], error: true } en vez de lanzar el error.
    */
@@ -82,7 +107,10 @@ export class GeocodificacionService {
       .set('bbox', `${LIMITE_GAM.lonMin},${LIMITE_GAM.latMin},${LIMITE_GAM.lonMax},${LIMITE_GAM.latMax}`);
 
     return this.http.get<RespuestaPhoton>(PHOTON_URL, { params }).pipe(
-      map((respuesta) => ({ lugares: respuesta.features.map(aLugar), error: false })),
+      map((respuesta) => ({
+        lugares: sinRepetidos(respuesta.features.filter(esLugarValido).map(aLugar)),
+        error: false,
+      })),
       catchError(() => of({ lugares: [], error: true })),
     );
   }
