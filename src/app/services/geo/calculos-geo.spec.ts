@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
-import { LIMITE_GAM } from './geo.config';
-import { Coordenada } from './lugar.model';
-import { distanciaMetros, esMismoPunto, estaDentroDeGam } from './geo.utils';
+import { LIMITE_GAM } from './parametros-geo';
+import { Coordenada } from '../../interfaces/lugar';
+import { distanciaMetros, esMismoPunto, estaDentroDeGam } from './calculos-geo';
 
 const SAN_JOSE: Coordenada = { lat: 9.9281, lon: -84.0907 };
 const LIBERIA: Coordenada = { lat: 10.6346, lon: -85.4377 };
 const LIMON: Coordenada = { lat: 9.9907, lon: -83.036 };
 
-/** Metros que mide un grado de latitud con el radio usado en geo.utils. */
+/** Metros que mide un grado de latitud con el radio usado en calculos-geo. */
 const METROS_POR_GRADO = 111_195;
 
 const desplazarNorte = (p: Coordenada, metros: number): Coordenada => ({

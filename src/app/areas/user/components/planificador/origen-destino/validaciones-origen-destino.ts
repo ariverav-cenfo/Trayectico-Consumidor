@@ -1,6 +1,6 @@
 import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
-import { esMismoPunto, estaDentroDeGam } from '../../core/geo/geo.utils';
-import { Lugar } from '../../core/geo/lugar.model';
+import { esMismoPunto, estaDentroDeGam } from '../../../../../services/geo/calculos-geo';
+import { Lugar } from '../../../../../interfaces/lugar';
 
 /**
  * Indica si un valor es un lugar con coordenadas (elegido de las sugerencias o del GPS).

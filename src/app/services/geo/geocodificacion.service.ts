@@ -17,8 +17,8 @@ import {
   MAX_SUGERENCIAS,
   MIN_CARACTERES_BUSQUEDA,
   PHOTON_URL,
-} from './geo.config';
-import { Lugar, ResultadoBusqueda } from './lugar.model';
+} from './parametros-geo';
+import { Lugar, ResultadoBusqueda } from '../../interfaces/lugar';
 
 /** Un resultado de Photon (GeoJSON). Los nombres siguen el JSON de Photon. */
 interface FeaturePhoton {

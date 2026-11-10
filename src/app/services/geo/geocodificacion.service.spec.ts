@@ -3,9 +3,9 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { TestBed } from '@angular/core/testing';
 import { Subject } from 'rxjs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { PHOTON_URL } from './geo.config';
+import { PHOTON_URL } from './parametros-geo';
 import { GeocodificacionService } from './geocodificacion.service';
-import { ResultadoBusqueda } from './lugar.model';
+import { ResultadoBusqueda } from '../../interfaces/lugar';
 
 /** Respuesta de Photon con un solo resultado: el Hospital México. */
 const RESPUESTA_HOSPITAL = {
