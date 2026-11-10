@@ -1,0 +1,29 @@
+a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 88px;
+  padding: 20px;
+  color: white;
+  background: var(--color-trayectico-primary);
+  border-radius: 16px;
+  text-decoration: none;
+  font-size: 32px;
+  font-weight: 700;
+  text-align: center;
+}
+a:hover {
+  filter: brightness(1.1);
+}
+a:focus-visible {
+  outline: 3px solid var(--color-trayectico-primary);
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  a {
+    min-height: 58px;
+    padding: 14px;
+    font-size: 22px;
+    border-radius: 10px;
+  }
+}

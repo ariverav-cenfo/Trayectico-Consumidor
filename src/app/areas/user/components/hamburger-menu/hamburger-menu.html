@@ -1,0 +1,34 @@
+<button
+  type="button"
+  class="menu-trigger"
+  aria-label="Abrir menú"
+  aria-haspopup="dialog"
+  (click)="menu.showModal()"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M3 12h18M3 19h18" /></svg>
+</button>
+<dialog #menu aria-labelledby="menu-title" (click)="closeOnBackdrop($event, menu)">
+  <div class="drawer">
+    <header>
+      <h2 id="menu-title">Menú</h2>
+      <button type="button" autofocus aria-label="Cerrar menú" (click)="menu.close()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 5 14 14M19 5 5 19" /></svg>
+      </button>
+    </header>
+    <div class="user">
+      <span class="avatar" aria-hidden="true">{{ userName().slice(0, 2).toUpperCase() }}</span
+      ><strong>{{ userName() }}</strong>
+    </div>
+    <nav aria-label="Menú de usuario">
+      @for (link of links; track link.route) {
+        <a [routerLink]="link.route" (click)="menu.close()"
+          ><svg viewBox="0 0 24 24" aria-hidden="true"><path [attr.d]="link.path" /></svg
+          >{{ link.label }}</a
+        >
+      }
+    </nav>
+    <footer>
+      <app-logout-button />
+    </footer>
+  </div>
+</dialog>

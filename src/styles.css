@@ -1,3 +1,6 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+@import './app/areas/user/components/user-ui.css';
+
+@theme {
+  --color-trayectico-primary: #1c3a34;
+}

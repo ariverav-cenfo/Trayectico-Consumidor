@@ -1,0 +1,11 @@
+<main>
+  <h1>Planificar viaje</h1>
+  <app-origen-destino [initialSearch]="selected()" (search)="search($event)" />
+
+  <app-busquedas-recientes [searches]="searches()" [selected]="selected()" (choose)="select($event)" />
+  <footer>
+    Datos: Consejo de Transporte Público (CTP), Visor de Rutas. Tarifas: ARESEP. La aplicación no
+    incluye horarios ni frecuencias.
+  </footer>
+</main>
+<app-ai-message />

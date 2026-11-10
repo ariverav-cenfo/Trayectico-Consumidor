@@ -1,0 +1,33 @@
+<form (ngSubmit)="submit()">
+  <div class="fields">
+    <div class="places">
+      <label for="trip-origin">Origen</label>
+      <input
+        id="trip-origin"
+        name="origin"
+        [(ngModel)]="origin"
+        placeholder="Ejemplo: parada o lugar de salida"
+        required
+      />
+      <label for="trip-destination">Destino</label>
+      <input
+        id="trip-destination"
+        name="destination"
+        [(ngModel)]="destination"
+        placeholder="Ejemplo: parada o lugar de llegada"
+        required
+      />
+    </div>
+    <button type="button" class="swap" aria-label="Intercambiar origen y destino" (click)="swap()">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M7 18V3M3 7l4-4 4 4M17 6v15M13 17l4 4 4-4" />
+      </svg>
+    </button>
+  </div>
+  <button type="submit" class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="10" cy="10" r="8" />
+      <path d="m16 16 6 6" /></svg
+    >Buscar ruta
+  </button>
+</form>

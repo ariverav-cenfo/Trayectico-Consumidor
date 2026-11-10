@@ -1,0 +1,40 @@
+a {
+  position: fixed;
+  z-index: 40;
+  bottom: calc(106px + env(safe-area-inset-bottom, 0px));
+  right: 24px;
+  display: grid;
+  place-items: center;
+  width: 80px;
+  height: 80px;
+  border: 3px solid var(--color-trayectico-primary);
+  border-radius: 50%;
+  background: white;
+  color: var(--color-trayectico-primary);
+}
+svg {
+  width: 36px;
+  height: 36px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linejoin: round;
+}
+a:hover {
+  background: #ecf2ef;
+}
+a:focus-visible {
+  outline: 3px solid var(--color-trayectico-primary);
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  a {
+    width: 60px;
+    height: 60px;
+    right: 16px;
+  }
+  svg {
+    width: 28px;
+    height: 28px;
+  }
+}

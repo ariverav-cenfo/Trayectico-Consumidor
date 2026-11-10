@@ -1,0 +1,32 @@
+<div class="stack">
+  <div>
+    <label for="ramal-ruta">Ramal</label
+    ><select id="ramal-ruta" [(ngModel)]="ramal" (ngModelChange)="emit()">
+    <option value="" disabled>Seleccione una opción</option>
+    <option value="principal">[Nombre del ramal principal]</option>
+    <option value="alterno">[Nombre del ramal alterno]</option>
+  </select>
+  </div>
+  <fieldset>
+    <legend>Sentido del recorrido</legend>
+    <div class="radios">
+      <label
+      ><input
+        type="radio"
+        name="sentido"
+        value="1-2"
+        [(ngModel)]="sentidoRecorrido"
+        (ngModelChange)="emit()"
+      />Sentido 1-2</label
+      ><label
+    ><input
+      type="radio"
+      name="sentido"
+      value="2-1"
+      [(ngModel)]="sentidoRecorrido"
+      (ngModelChange)="emit()"
+    />Sentido 2-1</label
+    >
+    </div>
+  </fieldset>
+</div>

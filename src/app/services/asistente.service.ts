@@ -1,0 +1,54 @@
+import { Injectable, inject } from '@angular/core';
+import { Observable, map, of } from 'rxjs';
+import { MENSAJES_DEMO } from '../data/asistente-demo';
+import type { MensajeAsistente, RespuestaAsistente } from '../interfaces/mensaje-asistente';
+import { RutaService } from './ruta.service';
+
+/** Respuestas de demostración del asistente; todavía no usa inteligencia artificial. */
+@Injectable({ providedIn: 'root' })
+export class AsistenteService {
+  private readonly transport = inject(RutaService);
+  /** Devuelve copias de los mensajes con los que empieza la conversación. */
+  mensajesIniciales(): MensajeAsistente[] {
+    return MENSAJES_DEMO.map((message) => ({ ...message }));
+  }
+  /**
+   * Arma la respuesta del asistente según las palabras clave del mensaje.
+   * @param text Mensaje escrito por la persona.
+   * @returns La respuesta, con la acción realizada y un enlace cuando aplica.
+   */
+  responder(text: string): Observable<RespuestaAsistente> {
+    const normalized = text.toLocaleLowerCase('es');
+    const routeId = text.match(/\b\d{4}\b/)?.[0] ?? '0002';
+    if (/cuesta|tarifa|precio/.test(normalized)) {
+      return this.transport.obtenerRuta(routeId).pipe(
+        map((route) => ({
+          text: route
+            ? `La ruta ${route.codigo_ruta}: tarifa no disponible.`
+            : `No encontré la ruta ${routeId} en los datos de demostración.`,
+          action: route ? `Consulté la tarifa de la ruta ${route.codigo_ruta}.` : undefined,
+          link: route ? `/rutas/${route.codigo_ruta}` : undefined,
+        })),
+      );
+    }
+    let reply: RespuestaAsistente;
+    if (/aviso|alerta|servicio/.test(normalized)) {
+      reply = {
+        text: `Hay ${this.transport.buscarAvisos().filter((alert) => !alert.resolved).length} avisos de servicio activos en los datos de demostración.`,
+        action: 'Busqué los avisos de servicio.',
+        link: '/avisos',
+      };
+    } else if (/llego|ruta|viaje|ir de/.test(normalized)) {
+      reply = {
+        text: 'Puede indicar su origen y destino en el planificador para consultar las opciones de demostración.',
+        action: 'Preparé el acceso al planificador de rutas.',
+        link: '/planificar',
+      };
+    } else {
+      reply = {
+        text: 'Puedo ayudarle a consultar rutas, tarifas y avisos de servicio. Pruebe con una de las sugerencias. Esta conversación es una demostración.',
+      };
+    }
+    return of(reply);
+  }
+}

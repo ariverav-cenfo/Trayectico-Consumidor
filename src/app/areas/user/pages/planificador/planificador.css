@@ -1,0 +1,45 @@
+:host {
+  display: block;
+}
+main {
+  display: flex;
+  flex-direction: column;
+  max-width: 780px;
+  margin-inline: auto;
+  padding: 36px 32px 130px;
+  min-height: calc(100dvh - 194px);
+}
+h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 44px;
+}
+app-recent-searches {
+  margin-top: 36px;
+  margin-bottom: 100px;
+}
+footer {
+  margin-top: auto;
+  border-top: 2px solid #c7d5d0;
+  padding-top: 24px;
+  font-size: 28px;
+  line-height: 1.4;
+  color: #5d6e68;
+}
+@media (max-width: 600px) {
+  main {
+    padding: 24px 16px 100px;
+    min-height: calc(100dvh - 170px);
+  }
+  h1 {
+    font-size: 30px;
+    margin-bottom: 30px;
+  }
+  footer {
+    font-size: 18px;
+  }
+  app-recent-searches {
+    margin-bottom: 100px;
+  }
+}

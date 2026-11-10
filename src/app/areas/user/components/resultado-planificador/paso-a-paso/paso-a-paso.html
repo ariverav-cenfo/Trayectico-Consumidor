@@ -1,0 +1,8 @@
+<section aria-labelledby="steps-title">
+  <h2 id="steps-title">Paso a paso</h2>
+  <ol>
+    @for (step of steps(); track $index) {
+      <li><app-paso-viaje [step]="step" [number]="$index + 1" /></li>
+    }
+  </ol>
+</section>

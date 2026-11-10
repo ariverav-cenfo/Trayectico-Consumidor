@@ -1,0 +1,6 @@
+<app-encabezado-asistente />
+<app-nota-asistente />
+<main aria-label="Asistente de viajes">
+  <app-conversacion-asistente [messages]="messages()" (suggestion)="send($event)" />
+</main>
+<app-entrada-asistente (send)="send($event)" />
