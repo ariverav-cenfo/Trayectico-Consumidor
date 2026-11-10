@@ -1,10 +1,24 @@
-import { Component, OnChanges, inject, input, output } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  OnChanges,
+  inject,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { map } from 'rxjs';
 import type { BusquedaReciente } from '../../../../../interfaces/busqueda-reciente';
 import type { Lugar, ResultadoBusqueda } from '../../../../../interfaces/lugar';
 import { GeocodificacionService } from '../../../../../services/geo/geocodificacion.service';
+import {
+  ErrorUbicacion,
+  MotivoErrorUbicacion,
+  UbicacionService,
+} from '../../../../../services/geo/ubicacion.service';
 import {
   dentroDeGamValidator,
   esLugar,
@@ -20,6 +34,15 @@ type ValorLugar = string | Lugar;
 
 const SIN_SUGERENCIAS: ResultadoBusqueda = { lugares: [], error: false };
 
+/** Mensaje para cada motivo por el que el GPS no dio la ubicación. Todos piden escribir el origen. */
+const MENSAJES_UBICACION: Record<MotivoErrorUbicacion, string> = {
+  'permiso-denegado':
+    'No tenemos permiso para usar su ubicación. Escriba el origen o active la ubicación en el navegador.',
+  'no-disponible': 'No pudimos obtener su ubicación. Escriba el origen.',
+  'tiempo-agotado': 'Su ubicación tardó demasiado en responder. Escriba el origen.',
+  'no-soportado': 'Este navegador no permite usar la ubicación. Escriba el origen.',
+};
+
 /** Texto que se muestra en el campo: lo escrito o el nombre del lugar elegido. */
 function textoDe(valor: ValorLugar): string {
   return esLugar(valor) ? valor.nombre : valor;
@@ -33,6 +56,8 @@ function textoDe(valor: ValorLugar): string {
 })
 export class OrigenDestino implements OnChanges {
   private readonly geocodificacion = inject(GeocodificacionService);
+  private readonly ubicacion = inject(UbicacionService);
+  private readonly campoOrigen = viewChild.required<ElementRef<HTMLInputElement>>('campoOrigen');
 
   readonly initialSearch = input<BusquedaReciente | null>(null);
   readonly search = output<BusquedaReciente>();
@@ -54,9 +79,15 @@ export class OrigenDestino implements OnChanges {
   protected readonly sugerenciasOrigen = this.sugerenciasDe('origen');
   protected readonly sugerenciasDestino = this.sugerenciasDe('destino');
 
+  /** True mientras se espera la respuesta del GPS. */
+  protected readonly ubicando = signal(false);
+  /** Motivo del último fallo del GPS; se limpia al escribir o elegir otro origen. */
+  private readonly errorUbicacion = signal<MotivoErrorUbicacion | null>(null);
+
   ngOnChanges(): void {
     const seleccionada = this.initialSearch();
     if (seleccionada) {
+      this.errorUbicacion.set(null);
       this.formulario.setValue({
         origen: seleccionada.origin,
         destino: seleccionada.destination,
@@ -76,10 +107,15 @@ export class OrigenDestino implements OnChanges {
 
   /**
    * Mensaje de error del campo, o null si no hay que mostrar ninguno.
-   * El error del servicio se muestra de una vez; los de validación, después de intentar
-   * buscar o de elegir un lugar, para no regañar mientras la persona todavía escribe.
+   * Los errores del GPS y del servicio se muestran de una vez; los de validación, después de
+   * intentar buscar o de elegir un lugar, para no regañar mientras la persona todavía escribe.
    */
   protected mensajeError(campo: Campo): string | null {
+    const motivoUbicacion = this.errorUbicacion();
+    if (campo === 'origen' && motivoUbicacion) {
+      return MENSAJES_UBICACION[motivoUbicacion];
+    }
+
     const sugerencias = campo === 'origen' ? this.sugerenciasOrigen() : this.sugerenciasDestino();
     if (!this.tieneLugar(campo) && sugerencias.error) {
       return 'No pudimos buscar direcciones. Revise su conexión e intente de nuevo.';
@@ -107,17 +143,42 @@ export class OrigenDestino implements OnChanges {
   /** Guarda lo que se escribe. Si había un lugar elegido, lo reemplaza el texto. */
   protected escribir(campo: Campo, evento: Event): void {
     const texto = (evento.target as HTMLInputElement).value;
+    if (campo === 'origen') {
+      this.errorUbicacion.set(null);
+    }
     this.formulario.controls[campo].setValue(texto);
   }
 
-  /** Guarda el lugar elegido de las sugerencias. */
+  /** Guarda el lugar elegido de las sugerencias o del GPS. */
   protected elegir(campo: Campo, lugar: Lugar): void {
+    if (campo === 'origen') {
+      this.errorUbicacion.set(null);
+    }
     const control = this.formulario.controls[campo];
     control.setValue(lugar);
     control.markAsTouched();
   }
 
+  /**
+   * Usa la ubicación del GPS como origen. Si no se puede, avisa el motivo
+   * y pone el cursor en el campo de origen para que se escriba a mano.
+   */
+  protected async usarUbicacionActual(): Promise<void> {
+    this.ubicando.set(true);
+    this.errorUbicacion.set(null);
+    try {
+      const lugar = await this.ubicacion.obtenerUbicacionActual();
+      this.elegir('origen', lugar);
+    } catch (error) {
+      this.errorUbicacion.set(error instanceof ErrorUbicacion ? error.motivo : 'no-disponible');
+      this.campoOrigen().nativeElement.focus();
+    } finally {
+      this.ubicando.set(false);
+    }
+  }
+
   protected intercambiar(): void {
+    this.errorUbicacion.set(null);
     const { origen, destino } = this.formulario.getRawValue();
     this.formulario.setValue({ origen: destino, destino: origen });
   }

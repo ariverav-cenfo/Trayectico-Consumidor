@@ -4,6 +4,10 @@ import { HttpTestingController, provideHttpClientTesting } from '@angular/common
 import { vi } from 'vitest';
 import { OrigenDestino } from './origen-destino';
 import { ESPERA_BUSQUEDA_MS, PHOTON_URL } from '../../../../../services/geo/parametros-geo';
+import {
+  GEOLOCALIZACION,
+  NOMBRE_UBICACION_ACTUAL,
+} from '../../../../../services/geo/ubicacion.service';
 
 /** Espera el tiempo indicado con temporizadores reales. */
 const esperar = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve, ms));
@@ -24,11 +28,18 @@ describe('OrigenDestino', () => {
   let fixture: ComponentFixture<OrigenDestino>;
   let element: HTMLElement;
   let http: HttpTestingController;
+  /** GPS falso; cada prueba decide cómo responde. */
+  let gps: Geolocation;
 
   beforeEach(async () => {
+    gps = { getCurrentPosition: vi.fn() } as unknown as Geolocation;
     await TestBed.configureTestingModule({
       imports: [OrigenDestino],
-      providers: [provideHttpClient(), provideHttpClientTesting()],
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        { provide: GEOLOCALIZACION, useValue: gps },
+      ],
     }).compileComponents();
     http = TestBed.inject(HttpTestingController);
     fixture = TestBed.createComponent(OrigenDestino);
@@ -76,6 +87,26 @@ describe('OrigenDestino', () => {
     return element.querySelector(`#error${campo}`)?.textContent?.trim() ?? null;
   }
 
+  /** El GPS falso responde con esa posición. */
+  function gpsResponde(lat: number, lon: number): void {
+    vi.mocked(gps.getCurrentPosition).mockImplementation((exito) =>
+      exito({ coords: { latitude: lat, longitude: lon } } as GeolocationPosition),
+    );
+  }
+
+  /** El GPS falso falla con el código del navegador: 1 permiso, 2 no disponible, 3 tiempo. */
+  function gpsFalla(code: number): void {
+    vi.mocked(gps.getCurrentPosition).mockImplementation((_exito, error) =>
+      error?.({ code } as GeolocationPositionError),
+    );
+  }
+
+  async function usarUbicacion(): Promise<void> {
+    element.querySelector<HTMLButtonElement>('#btnUbicacionActual')!.click();
+    await fixture.whenStable();
+    await fixture.whenStable();
+  }
+
   it('no muestra errores antes de intentar buscar', () => {
     expect(mensaje('Origen')).toBeNull();
     expect(mensaje('Destino')).toBeNull();
@@ -116,6 +147,42 @@ describe('OrigenDestino', () => {
       .flush('falla', { status: 503, statusText: 'Service Unavailable' });
     await fixture.whenStable();
     expect(mensaje('Origen')).toContain('No pudimos buscar direcciones');
+  });
+
+  it('usa la ubicación del GPS como origen', async () => {
+    gpsResponde(9.9281, -84.0907);
+    await usarUbicacion();
+    expect(element.querySelector<HTMLInputElement>('#txtOrigen')!.value).toBe(
+      NOMBRE_UBICACION_ACTUAL,
+    );
+    expect(mensaje('Origen')).toBeNull();
+  });
+
+  it('pide escribir el origen si se niega el permiso de ubicación', async () => {
+    gpsFalla(1);
+    await usarUbicacion();
+    expect(mensaje('Origen')).toContain('No tenemos permiso');
+    expect(mensaje('Origen')).toContain('Escriba el origen');
+  });
+
+  it('pide escribir el origen si el GPS no responde a tiempo', async () => {
+    gpsFalla(3);
+    await usarUbicacion();
+    expect(mensaje('Origen')).toContain('tardó demasiado');
+  });
+
+  it('avisa si la ubicación del GPS está fuera de la GAM', async () => {
+    gpsResponde(9.9763, -84.8384);
+    await usarUbicacion();
+    expect(mensaje('Origen')).toContain('fuera de la cobertura');
+  });
+
+  it('quita el aviso del GPS al escribir el origen', async () => {
+    gpsFalla(1);
+    await usarUbicacion();
+    await escribir('Origen', 'Hospital');
+    await responder('Hospital', { features: [] });
+    expect(mensaje('Origen')).toBeNull();
   });
 
   it('emite la búsqueda con dos lugares válidos', async () => {

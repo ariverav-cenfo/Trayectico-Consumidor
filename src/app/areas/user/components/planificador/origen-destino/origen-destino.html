@@ -3,6 +3,7 @@
     <div class="places">
       <label for="txtOrigen">Origen</label>
       <input
+        #campoOrigen
         id="txtOrigen"
         autocomplete="off"
         placeholder="Ejemplo: Hospital México"
@@ -12,6 +13,21 @@
         [value]="texto('origen')"
         (input)="escribir('origen', $event)"
       />
+      <button
+        id="btnUbicacionActual"
+        type="button"
+        class="ubicacion"
+        [disabled]="ubicando()"
+        [attr.aria-busy]="ubicando()"
+        (click)="usarUbicacionActual()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="7" />
+          <circle cx="12" cy="12" r="2" />
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+        </svg>
+        {{ ubicando() ? 'Buscando su ubicación…' : 'Usar mi ubicación actual' }}
+      </button>
       @if (mensajeError('origen'); as mensaje) {
       <p id="errorOrigen" class="mensaje-error" role="alert">
         <svg viewBox="0 0 24 24" aria-hidden="true">
