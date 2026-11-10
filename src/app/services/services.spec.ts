@@ -58,4 +58,24 @@ describe('Demo application services', () => {
     localStorage.setItem('trayectico-recent-searches', '{invalid');
     expect(new BusquedasRecientesService().searches()).toEqual([]);
   });
+
+  it('keeps the coordinates of recent searches and drops damaged ones', () => {
+    const coordenadas = {
+      origen: { lat: 9.9325, lon: -84.0796 },
+      destino: { lat: 9.9981, lon: -84.117 },
+    };
+    localStorage.setItem(
+      'trayectico-recent-searches',
+      JSON.stringify([
+        { origin: 'San José', destination: 'Heredia', coordenadas },
+        { origin: 'A', destination: 'B', coordenadas: { origen: { lat: 'x' } } },
+        { origin: 1, destination: 'C' },
+        null,
+      ]),
+    );
+    expect(new BusquedasRecientesService().searches()).toEqual([
+      { origin: 'San José', destination: 'Heredia', coordenadas },
+      { origin: 'A', destination: 'B' },
+    ]);
+  });
 });

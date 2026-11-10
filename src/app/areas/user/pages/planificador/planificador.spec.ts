@@ -80,13 +80,24 @@ describe('Planificador', () => {
     element.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
     await fixture.whenStable();
     expect(JSON.parse(localStorage.getItem('trayectico-recent-searches')!)).toEqual([
-      { origin: 'Heredia', destination: 'San José' },
+      {
+        origin: 'Heredia',
+        destination: 'San José',
+        coordenadas: {
+          origen: { lat: 9.9981, lon: -84.117 },
+          destino: { lat: 9.9325, lon: -84.0796 },
+        },
+      },
     ]);
     expect(TestBed.inject(Router).navigate).toHaveBeenCalledWith(['/planificar/resultado'], {
       queryParams: expect.objectContaining({
         origin: 'Heredia',
         destination: 'San José',
         tripId: expect.any(String),
+        origen_lat: 9.9981,
+        origen_lon: -84.117,
+        destino_lat: 9.9325,
+        destino_lon: -84.0796,
       }),
     });
     element.querySelector<HTMLButtonElement>('#btnIntercambiar')!.click();
@@ -95,7 +106,50 @@ describe('Planificador', () => {
     await fixture.whenStable();
     expect(origin.value).toBe('Heredia');
     expect(destination.value).toBe('San José');
+
+    // La búsqueda reciente vuelve con coordenadas: se puede buscar sin elegir los lugares de nuevo.
+    element.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
+    await fixture.whenStable();
+    expect(element.querySelector('#errorOrigen')).toBeNull();
+    expect(element.querySelector('#errorDestino')).toBeNull();
+    expect(TestBed.inject(Router).navigate).toHaveBeenCalledTimes(2);
   });
 
   afterEach(() => localStorage.removeItem('trayectico-recent-searches'));
+});
+
+describe('Planificador al volver de los resultados', () => {
+  afterEach(() => localStorage.removeItem('trayectico-recent-searches'));
+
+  it('restaura origen y destino con coordenadas desde los query params', async () => {
+    localStorage.removeItem('trayectico-recent-searches');
+    await TestBed.configureTestingModule({
+      imports: [Planificador],
+      providers: [provideRouter([]), provideHttpClient(), provideHttpClientTesting()],
+    }).compileComponents();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl(
+      '/?origin=San%20Jos%C3%A9&destination=Heredia' +
+      '&origen_lat=9.9325&origen_lon=-84.0796&destino_lat=9.9981&destino_lon=-84.117',
+    );
+    const navigate = vi.spyOn(router, 'navigate').mockResolvedValue(true);
+
+    const fixture = TestBed.createComponent(Planificador);
+    await fixture.whenStable();
+    const element = fixture.nativeElement as HTMLElement;
+    expect(element.querySelector<HTMLInputElement>('#txtOrigen')!.value).toBe('San José');
+    expect(element.querySelector<HTMLInputElement>('#txtDestino')!.value).toBe('Heredia');
+
+    element.querySelector('form')!.dispatchEvent(new Event('submit', { cancelable: true }));
+    await fixture.whenStable();
+    expect(element.querySelector('#errorOrigen')).toBeNull();
+    expect(navigate).toHaveBeenCalledWith(['/planificar/resultado'], {
+      queryParams: expect.objectContaining({
+        origen_lat: 9.9325,
+        origen_lon: -84.0796,
+        destino_lat: 9.9981,
+        destino_lon: -84.117,
+      }),
+    });
+  });
 });

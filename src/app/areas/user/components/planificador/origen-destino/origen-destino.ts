@@ -12,11 +12,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { map } from 'rxjs';
 import type { BusquedaReciente } from '../../../../../interfaces/busqueda-reciente';
-import type { Lugar, ResultadoBusqueda } from '../../../../../interfaces/lugar';
+import type { Coordenada, Lugar, ResultadoBusqueda } from '../../../../../interfaces/lugar';
 import { GeocodificacionService } from '../../../../../services/geo/geocodificacion.service';
 import {
   ErrorUbicacion,
   MotivoErrorUbicacion,
+  NOMBRE_UBICACION_ACTUAL,
   UbicacionService,
 } from '../../../../../services/geo/ubicacion.service';
 import {
@@ -46,6 +47,18 @@ const MENSAJES_UBICACION: Record<MotivoErrorUbicacion, string> = {
 /** Texto que se muestra en el campo: lo escrito o el nombre del lugar elegido. */
 function textoDe(valor: ValorLugar): string {
   return esLugar(valor) ? valor.nombre : valor;
+}
+
+/**
+ * Valor de un campo al restaurar una búsqueda guardada.
+ * Con coordenadas vuelve como lugar reconocido; sin ellas, como texto para elegir de nuevo.
+ * La ubicación del GPS no se restaura, porque la persona pudo haberse movido.
+ */
+function restaurar(nombre: string, coordenada: Coordenada | undefined): ValorLugar {
+  if (nombre === NOMBRE_UBICACION_ACTUAL) {
+    return '';
+  }
+  return coordenada ? { nombre, detalle: '', coordenada } : nombre;
 }
 
 @Component({
@@ -87,10 +100,11 @@ export class OrigenDestino implements OnChanges {
   ngOnChanges(): void {
     const seleccionada = this.initialSearch();
     if (seleccionada) {
+      const { origin, destination, coordenadas } = seleccionada;
       this.errorUbicacion.set(null);
       this.formulario.setValue({
-        origen: seleccionada.origin,
-        destino: seleccionada.destination,
+        origen: restaurar(origin, coordenadas?.origen),
+        destino: restaurar(destination, coordenadas?.destino),
       });
     }
   }
@@ -183,13 +197,21 @@ export class OrigenDestino implements OnChanges {
     this.formulario.setValue({ origen: destino, destino: origen });
   }
 
+  /**
+   * Emite la búsqueda con los nombres para mostrar y las coordenadas para el cálculo
+   * del viaje: { origen: { lat, lon }, destino: { lat, lon } }.
+   */
   protected buscar(): void {
     this.formulario.markAllAsTouched();
-    if (this.formulario.invalid) {
+    const { origen, destino } = this.formulario.getRawValue();
+    if (this.formulario.invalid || !esLugar(origen) || !esLugar(destino)) {
       return;
     }
-    const { origen, destino } = this.formulario.getRawValue();
-    this.search.emit({ origin: textoDe(origen), destination: textoDe(destino) });
+    this.search.emit({
+      origin: origen.nombre,
+      destination: destino.nombre,
+      coordenadas: { origen: origen.coordenada, destino: destino.coordenada },
+    });
   }
 
   /** Sugerencias de Photon para un campo; con un lugar elegido, la lista queda vacía. */

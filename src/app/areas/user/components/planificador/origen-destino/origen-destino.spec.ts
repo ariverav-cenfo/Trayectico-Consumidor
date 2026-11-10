@@ -193,6 +193,46 @@ describe('OrigenDestino', () => {
     await buscar();
     expect(mensaje('Origen')).toBeNull();
     expect(mensaje('Destino')).toBeNull();
-    expect(emitida).toHaveBeenCalledWith({ origin: 'San José', destination: 'Heredia' });
+    expect(emitida).toHaveBeenCalledWith({
+      origin: 'San José',
+      destination: 'Heredia',
+      coordenadas: {
+        origen: { lat: 9.9325, lon: -84.0796 },
+        destino: { lat: 9.9981, lon: -84.117 },
+      },
+    });
+  });
+
+  it('restaura una búsqueda con coordenadas como lugares reconocidos', async () => {
+    const emitida = vi.fn();
+    fixture.componentInstance.search.subscribe(emitida);
+    const coordenadas = {
+      origen: { lat: 9.9325, lon: -84.0796 },
+      destino: { lat: 9.9981, lon: -84.117 },
+    };
+    fixture.componentRef.setInput('initialSearch', {
+      origin: 'San José',
+      destination: 'Heredia',
+      coordenadas,
+    });
+    await fixture.whenStable();
+    expect(element.querySelector<HTMLInputElement>('#txtOrigen')!.value).toBe('San José');
+    await buscar();
+    expect(mensaje('Origen')).toBeNull();
+    expect(emitida).toHaveBeenCalledWith({ origin: 'San José', destination: 'Heredia', coordenadas });
+  });
+
+  it('no restaura la ubicación del GPS de una búsqueda guardada', async () => {
+    fixture.componentRef.setInput('initialSearch', {
+      origin: NOMBRE_UBICACION_ACTUAL,
+      destination: 'Heredia',
+      coordenadas: {
+        origen: { lat: 10.0126, lon: -84.116 },
+        destino: { lat: 9.9981, lon: -84.117 },
+      },
+    });
+    await fixture.whenStable();
+    expect(element.querySelector<HTMLInputElement>('#txtOrigen')!.value).toBe('');
+    expect(element.querySelector<HTMLInputElement>('#txtDestino')!.value).toBe('Heredia');
   });
 });
