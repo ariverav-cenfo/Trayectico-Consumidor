@@ -6,9 +6,21 @@
         id="txtOrigen"
         autocomplete="off"
         placeholder="Ejemplo: Hospital México"
+        [class.con-error]="mensajeError('origen')"
+        [attr.aria-invalid]="mensajeError('origen') ? true : null"
+        [attr.aria-describedby]="mensajeError('origen') ? 'errorOrigen' : null"
         [value]="texto('origen')"
         (input)="escribir('origen', $event)"
       />
+      @if (mensajeError('origen'); as mensaje) {
+      <p id="errorOrigen" class="mensaje-error" role="alert">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 7v6M12 17h.01" />
+        </svg>
+        <span>{{ mensaje }}</span>
+      </p>
+      }
       @if (!tieneLugar('origen') && sugerenciasOrigen().lugares.length) {
       <ul id="lstSugerenciasOrigen" class="sugerencias">
         @for (lugar of sugerenciasOrigen().lugares; track $index) {
@@ -27,9 +39,21 @@
         id="txtDestino"
         autocomplete="off"
         placeholder="Ejemplo: Mall San Pedro"
+        [class.con-error]="mensajeError('destino')"
+        [attr.aria-invalid]="mensajeError('destino') ? true : null"
+        [attr.aria-describedby]="mensajeError('destino') ? 'errorDestino' : null"
         [value]="texto('destino')"
         (input)="escribir('destino', $event)"
       />
+      @if (mensajeError('destino'); as mensaje) {
+      <p id="errorDestino" class="mensaje-error" role="alert">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 7v6M12 17h.01" />
+        </svg>
+        <span>{{ mensaje }}</span>
+      </p>
+      }
       @if (!tieneLugar('destino') && sugerenciasDestino().lugares.length) {
       <ul id="lstSugerenciasDestino" class="sugerencias">
         @for (lugar of sugerenciasDestino().lugares; track $index) {

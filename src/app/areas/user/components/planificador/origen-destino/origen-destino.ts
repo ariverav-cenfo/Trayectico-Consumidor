@@ -74,6 +74,36 @@ export class OrigenDestino implements OnChanges {
     return esLugar(this.formulario.controls[campo].value);
   }
 
+  /**
+   * Mensaje de error del campo, o null si no hay que mostrar ninguno.
+   * El error del servicio se muestra de una vez; los de validación, después de intentar
+   * buscar o de elegir un lugar, para no regañar mientras la persona todavía escribe.
+   */
+  protected mensajeError(campo: Campo): string | null {
+    const sugerencias = campo === 'origen' ? this.sugerenciasOrigen() : this.sugerenciasDestino();
+    if (!this.tieneLugar(campo) && sugerencias.error) {
+      return 'No pudimos buscar direcciones. Revise su conexión e intente de nuevo.';
+    }
+
+    const control = this.formulario.controls[campo];
+    if (!control.touched) {
+      return null;
+    }
+    if (control.hasError('required')) {
+      return `Escriba ${campo === 'origen' ? 'el origen' : 'el destino'} y elija una de las sugerencias.`;
+    }
+    if (control.hasError('lugarNoReconocido')) {
+      return 'No encontramos esa dirección. Elija una de las sugerencias.';
+    }
+    if (control.hasError('fueraDeGam')) {
+      return 'Ese lugar está fuera de la cobertura de Trayectico, que incluye solo la Gran Área Metropolitana.';
+    }
+    if (campo === 'destino' && this.formulario.hasError('mismoPunto')) {
+      return 'El origen y el destino son el mismo lugar. Elija un destino diferente.';
+    }
+    return null;
+  }
+
   /** Guarda lo que se escribe. Si había un lugar elegido, lo reemplaza el texto. */
   protected escribir(campo: Campo, evento: Event): void {
     const texto = (evento.target as HTMLInputElement).value;
