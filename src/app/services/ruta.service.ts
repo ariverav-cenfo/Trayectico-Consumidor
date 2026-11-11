@@ -1,17 +1,33 @@
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { RUTAS_DEMO, AVISOS_DEMO, PARADAS_DEMO } from '../data/datos-demo';
 import { EXAMPLE_OPTIONS } from '../data/demo-trip-options';
 import type { ValorFiltrosAvisos } from '../interfaces/valor-filtros-avisos';
 import type { ValorControlesRuta } from '../interfaces/valor-controles-ruta';
 import type { Ruta } from '../interfaces/ruta';
+import type { Ramal } from '../interfaces/ramal';
+import type { Recorrido } from '../interfaces/recorrido';
 import type { ParadaRuta } from '../interfaces/parada-ruta';
 import type { Aviso } from '../interfaces/aviso';
 import type { TripOption } from '../interfaces/trip-option';
-import { Observable, map, of } from 'rxjs';
+import { Observable, catchError, map, of, throwError } from 'rxjs';
 
 /** Acceso a rutas, avisos y paradas. Los componentes no importan los datos de ejemplo directamente. */
 @Injectable({ providedIn: 'root' })
 export class RutaService {
+  /** URL de la API para acceder a  /GET-rutas. */
+  private apiUrl = 'http://localhost:8080/rutas';
+  constructor(private http: HttpClient) {}
+
+  /**Obtiene la lista de rutas desde el backend en Spring Boot */
+  getRutas(): Observable<Ruta[]> {
+    return this.http.get<Ruta[]>(this.apiUrl).pipe(
+      map((rutas) => rutas.map((ruta) => ({ ...ruta }))),
+      // Manejo de errores
+      catchError(this.handleError)
+    );
+  } 
+
   /**
    * Busca las rutas cuyo código o nombre contienen el texto indicado.
    * @param query Texto a buscar; si está vacío devuelve todas las rutas.
@@ -81,4 +97,19 @@ export class RutaService {
       steps: option.steps.map((step) => ({ ...step })),
     }));
   }
+
+  /**Menejador centralizado de errores de HTTP */
+  private handleError(error: HttpErrorResponse){
+    let errorMessage = '';
+    if (error.status === 0) {
+      // Ocurrió un error de red o el servidor no respondió.
+      errorMessage = 'No se pudo conectar con el servidor. Verifica que el backend esté corriendo y que la URL sea correcta.';
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong.
+      errorMessage = `El servidor devolvió un código de error ${error.status}, el cuerpo de la respuesta fue: ${error.error}`;
+    }
+    return throwError(() => new Error(errorMessage));
+  }
 }
+

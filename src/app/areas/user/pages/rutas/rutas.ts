@@ -5,7 +5,7 @@ import { BuscadorRutas } from '../../components/rutas/buscador-rutas/buscador-ru
 import { ListaRutas } from '../../components/rutas/lista-rutas/lista-rutas';
 import { DataFooter } from '../../../../shared/layout/data-footer/data-footer';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { switchMap } from 'rxjs';
+import { map, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-rutas',
@@ -17,7 +17,19 @@ export class Rutas {
   private readonly transport = inject(RutaService);
   protected readonly query = signal('');
   protected readonly routes = toSignal(
-    toObservable(this.query).pipe(switchMap((query) => this.transport.buscarRutas(query))),
+    toObservable(this.query).pipe(
+      switchMap((query) => 
+        this.transport.getRutas().pipe(
+          map(rutas=>{
+            const termSrt = typeof query === 'string' ? query.trim().toLowerCase() : '';
+            if (!termSrt)return rutas;
+            return rutas.filter(ruta =>
+            `${ruta.codigo_ruta} ${ruta.nombre_ruta}`.toLocaleLowerCase().includes(termSrt)
+            );
+          })
+        ),
+      ),
+    ),
     { initialValue: [] },
   );
 }
