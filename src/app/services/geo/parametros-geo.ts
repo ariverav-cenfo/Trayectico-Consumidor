@@ -1,4 +1,4 @@
-import { Coordenada } from './lugar.model';
+import { Coordenada } from '../../interfaces/lugar';
 
 /**
  * Rectángulo que envuelve la GAM (iteración 1).

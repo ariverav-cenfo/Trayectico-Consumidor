@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ResultadoPlanificador } from './resultado-planificador';
-import { provideRouter } from '@angular/router';
+import { provideRouter, Router } from '@angular/router';
 
 describe('ResultadoPlanificador', () => {
   let component: ResultadoPlanificador;
@@ -37,5 +37,24 @@ describe('ResultadoPlanificador', () => {
     expect(element.querySelector('app-enlace-detalle-ruta a')!.getAttribute('href')).toBe(
       '/rutas/0002',
     );
+  });
+
+  it('vuelve al planificador con los nombres y las coordenadas, sin el tripId', async () => {
+    await TestBed.inject(Router).navigateByUrl(
+      '/?origin=Hospital&destination=Paseo&tripId=abc' +
+      '&origen_lat=9.990397&origen_lon=-84.1218642&destino_lat=9.9849782&destino_lon=-84.1113713',
+    );
+    await fixture.whenStable();
+    const href = (fixture.nativeElement as HTMLElement)
+      .querySelector('a.back')!
+      .getAttribute('href')!;
+    expect(href).toContain('/planificar?');
+    expect(href).toContain('origin=Hospital');
+    expect(href).toContain('destination=Paseo');
+    expect(href).toContain('origen_lat=9.990397');
+    expect(href).toContain('origen_lon=-84.1218642');
+    expect(href).toContain('destino_lat=9.9849782');
+    expect(href).toContain('destino_lon=-84.1113713');
+    expect(href).not.toContain('tripId');
   });
 });

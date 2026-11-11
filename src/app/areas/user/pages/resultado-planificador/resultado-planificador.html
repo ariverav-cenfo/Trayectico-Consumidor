@@ -2,8 +2,8 @@
   <a
     class="back"
     routerLink="/planificar"
-    [queryParams]="{ origin: params().get('origin'), destination: params().get('destination') }"
-    ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
+    [queryParams]="paramsCambiarBusqueda()"
+  ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
   >
   <header class="results-heading">
     <h1>Resultados</h1>
