@@ -59,6 +59,35 @@ describe('Demo application services', () => {
     expect(new BusquedasRecientesService().searches()).toEqual([]);
   });
 
+  it('no restaura coordenadas guardadas fuera de rango, NaN o Infinity', () => {
+    const valida = { lat: 9.9325, lon: -84.0796 };
+    const guardar = (coordenadas: string) =>
+      localStorage.setItem(
+        'trayectico-recent-searches',
+        `[{"origin":"A","destination":"B","coordenadas":${coordenadas}}]`,
+      );
+    const invalidas = [
+      { lat: 91, lon: -84 },
+      { lat: -91, lon: -84 },
+      { lat: 9, lon: 181 },
+      { lat: 9, lon: -181 },
+      { lat: NaN, lon: -84 },
+      { lat: 9, lon: Infinity },
+      { lat: -Infinity, lon: -84 },
+    ];
+    for (const mala of invalidas) {
+      guardar(JSON.stringify({ origen: mala, destino: valida }));
+      expect(new BusquedasRecientesService().searches()).toEqual([
+        { origin: 'A', destination: 'B' },
+      ]);
+    }
+    // 1e999 es Infinity al leerlo con JSON.parse.
+    guardar('{"origen":{"lat":1e999,"lon":-84},"destino":{"lat":9,"lon":-84}}');
+    expect(new BusquedasRecientesService().searches()).toEqual([
+      { origin: 'A', destination: 'B' },
+    ]);
+  });
+
   it('keeps the coordinates of recent searches and drops damaged ones', () => {
     const coordenadas = {
       origen: { lat: 9.9325, lon: -84.0796 },
