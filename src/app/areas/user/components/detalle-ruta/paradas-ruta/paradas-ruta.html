@@ -1,0 +1,34 @@
+<section>
+  <h2>Paradas del recorrido</h2>
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">
+        Paradas en orden de recorrido
+      </caption>
+      <thead>
+        <tr>
+          <th scope="col">N.º</th>
+          <th scope="col">Parada</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (stop of visible(); track stop.id) {
+          <tr>
+            <td>{{ $index + 1 }}</td>
+            <td>{{ stop.name }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  @if (stops().length > 4) {
+    <button
+      type="button"
+      class="link load"
+      [attr.aria-expanded]="expanded()"
+      (click)="expanded.set(!expanded())"
+    >
+      {{ expanded() ? 'Ver menos paradas' : 'Ver las ' + stops().length + ' paradas' }}
+    </button>
+  }
+</section>

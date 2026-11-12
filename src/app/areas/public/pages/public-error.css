@@ -1,0 +1,105 @@
+:host {
+  display: block;
+  min-height: 100dvh;
+}
+main {
+  max-width: 780px;
+  margin-inline: auto;
+  padding: 96px 32px 48px;
+  text-align: center;
+}
+.error-icon {
+  width: 176px;
+  height: 176px;
+  border-radius: 50%;
+  background: #ecf2ef;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 32px;
+}
+.error-icon svg {
+  width: 88px;
+  height: 88px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 3.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.lock {
+  color: #ce2428;
+}
+.compass {
+  color: #1767c9;
+}
+.error-code {
+  color: #5d6e68;
+  font-size: 28px;
+  margin-bottom: 28px;
+}
+h1 {
+  font-size: 48px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 36px;
+}
+.description {
+  color: #5d6e68;
+  font-size: 32px;
+  line-height: 1.5;
+  margin-bottom: 52px;
+}
+.return-link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 88px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--color-trayectico-primary);
+  color: white;
+  font-size: 32px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.return-link:hover {
+  filter: brightness(1.1);
+}
+.return-link:focus-visible {
+  outline: 3px solid var(--color-trayectico-primary);
+  outline-offset: 4px;
+}
+@media (max-width: 600px) {
+  main {
+    padding: 48px 16px 28px;
+  }
+  .error-icon {
+    width: 112px;
+    height: 112px;
+    margin-bottom: 24px;
+  }
+  .error-icon svg {
+    width: 56px;
+    height: 56px;
+  }
+  .error-code {
+    font-size: 18px;
+    margin-bottom: 22px;
+  }
+  h1 {
+    font-size: 30px;
+    margin-bottom: 24px;
+  }
+  .description {
+    font-size: 20px;
+    margin-bottom: 32px;
+  }
+  .return-link {
+    min-height: 58px;
+    font-size: 20px;
+    border-radius: 10px;
+  }
+  .desktop-break {
+    display: none;
+  }
+}

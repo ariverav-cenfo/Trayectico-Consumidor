@@ -1,0 +1,8 @@
+<section aria-label="Tarifa y método de pago">
+  <div class="fare">
+    <p>Tarifa regular desde</p>
+    <strong>{{ price() }}</strong>
+    <p>Fuente: ARESEP · actualizada el {{ updatedAt() }}</p>
+  </div>
+  <app-payment-method [method]="payment()" />
+</section>

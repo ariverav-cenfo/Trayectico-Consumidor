@@ -1,0 +1,8 @@
+<main>
+  <h1>Avisos de servicio</h1>
+  <p class="intro">Averías, bloqueos y cierres de vía que afectan las rutas.</p>
+  <app-filtros-avisos (change)="filters.set($event)" />
+  <p class="example">Avisos de ejemplo; no representan incidencias actuales.</p>
+  <app-lista-avisos [alerts]="alerts()" /><app-data-footer [alerts]="true" />
+</main>
+<app-ai-message />

@@ -1,5 +1,22 @@
 # TrayecticoConsumidor
 
+## Áreas de la aplicación
+
+Las rutas principales cargan tres áreas de forma diferida mediante `loadChildren`:
+
+- `src/app/areas/public`: Inicio (`/`), Acceso denegado y Página no encontrada.
+- `src/app/areas/user`: Planificador (`/planificar`) como entrada de usuario, resultados, rutas, detalle, avisos, historial, asistente y perfil.
+- `src/app/areas/admin`: panel y gestión de rutas, paradas, avisos, tarifas y usuarios bajo `/admin`.
+
+Cada área contiene sus pantallas en `pages/` y su propio archivo de rutas.
+Los componentes exclusivos de un área se ubican en su carpeta `components/`.
+Los elementos visuales reutilizables van en `src/app/shared/ui/`, y la estructura
+compartida de las pantallas en `src/app/shared/layout/` (como la barra de navegación).
+Las direcciones desconocidas muestran la página pública de error.
+Se retiraron las pantallas iniciales de login, registro y recuperación de contraseña;
+la integración con Google y los controles de acceso todavía están pendientes.
+La carga diferida por sí sola no restringe el acceso a las pantallas.
+
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.2.0.
 
 ## Development server
@@ -57,3 +74,44 @@ Angular CLI does not come with an end-to-end testing framework by default. You c
 ## Additional Resources
 
 For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+
+
+## INSTRUCCIONES PARA LEVANTAR EL PROYECTO POR PRIMERA VEZ
+
+## 1. Prerrequisitos
+
+Instalar las siguientes herramientas antes de iniciar:
+
+- **Visual Studio Code**
+- **Git**
+- **Angular 22.2.0**
+- **NodeJS 24.15.0**
+- **npm 11.12.1**
+
+## 2. Clonar el repositorio
+
+```bash
+git clone https://github.com/ariverav-cenfo/Trayectico-Consumidor.git
+
+cd Trayectico-Consumidor
+```
+
+## 3. Instalar dependencias
+
+```bash
+npm install
+```
+
+## 4. Levantar el proyecto
+
+```bash
+npm start
+```
+
+*Para detener npm start deben presionar Ctrl + C dentro de la terminal.*
+
+## 5. Compilar proyecto
+
+```bash
+npm run build
+```

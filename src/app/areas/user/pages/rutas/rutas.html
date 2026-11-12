@@ -1,0 +1,9 @@
+<main>
+  <h1>Rutas</h1>
+  <app-buscador-rutas (search)="query.set($event)" />
+  <p class="example">
+    Vista de ejemplo: los avisos y el detalle de las rutas aún no son datos oficiales.
+  </p>
+  <app-lista-rutas [routes]="routes()" /><app-data-footer />
+</main>
+<app-ai-message />

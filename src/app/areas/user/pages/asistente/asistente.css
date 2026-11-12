@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  max-width: 780px;
+  min-height: 100dvh;
+  margin-inline: auto;
+  background: white;
+  color: #202724;
+}
+main {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  padding: 32px 32px 104px;
+  margin: 0;
+}
+@media (max-width: 600px) {
+  main {
+    padding: 24px 16px 64px;
+  }
+}

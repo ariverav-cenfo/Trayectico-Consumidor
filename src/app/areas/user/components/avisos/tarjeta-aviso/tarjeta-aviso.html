@@ -1,0 +1,22 @@
+<article class="card alert-card" [class.resolved]="alert().resolved">
+  <header>
+    <h3 class="row" [class.warning]="!alert().resolved" [class.muted]="alert().resolved">
+      <app-ui-icon [name]="alert().resolved ? 'blocked' : 'warning'" />{{ alert().type }}
+    </h3>
+    <span class="badge" [class.warning]="!alert().resolved" [class.success]="alert().resolved">
+      @if (alert().resolved) {
+        <app-ui-icon name="check" />
+      }
+      {{ alert().resolved ? 'Resuelto' : 'Activo' }}</span
+    >
+  </header>
+  <h3>{{ alert().title }}</h3>
+  <p>{{ alert().description }}</p>
+  <div class="badges">
+    <span class="badge">Ruta {{ alert().routeId }}</span
+    ><span class="badge">{{ alert().resolved ? 'Resuelto' : 'Publicado' }} el [fecha]</span>
+  </div>
+  @if (!alert().resolved) {
+    <a class="link" [routerLink]="['/rutas', alert().routeId]">Ver la ruta afectada</a>
+  }
+</article>

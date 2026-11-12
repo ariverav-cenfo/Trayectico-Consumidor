@@ -1,0 +1,25 @@
+<div class="stack">
+  <a appButton variant="primary" routerLink="/planificar">Planificar un viaje</a>
+  <div class="divider">
+    <button
+      type="button"
+      appButton
+      variant="danger"
+      [disabled]="!hasTrips()"
+      (click)="confirmation.showModal()"
+    >
+      Borrar todo el historial
+    </button>
+    <p class="muted" style="margin-top: 16px">Se le pedirá confirmación antes de borrar.</p>
+  </div>
+</div>
+<dialog #confirmation aria-labelledby="clear-title">
+  <h2 id="clear-title">¿Borrar todo el historial?</h2>
+  <p>Se eliminarán los viajes guardados en este navegador. Esta acción no se puede deshacer.</p>
+  <div class="stack">
+    <button type="button" appButton autofocus (click)="confirmation.close()">Cancelar</button
+    ><button type="button" appButton variant="danger" (click)="clear.emit(); confirmation.close()">
+      Sí, borrar historial
+    </button>
+  </div>
+</dialog>
