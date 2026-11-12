@@ -3,6 +3,7 @@ import type { TripOption } from '../../../../interfaces/trip-option';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { catchError, of, switchMap } from 'rxjs';
 import { Resultados } from '../../components/resultado-planificador/resultados/resultados';
 
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
@@ -44,13 +45,28 @@ export class ResultadoPlanificador {
     const params = this.params();
     return Object.fromEntries(PARAMS_BUSQUEDA.map((nombre) => [nombre, params.get(nombre)]));
   });
-  protected readonly options = inject(RutaService).getTripOptions();
-  protected readonly selected = signal(
-    this.options.find((option) => option.id === this.route.snapshot.queryParamMap.get('option')) ??
-    this.options[0],
+  private readonly rutaService = inject(RutaService);
+  /** Opciones de viaje del backend; se recargan si cambian origen o destino en la URL. */
+  protected readonly options = toSignal(
+    this.route.queryParamMap.pipe(
+      switchMap((query) =>
+        this.rutaService
+          .getTripOptions(query.get('origen') ?? '', query.get('destino') ?? '')
+          .pipe(catchError(() => of([] as TripOption[]))),
+      ),
+    ),
+    { initialValue: [] as TripOption[] },
   );
+  private readonly selectedId = signal<string | null>(
+    this.route.snapshot.queryParamMap.get('option'),
+  );
+  /** Opción elegida, o la primera si no hay una elegida; `undefined` mientras no hay opciones. */
+  protected readonly selected = computed(() => {
+    const options = this.options();
+    return options.find((option) => option.id === this.selectedId()) ?? options[0];
+  });
   protected choose(option: TripOption) {
-    this.selected.set(option);
+    this.selectedId.set(option.id);
     const id = this.params().get('tripId');
     if (id) this.history.actualizarOpcion(id, option.id);
   }
