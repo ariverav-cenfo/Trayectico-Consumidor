@@ -9,7 +9,7 @@ import { Rutas } from './pages/rutas/rutas';
 import { Avisos } from './pages/avisos/avisos';
 import { Historial } from './pages/historial/historial';
 import { HistorialViajesService } from '../../services/historial-viajes.service';
-import { AVISOS_DEMO, PARADAS_DEMO, RUTAS_DEMO } from '../../data/datos-demo';
+import { RUTAS_DEMO } from '../../data/datos-demo';
 
 /** Respuesta del GET /rutas/{codigo}: la ruta con sus ramales, como la devuelve el backend. */
 const RAMALES = [
@@ -18,30 +18,16 @@ const RAMALES = [
 ];
 
 /**
- * Responde todas las peticiones HTTP pendientes con los datos de ejemplo, filtrando
- * como lo haría el backend. Se llama después de cada acción que dispara peticiones.
+ * Responde las peticiones HTTP pendientes. El backend solo tiene GET /rutas y
+ * GET /rutas/{codigo}; avisos y paradas son datos de ejemplo y no pasan por HTTP.
  */
 async function responderPeticiones(http: HttpTestingController, estable: { whenStable(): Promise<unknown> }) {
   // Las peticiones se emiten cuando los efectos de los signals ya corrieron.
   await estable.whenStable();
   for (const req of http.match(() => true)) {
-    const { url, params } = req.request;
-    const paradas = url.match(/\/rutas\/[^/]+\/paradas$/);
+    const { url } = req.request;
     const ruta = url.match(/\/rutas\/([^/]+)$/);
-    if (url.endsWith('/avisos')) {
-      const routeId = params.get('routeId');
-      const type = params.get('type');
-      req.flush(
-        AVISOS_DEMO.filter(
-          (aviso) => (!routeId || aviso.routeId === routeId) && (!type || aviso.type === type),
-        ),
-      );
-    } else if (paradas) {
-      const stops = params.get('ramal') === 'alterno' ? PARADAS_DEMO.slice(0, 6) : PARADAS_DEMO;
-      req.flush(params.get('sentido') === '2-1' ? [...stops].reverse() : stops);
-    } else if (url.endsWith('/geometria')) {
-      req.flush('40,180 100,140 160,146 220,96 280,105 322,65');
-    } else if (ruta) {
+    if (ruta) {
       const encontrada = RUTAS_DEMO.find((r) => r.codigo_ruta === ruta[1]);
       if (encontrada) req.flush({ ...encontrada, ramales: RAMALES });
       else req.flush(null, { status: 404, statusText: 'Not Found' });
@@ -111,6 +97,8 @@ describe('User page interactions', () => {
     await responderPeticiones(http, fixture);
     const element = fixture.nativeElement as HTMLElement;
     expect(element.querySelectorAll('app-tarjeta-ruta')).toHaveLength(4);
+    // Solo las rutas 0002 y 0003 tienen aviso activo.
+    expect(element.querySelectorAll('app-tarjeta-ruta .badge.warning')).toHaveLength(2);
     element.querySelector<HTMLButtonElement>('app-lista-rutas button')!.click();
     await fixture.whenStable();
     expect(element.querySelectorAll('app-tarjeta-ruta')).toHaveLength(6);

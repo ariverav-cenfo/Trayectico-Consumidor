@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { AVISOS_DEMO, PARADAS_DEMO } from '../data/datos-demo';
+import { EXAMPLE_OPTIONS } from '../data/demo-trip-options';
 import type { ValorFiltrosAvisos } from '../interfaces/valor-filtros-avisos';
 import type { ValorControlesRuta } from '../interfaces/valor-controles-ruta';
 import type { Ruta } from '../interfaces/ruta';
@@ -9,14 +11,15 @@ import type { Aviso } from '../interfaces/aviso';
 import type { TripOption } from '../interfaces/trip-option';
 import { Observable, catchError, map, of, throwError } from 'rxjs';
 
-/** Acceso a rutas, avisos y paradas mediante el backend de Spring Boot. */
+/**
+ * Acceso a rutas, avisos y paradas. Solo GET /rutas y GET /rutas/{codigo} existen en el backend;
+ * avisos, paradas, geometría y opciones de viaje siguen siendo datos de ejemplo.
+ */
 @Injectable({ providedIn: 'root' })
 export class RutaService {
   private readonly baseUrl = environment.apiUrl;
-  
+
   private readonly rutasUrl = `${this.baseUrl}/rutas`;
-  private readonly avisosUrl = `${this.baseUrl}/avisos`; 
-  private readonly viajesUrl = `${this.baseUrl}/viajes/opciones`; 
 
   constructor(private http: HttpClient) {}
 
@@ -64,73 +67,49 @@ export class RutaService {
     );
   }
 
-  /**
-   * Consulta el endpoint de avisos aplicando los filtros correspondientes.
-   */
+  /** Busca los avisos de servicio que cumplen los filtros (datos de ejemplo; sin endpoint en el backend). */
   buscarAvisos(filters?: ValorFiltrosAvisos): Observable<Aviso[]> {
-    let params = new HttpParams();
-    
-    if (filters) {
-      if (filters.route) params = params.set('routeId', filters.route);
-      if (filters.type) params = params.set('type', filters.type);
-    }
-
-    return this.http.get<Aviso[]>(this.avisosUrl, { params }).pipe(
-      catchError(this.handleError)
+    return of(
+      AVISOS_DEMO.filter(
+        (alert) =>
+          !filters ||
+          ((!filters.route || alert.routeId === filters.route) &&
+            (!filters.type || alert.type === filters.type)),
+      ).map((alert) => ({ ...alert })),
     );
   }
 
-  /**
-   * Obtiene el aviso activo (no resuelto) de una ruta.
-   */
+  /** Obtiene el aviso sin resolver de una ruta (datos de ejemplo). */
   obtenerAvisoActivo(routeId: string | null): Observable<Aviso | undefined> {
-    if (!routeId) return of(undefined);
-
-    // Filtramos desde el backend por la ruta, y localmente buscamos el activo
-    return this.buscarAvisos({ route: routeId, type: '' }).pipe(
-      map(avisos => avisos.find(aviso => !aviso.resolved)),
-      catchError(this.handleError)
+    return this.buscarAvisos().pipe(
+      map((avisos) => avisos.find((alert) => !alert.resolved && alert.routeId === routeId)),
     );
   }
 
-  /**
-   * Obtiene las paradas correspondientes a una ruta, ramal y sentido.
-   */
-  obtenerParadas(routeId: string, controls: ValorControlesRuta): Observable<ParadaRuta[]> {
-    const params = new HttpParams()
-      .set('ramal', controls.ramal)
-      .set('sentido', controls.sentidoRecorrido);
+  /** Paradas del ramal elegido, ordenadas según el sentido (datos de ejemplo). */
+  obtenerParadas(_routeId: string, controls: ValorControlesRuta): Observable<ParadaRuta[]> {
+    const stops = (controls.ramal === 'alterno' ? PARADAS_DEMO.slice(0, 6) : PARADAS_DEMO).map(
+      (stop) => ({ ...stop }),
+    );
+    return of(controls.sentidoRecorrido === '2-1' ? stops.reverse() : stops);
+  }
 
-    return this.http.get<ParadaRuta[]>(`${this.rutasUrl}/${routeId}/paradas`, { params }).pipe(
-      catchError(this.handleError)
+  /** Puntos del trazo de ejemplo que dibuja el mapa para el ramal elegido. */
+  obtenerPuntosMapa(_routeId: string, controls: ValorControlesRuta): Observable<string> {
+    return of(
+      controls.ramal === 'alterno'
+        ? '40,180 100,140 160,96 220,96 280,60 322,48'
+        : '40,180 100,140 160,146 220,96 280,105 322,65',
     );
   }
 
-  /**
-   * Obtiene las geometrías reales del recorrido (ej. un string de coordenadas para un SVG o mapa).
-   */
-  obtenerPuntosMapa(routeId: string, controls: ValorControlesRuta): Observable<string> {
-    const params = new HttpParams()
-      .set('ramal', controls.ramal)
-      .set('sentido', controls.sentidoRecorrido);
-
-    // Si el backend devuelve texto plano, usamos responseType: 'text'
-    // Si devuelve JSON, cambia a get<TipoGeometria> y omite responseType
-    return this.http.get(`${this.rutasUrl}/${routeId}/geometria`, { params, responseType: 'text' }).pipe(
-      catchError(this.handleError)
-    );
-  }
-
-  /**
-   * Consulta el endpoint que calcula las opciones de viaje.
-   */
-  getTripOptions(origen: string, destino: string): Observable<TripOption[]> {
-    const params = new HttpParams()
-      .set('origen', origen)
-      .set('destino', destino);
-
-    return this.http.get<TripOption[]>(this.viajesUrl, { params }).pipe(
-      catchError(this.handleError)
+  /** Opciones de viaje de ejemplo (copias). */
+  getTripOptions(_origen: string, _destino: string): Observable<TripOption[]> {
+    return of(
+      EXAMPLE_OPTIONS.map((option) => ({
+        ...option,
+        steps: option.steps.map((step) => ({ ...step })),
+      })),
     );
   }
 

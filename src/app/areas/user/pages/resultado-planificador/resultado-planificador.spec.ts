@@ -1,9 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
-import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
 import { ResultadoPlanificador } from './resultado-planificador';
-import { EXAMPLE_OPTIONS } from '../../../../data/demo-trip-options';
 
 describe('ResultadoPlanificador', () => {
   let component: ResultadoPlanificador;
@@ -21,11 +20,6 @@ describe('ResultadoPlanificador', () => {
 
     fixture = TestBed.createComponent(ResultadoPlanificador);
     component = fixture.componentInstance;
-    await fixture.whenStable();
-    // GET /viajes/opciones: el backend devuelve las opciones de viaje.
-    TestBed.inject(HttpTestingController)
-      .expectOne((req) => req.url.endsWith('/viajes/opciones'))
-      .flush(EXAMPLE_OPTIONS);
     await fixture.whenStable();
   });
 
