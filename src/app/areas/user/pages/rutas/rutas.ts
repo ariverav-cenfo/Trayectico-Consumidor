@@ -19,7 +19,7 @@ export class Rutas {
   protected readonly routes = toSignal(
     toObservable(this.query).pipe(
       switchMap((query) => 
-        this.transport.getRutas().pipe(
+        this.transport.buscarRutas().pipe(
           map(rutas=>{
             const termSrt = typeof query === 'string' ? query.trim().toLowerCase() : '';
             if (!termSrt)return rutas;

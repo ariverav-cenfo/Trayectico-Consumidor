@@ -14,21 +14,31 @@ describe('Demo application services', () => {
     expect(filtradas.map((ruta) => ruta.codigo_ruta)).toEqual(['0003']);
     expect(transport.buscarAvisos({ route: '0002', type: 'Cierre de vía' })).toHaveLength(1);
     expect(transport.obtenerAvisoActivo('0004')).toBeUndefined();
+    
     const primeraVez = await firstValueFrom(transport.buscarRutas());
     primeraVez[0].nombre_ruta = 'changed';
-    transport.getTripOptions()[0].steps[0].title = 'changed';
+    
+    const tripOptions1 = await firstValueFrom(transport.getTripOptions('San Jose', 'Cartago'));
+    tripOptions1[0].steps[0].title = 'changed';
+    
     const segundaVez = await firstValueFrom(transport.buscarRutas());
     expect(segundaVez[0].nombre_ruta).not.toBe('changed');
-    expect(transport.getTripOptions()[0].steps[0].title).not.toBe('changed');
+    
+    const tripOptions2 = await firstValueFrom(transport.getTripOptions('San Jose', 'Cartago'));
+    expect(tripOptions2[0].steps[0].title).not.toBe('changed');
   });
 
-  it('reverses the selected ramal without changing the outbound stops', () => {
+  it('reverses the selected ramal without changing the outbound stops', async () => {
     const transport = TestBed.inject(RutaService);
-    const outbound = transport.obtenerParadas({ ramal: 'alterno', sentidoRecorrido: '1-2' });
-    const inbound = transport.obtenerParadas({ ramal: 'alterno', sentidoRecorrido: '2-1' });
+    
+    const outbound = await firstValueFrom(transport.obtenerParadas('0003', { ramal: 'alterno', sentidoRecorrido: '1-2' }));
+    const inbound = await firstValueFrom(transport.obtenerParadas('0003', { ramal: 'alterno', sentidoRecorrido: '2-1' }));
+    
     expect(outbound).toHaveLength(6);
     expect(inbound.map((stop) => stop.id)).toEqual(outbound.map((stop) => stop.id).reverse());
-    expect(transport.obtenerParadas({ ramal: '', sentidoRecorrido: '1-2' })[0].id).toBe(1);
+    
+    const paradas = await firstValueFrom(transport.obtenerParadas('0003', { ramal: '', sentidoRecorrido: '1-2' }));
+    expect(paradas[0].id).toBe(1);
   });
 
   it('uses the requested route for demo fares and handles missing routes', async () => {
