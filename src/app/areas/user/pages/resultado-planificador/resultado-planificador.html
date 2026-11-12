@@ -2,7 +2,7 @@
   <a
     class="back"
     routerLink="/planificar"
-    [queryParams]="{ origin: params().get('origin'), destination: params().get('destination') }"
+    [queryParams]="paramsCambiarBusqueda()"
   ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
   >
   <header class="results-heading">
@@ -11,6 +11,9 @@
       {{ params().get('origin') || '[Origen]' }} a {{ params().get('destination') || '[Destino]' }}
     </p>
   </header>
+  <p class="example-note" role="note">
+    Vista de ejemplo. Las rutas, paradas y tarifas todavía no son datos de un viaje real.
+  </p>
   <app-resultados [options]="options()" [selectedId]="selected()?.id ?? ''" (choose)="choose($event)" />
   <app-mapa-resultado [points]="selected()?.points ?? ''" />
   <app-paso-a-paso [steps]="selected()?.steps ?? []" />

@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { RutaService } from './ruta.service';
 import { AsistenteService } from './asistente.service';
 import { BusquedasRecientesService } from './busquedas-recientes.service';
+import { AVISOS_DEMO } from '../data/datos-demo';
 
 describe('Demo application services', () => {
   let httpMock: HttpTestingController;
@@ -47,8 +48,19 @@ describe('Demo application services', () => {
 
     const filtradas = await promiseRutas;
     expect(filtradas.map((ruta) => ruta.codigo_ruta)).toEqual(['0003']);
-    expect(transport.buscarAvisos({ route: '0002', type: 'Cierre de vía' })).toHaveLength(1);
-    expect(transport.obtenerAvisoActivo('0004')).toBeUndefined();
+
+    const promiseAvisos = firstValueFrom(
+      transport.buscarAvisos({ route: '0002', type: 'Cierre de vía' }),
+    );
+    const reqAvisos = httpMock.expectOne((req) => req.url.endsWith('/avisos'));
+    expect(reqAvisos.request.params.get('routeId')).toBe('0002');
+    expect(reqAvisos.request.params.get('type')).toBe('Cierre de vía');
+    reqAvisos.flush([AVISOS_DEMO[0]]);
+    expect(await promiseAvisos).toHaveLength(1);
+
+    const promiseActivo = firstValueFrom(transport.obtenerAvisoActivo('0004'));
+    httpMock.expectOne((req) => req.url.endsWith('/avisos')).flush([]);
+    expect(await promiseActivo).toBeUndefined();
 
     const promisePrimeraVez = firstValueFrom(transport.buscarRutas());
     httpMock
@@ -131,22 +143,30 @@ describe('Demo application services', () => {
     const assistant = TestBed.inject(AsistenteService);
 
     const promiseTarifa = firstValueFrom(assistant.responder('¿Cuánto cuesta la ruta 0003?'));
-    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    httpMock
+      .expectOne((req) => req.url.endsWith('/rutas/0003'))
+      .flush({ codigo_ruta: '0003', nombre_ruta: 'Ruta 3' });
     const tarifa = await promiseTarifa;
     expect(tarifa.link).toBe('/rutas/0003');
 
     const promiseSinTarifa = firstValueFrom(assistant.responder('Precio de la ruta 0004'));
-    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    httpMock
+      .expectOne((req) => req.url.endsWith('/rutas/0004'))
+      .flush({ codigo_ruta: '0004', nombre_ruta: 'Ruta 4' });
     const sinTarifa = await promiseSinTarifa;
     expect(sinTarifa.text).toContain('tarifa no disponible');
 
     const promiseNoExiste = firstValueFrom(assistant.responder('Precio de la ruta 9999'));
-    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    httpMock
+      .expectOne((req) => req.url.endsWith('/rutas/9999'))
+      .flush(null, { status: 404, statusText: 'Not Found' });
     const noExiste = await promiseNoExiste;
     expect(noExiste.link).toBeUndefined();
 
     const promiseAvisos = firstValueFrom(assistant.responder('Avisos de servicio'));
-    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    httpMock
+      .expectOne((req) => req.url.endsWith('/avisos'))
+      .flush(AVISOS_DEMO);
     const avisos = await promiseAvisos;
     expect(avisos.text).toContain('2 avisos');
   });
