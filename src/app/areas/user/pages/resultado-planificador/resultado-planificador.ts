@@ -3,10 +3,7 @@ import type { TripOption } from '../../../../interfaces/trip-option';
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of } from 'rxjs';
-
-import { RutaService } from '../../../../services/ruta.service';
-import type { TripOption } from '../../../../interfaces/trip-option';
+import { catchError, of, switchMap } from 'rxjs';
 import { Resultados } from '../../components/resultado-planificador/resultados/resultados';
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
 import { PasoAPaso } from '../../components/resultado-planificador/paso-a-paso/paso-a-paso';
@@ -39,32 +36,38 @@ export class ResultadoPlanificador {
   protected readonly params = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
-  /**
-   * Query params del enlace "Cambiar búsqueda". Llevan las coordenadas para que el
-   * planificador restaure los lugares como reconocidos y no haya que elegirlos de nuevo.
-   * Los que no vienen quedan en null y el router los omite.
-   */
-  protected readonly paramsCambiarBusqueda = computed(() => {
-    const params = this.params();
-    return Object.fromEntries(PARAMS_BUSQUEDA.map((nombre) => [nombre, params.get(nombre)]));
-  });
-  protected readonly options = inject(RutaService).getTripOptions();
-  protected readonly selected = signal(
-    this.options.find((option) => option.id === this.route.snapshot.queryParamMap.get('option')) ??
-    this.options[0],
+
+  // Se actualiza automáticamente si cambian origen o destino en la URL
+  protected readonly options = toSignal(
+    this.route.queryParamMap.pipe(
+      switchMap((queryParams) => {
+        const origen = queryParams.get('origen') ?? '';
+        const destino = queryParams.get('destino') ?? '';
+        return this.rutaService.getTripOptions(origen, destino).pipe(
+          catchError((error) => {
+            console.error('Error cargando las opciones de viaje:', error);
+            return of([] as TripOption[]);
+          })
+        );
+      })
+    ),
+    { initialValue: [] as TripOption[] }
   );
 
-  // 4. Computamos la opción seleccionada reactivamente (seguro contra datos asíncronos)
+  protected readonly selectedId = signal<string | null>(
+    this.route.snapshot.queryParamMap.get('option')
+  );
+
   protected readonly selected = computed(() => {
     const currentOptions = this.options();
     if (currentOptions.length === 0) return undefined;
-    
+
     const id = this.selectedId();
     return currentOptions.find((opt) => opt.id === id) ?? currentOptions[0];
   });
 
   protected choose(option: TripOption) {
-    this.selectedId.set(option.id); // Actualizamos solo el ID
+    this.selectedId.set(option.id);
     const tripId = this.params().get('tripId');
     if (tripId) this.history.actualizarOpcion(tripId, option.id);
   }
