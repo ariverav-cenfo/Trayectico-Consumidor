@@ -1,4 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { Rutas } from './rutas';
 
@@ -8,7 +10,11 @@ describe('Rutas', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(), // Intercepta peticiones HTTP dentro de RutasComponent
+      ],
       imports: [Rutas],
     }).compileComponents();
 

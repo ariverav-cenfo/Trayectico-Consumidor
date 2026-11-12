@@ -1,4 +1,6 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
 import { DetalleRuta } from './pages/detalle-ruta/detalle-ruta';
@@ -15,7 +17,13 @@ describe('User page interactions', () => {
   afterEach(() => localStorage.removeItem(historyKey));
 
   it('expands stops and refreshes the alert and fare for another route', async () => {
-    TestBed.configureTestingModule({ providers: [provideRouter([{ path: 'rutas/:id', component: DetalleRuta }])] });
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: 'rutas/:id', component: DetalleRuta }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
     const harness = await RouterTestingHarness.create('/rutas/0002');
     let element = harness.routeNativeElement!;
     expect(element.querySelector('app-aviso-ruta')!.textContent).toContain('Cierre de vía');
@@ -38,7 +46,14 @@ describe('User page interactions', () => {
   });
 
   it('loads more routes and filters by route code', async () => {
-    TestBed.configureTestingModule({ imports: [Rutas], providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      imports: [Rutas],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
     const fixture = TestBed.createComponent(Rutas);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
@@ -59,7 +74,14 @@ describe('User page interactions', () => {
   });
 
   it('combines route and alert type filters, including the empty state', async () => {
-    TestBed.configureTestingModule({ imports: [Avisos], providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      imports: [Avisos],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
     const fixture = TestBed.createComponent(Avisos);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
@@ -78,7 +100,14 @@ describe('User page interactions', () => {
   });
 
   it('requires explicit confirmation to clear history and persists the empty history', async () => {
-    TestBed.configureTestingModule({ imports: [Historial], providers: [provideRouter([])] });
+    TestBed.configureTestingModule({
+      imports: [Historial],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
     const fixture = TestBed.createComponent(Historial);
     await fixture.whenStable();
     const element = fixture.nativeElement as HTMLElement;
@@ -112,4 +141,3 @@ describe('User page interactions', () => {
     expect(new HistorialViajesService().trips().map(trip => trip.id)).toEqual([first]);
   });
 });
-

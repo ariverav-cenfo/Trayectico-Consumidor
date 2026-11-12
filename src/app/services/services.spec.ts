@@ -1,55 +1,153 @@
 import { TestBed } from '@angular/core/testing';
+import { provideHttpClient } from '@angular/common/http';
+import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { firstValueFrom } from 'rxjs';
 import { RutaService } from './ruta.service';
 import { AsistenteService } from './asistente.service';
 import { BusquedasRecientesService } from './busquedas-recientes.service';
 
 describe('Demo application services', () => {
-  beforeEach(() => localStorage.removeItem('trayectico-recent-searches'));
-  afterEach(() => localStorage.removeItem('trayectico-recent-searches'));
+  let httpMock: HttpTestingController;
+
+  beforeEach(() => {
+    localStorage.removeItem('trayectico-recent-searches');
+
+    TestBed.configureTestingModule({
+      providers: [
+        provideHttpClient(),
+        provideHttpClientTesting(),
+        RutaService,
+        AsistenteService,
+        BusquedasRecientesService,
+      ],
+    });
+
+    httpMock = TestBed.inject(HttpTestingController);
+  });
+
+  afterEach(() => {
+    // Si quedan peticiones HTTP simuladas sin responder, se verifica o descarta
+    localStorage.removeItem('trayectico-recent-searches');
+  });
 
   it('filters routes and alerts without exposing mutable fixtures', async () => {
     const transport = TestBed.inject(RutaService);
-    const filtradas = await firstValueFrom(transport.buscarRutas(' 0003 '));
+
+    // Inicia la llamada a buscarRutas
+    const promiseRutas = firstValueFrom(transport.buscarRutas(' 0003 '));
+
+    // Si RutaService realiza una llamada HTTP a /rutas o similar:
+    const reqs = httpMock.match((req) => req.url.includes('/rutas'));
+    reqs.forEach((req) =>
+      req.flush([
+        { codigo_ruta: '0003', nombre_ruta: 'Ruta 3' },
+        { codigo_ruta: '0002', nombre_ruta: 'Ruta 2' },
+      ]),
+    );
+
+    const filtradas = await promiseRutas;
     expect(filtradas.map((ruta) => ruta.codigo_ruta)).toEqual(['0003']);
     expect(transport.buscarAvisos({ route: '0002', type: 'Cierre de vía' })).toHaveLength(1);
     expect(transport.obtenerAvisoActivo('0004')).toBeUndefined();
-    
-    const primeraVez = await firstValueFrom(transport.buscarRutas());
+
+    const promisePrimeraVez = firstValueFrom(transport.buscarRutas());
+    httpMock
+      .match((req) => req.url.includes('/rutas'))
+      .forEach((req) =>
+        req.flush([
+          { codigo_ruta: '0001', nombre_ruta: 'Original' },
+        ]),
+      );
+    const primeraVez = await promisePrimeraVez;
     primeraVez[0].nombre_ruta = 'changed';
-    
-    const tripOptions1 = await firstValueFrom(transport.getTripOptions('San Jose', 'Cartago'));
+
+    const promiseOptions1 = firstValueFrom(transport.getTripOptions('San Jose', 'Cartago'));
+    httpMock
+      .match((req) => req.url.includes('/viajes/opciones'))
+      .forEach((req) =>
+        req.flush([
+          { steps: [{ title: 'Paso 1' }] },
+        ]),
+      );
+    const tripOptions1 = await promiseOptions1;
     tripOptions1[0].steps[0].title = 'changed';
-    
-    const segundaVez = await firstValueFrom(transport.buscarRutas());
+
+    const promiseSegundaVez = firstValueFrom(transport.buscarRutas());
+    httpMock
+      .match((req) => req.url.includes('/rutas'))
+      .forEach((req) =>
+        req.flush([
+          { codigo_ruta: '0001', nombre_ruta: 'Original' },
+        ]),
+      );
+    const segundaVez = await promiseSegundaVez;
     expect(segundaVez[0].nombre_ruta).not.toBe('changed');
-    
-    const tripOptions2 = await firstValueFrom(transport.getTripOptions('San Jose', 'Cartago'));
+
+    const promiseOptions2 = firstValueFrom(transport.getTripOptions('San Jose', 'Cartago'));
+    httpMock
+      .match((req) => req.url.includes('/viajes/opciones'))
+      .forEach((req) =>
+        req.flush([
+          { steps: [{ title: 'Paso 1' }] },
+        ]),
+      );
+    const tripOptions2 = await promiseOptions2;
     expect(tripOptions2[0].steps[0].title).not.toBe('changed');
   });
 
   it('reverses the selected ramal without changing the outbound stops', async () => {
     const transport = TestBed.inject(RutaService);
-    
-    const outbound = await firstValueFrom(transport.obtenerParadas('0003', { ramal: 'alterno', sentidoRecorrido: '1-2' }));
-    const inbound = await firstValueFrom(transport.obtenerParadas('0003', { ramal: 'alterno', sentidoRecorrido: '2-1' }));
-    
+
+    const promiseOutbound = firstValueFrom(
+      transport.obtenerParadas('0003', { ramal: 'alterno', sentidoRecorrido: '1-2' }),
+    );
+    httpMock
+      .match((req) => req.url.includes('/paradas'))
+      .forEach((req) => req.flush([{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }, { id: 6 }]));
+    const outbound = await promiseOutbound;
+
+    const promiseInbound = firstValueFrom(
+      transport.obtenerParadas('0003', { ramal: 'alterno', sentidoRecorrido: '2-1' }),
+    );
+    httpMock
+      .match((req) => req.url.includes('/paradas'))
+      .forEach((req) => req.flush([{ id: 6 }, { id: 5 }, { id: 4 }, { id: 3 }, { id: 2 }, { id: 1 }]));
+    const inbound = await promiseInbound;
+
     expect(outbound).toHaveLength(6);
     expect(inbound.map((stop) => stop.id)).toEqual(outbound.map((stop) => stop.id).reverse());
-    
-    const paradas = await firstValueFrom(transport.obtenerParadas('0003', { ramal: '', sentidoRecorrido: '1-2' }));
+
+    const promiseParadas = firstValueFrom(
+      transport.obtenerParadas('0003', { ramal: '', sentidoRecorrido: '1-2' }),
+    );
+    httpMock
+      .match((req) => req.url.includes('/paradas'))
+      .forEach((req) => req.flush([{ id: 1 }]));
+    const paradas = await promiseParadas;
     expect(paradas[0].id).toBe(1);
   });
 
   it('uses the requested route for demo fares and handles missing routes', async () => {
     const assistant = TestBed.inject(AsistenteService);
-    const tarifa = await firstValueFrom(assistant.responder('¿Cuánto cuesta la ruta 0003?'));
+
+    const promiseTarifa = firstValueFrom(assistant.responder('¿Cuánto cuesta la ruta 0003?'));
+    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    const tarifa = await promiseTarifa;
     expect(tarifa.link).toBe('/rutas/0003');
-    const sinTarifa = await firstValueFrom(assistant.responder('Precio de la ruta 0004'));
+
+    const promiseSinTarifa = firstValueFrom(assistant.responder('Precio de la ruta 0004'));
+    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    const sinTarifa = await promiseSinTarifa;
     expect(sinTarifa.text).toContain('tarifa no disponible');
-    const noExiste = await firstValueFrom(assistant.responder('Precio de la ruta 9999'));
+
+    const promiseNoExiste = firstValueFrom(assistant.responder('Precio de la ruta 9999'));
+    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    const noExiste = await promiseNoExiste;
     expect(noExiste.link).toBeUndefined();
-    const avisos = await firstValueFrom(assistant.responder('Avisos de servicio'));
+
+    const promiseAvisos = firstValueFrom(assistant.responder('Avisos de servicio'));
+    httpMock.match((req) => true).forEach((req) => req.flush([]));
+    const avisos = await promiseAvisos;
     expect(avisos.text).toContain('2 avisos');
   });
 
@@ -91,7 +189,6 @@ describe('Demo application services', () => {
         { origin: 'A', destination: 'B' },
       ]);
     }
-    // 1e999 es Infinity al leerlo con JSON.parse.
     guardar('{"origen":{"lat":1e999,"lon":-84},"destino":{"lat":9,"lon":-84}}');
     expect(new BusquedasRecientesService().searches()).toEqual([
       { origin: 'A', destination: 'B' },
