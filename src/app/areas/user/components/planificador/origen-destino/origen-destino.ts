@@ -176,14 +176,22 @@ export class OrigenDestino implements OnChanges {
   /**
    * Usa la ubicación del GPS como origen. Si no se puede, avisa el motivo
    * y pone el cursor en el campo de origen para que se escriba a mano.
+   * Si la persona cambia el origen mientras se espera al GPS, la respuesta se descarta.
    */
   protected async usarUbicacionActual(): Promise<void> {
     this.ubicando.set(true);
     this.errorUbicacion.set(null);
+    const origenAlPedir = this.formulario.controls.origen.value;
+    const origenCambio = () => this.formulario.controls.origen.value !== origenAlPedir;
     try {
       const lugar = await this.ubicacion.obtenerUbicacionActual();
-      this.elegir('origen', lugar);
+      if (!origenCambio()) {
+        this.elegir('origen', lugar);
+      }
     } catch (error) {
+      if (origenCambio()) {
+        return;
+      }
       this.errorUbicacion.set(error instanceof ErrorUbicacion ? error.motivo : 'no-disponible');
       this.campoOrigen().nativeElement.focus();
     } finally {

@@ -4,13 +4,22 @@ import type { Coordenada } from '../interfaces/lugar';
 import type { SolicitudViaje } from '../interfaces/solicitud-viaje';
 const STORAGE_KEY = 'trayectico-recent-searches';
 
-/** Indica si el valor es una coordenada con latitud y longitud numéricas. */
+/** Indica si el valor es una coordenada con latitud (-90 a 90) y longitud (-180 a 180) finitas. */
 function esCoordenada(valor: unknown): valor is Coordenada {
   if (typeof valor !== 'object' || valor === null) {
     return false;
   }
   const { lat, lon } = valor as Record<string, unknown>;
-  return typeof lat === 'number' && typeof lon === 'number';
+  return (
+    typeof lat === 'number' &&
+    typeof lon === 'number' &&
+    Number.isFinite(lat) &&
+    Number.isFinite(lon) &&
+    lat >= -90 &&
+    lat <= 90 &&
+    lon >= -180 &&
+    lon <= 180
+  );
 }
 
 /** Indica si el valor trae coordenadas válidas de origen y destino. */

@@ -185,6 +185,23 @@ describe('OrigenDestino', () => {
     expect(mensaje('Origen')).toBeNull();
   });
 
+  it('no sobrescribe lo que se escribió en el origen mientras llega el GPS', async () => {
+    let responderGps!: PositionCallback;
+    vi.mocked(gps.getCurrentPosition).mockImplementation((exito) => {
+      responderGps = exito;
+    });
+    element.querySelector<HTMLButtonElement>('#btnUbicacionActual')!.click();
+    await fixture.whenStable();
+    await escribir('Origen', 'Hospital');
+    await responder('Hospital', { features: [] });
+
+    responderGps({ coords: { latitude: 9.9281, longitude: -84.0907 } } as GeolocationPosition);
+    await fixture.whenStable();
+    await fixture.whenStable();
+
+    expect(element.querySelector<HTMLInputElement>('#txtOrigen')!.value).toBe('Hospital');
+  });
+
   it('emite la búsqueda con dos lugares válidos', async () => {
     const emitida = vi.fn();
     fixture.componentInstance.search.subscribe(emitida);
