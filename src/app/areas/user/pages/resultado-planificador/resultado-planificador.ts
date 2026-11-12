@@ -1,4 +1,6 @@
-import { Component, inject, signal, computed } from '@angular/core';
+import { RutaService } from '../../../../services/ruta.service';
+import type { TripOption } from '../../../../interfaces/trip-option';
+import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, of } from 'rxjs';
@@ -12,6 +14,16 @@ import { Tarifa } from '../../components/resultado-planificador/tarifa/tarifa';
 import { EnlaceDetalleRuta } from '../../components/resultado-planificador/enlace-detalle-ruta/enlace-detalle-ruta';
 import { HistorialViajesService } from '../../../../services/historial-viajes.service';
 import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
+
+/** Query params de la búsqueda que se devuelven al planificador: nombres y coordenadas. */
+const PARAMS_BUSQUEDA = [
+  'origin',
+  'destination',
+  'origen_lat',
+  'origen_lon',
+  'destino_lat',
+  'destino_lon',
+] as const;
 
 @Component({
   imports: [RouterLink, Resultados, MapaResultado, PasoAPaso, Tarifa, EnlaceDetalleRuta, AiMessage],
@@ -27,25 +39,19 @@ export class ResultadoPlanificador {
   protected readonly params = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
-
-  // 1. Extraemos origen y destino de la URL (ajusta los nombres de los parámetros si son distintos)
-  private readonly origen = this.route.snapshot.queryParamMap.get('origen') ?? '';
-  private readonly destino = this.route.snapshot.queryParamMap.get('destino') ?? '';
-
-  // 2. Manejamos el error del Observable antes de convertirlo a Signal
-  protected readonly options = toSignal(
-    this.rutaService.getTripOptions(this.origen, this.destino).pipe(
-      catchError((error) => {
-        console.error('Error cargando las opciones de viaje:', error);
-        return of([] as TripOption[]); // Retorna un array vacío si falla
-      })
-    ),
-    { initialValue: [] as TripOption[] }
-  );
-
-  // 3. Guardamos solo el ID de selección.
-  protected readonly selectedId = signal<string | null>(
-    this.route.snapshot.queryParamMap.get('option')
+  /**
+   * Query params del enlace "Cambiar búsqueda". Llevan las coordenadas para que el
+   * planificador restaure los lugares como reconocidos y no haya que elegirlos de nuevo.
+   * Los que no vienen quedan en null y el router los omite.
+   */
+  protected readonly paramsCambiarBusqueda = computed(() => {
+    const params = this.params();
+    return Object.fromEntries(PARAMS_BUSQUEDA.map((nombre) => [nombre, params.get(nombre)]));
+  });
+  protected readonly options = inject(RutaService).getTripOptions();
+  protected readonly selected = signal(
+    this.options.find((option) => option.id === this.route.snapshot.queryParamMap.get('option')) ??
+    this.options[0],
   );
 
   // 4. Computamos la opción seleccionada reactivamente (seguro contra datos asíncronos)

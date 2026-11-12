@@ -1,5 +1,5 @@
-import { DISTANCIA_MINIMA_METROS, LIMITE_GAM } from './geo.config';
-import { Coordenada } from './lugar.model';
+import { DISTANCIA_MINIMA_METROS, LIMITE_GAM } from './parametros-geo';
+import { Coordenada } from '../../interfaces/lugar';
 
 const RADIO_TIERRA_METROS = 6_371_000;
 

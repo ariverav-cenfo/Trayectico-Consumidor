@@ -1,11 +1,11 @@
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { describe, expect, it } from 'vitest';
-import { Lugar } from '../../core/geo/lugar.model';
+import { Lugar } from '../../../../../interfaces/lugar';
 import {
   dentroDeGamValidator,
   lugarReconocidoValidator,
   origenDestinoDistintosValidator,
-} from './origen-destino.validators';
+} from './validaciones-origen-destino';
 
 const METROS_POR_GRADO = 111_195;
 

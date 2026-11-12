@@ -1,5 +1,5 @@
 import { Injectable, InjectionToken, inject } from '@angular/core';
-import { Lugar } from './lugar.model';
+import { Lugar } from '../../interfaces/lugar';
 
 /**
  * API de geolocalización del navegador. Es un token para poder reemplazarla en las pruebas.
