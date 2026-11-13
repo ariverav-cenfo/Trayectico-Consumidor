@@ -1,9 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CalculoViajeService } from '../../../../services/calculo-viaje.service';
-import { MapperBackendOpcionesViaje } from '../../../../utils/viaje-adapter';
-import type { OpcionesViajeResponseDTO } from '../../../../interfaces/api-calculo-viaje';
+import { catchError, of, switchMap } from 'rxjs';
 import { Resultados } from '../../components/resultado-planificador/resultados/resultados';
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
 import { PasoAPaso } from '../../components/resultado-planificador/paso-a-paso/paso-a-paso';
@@ -45,71 +43,28 @@ export class ResultadoPlanificador {
     const params = this.params();
     return Object.fromEntries(PARAMS_BUSQUEDA.map((nombre) => [nombre, params.get(nombre)]));
   });
-
-  protected readonly PuntosSeleccion = computed(() => {
-    const opt = this.selected();
-    if (!opt) return '';
-    return opt.tramos
-      .flatMap((t) => t.geometria.coordenadas.map(([lon, lat]) => `${lon},${lat}`))
-      .join(' ');
+  private readonly rutaService = inject(RutaService);
+  /** Opciones de viaje del backend; se recargan si cambian origen o destino en la URL. */
+  protected readonly options = toSignal(
+    this.route.queryParamMap.pipe(
+      switchMap((query) =>
+        this.rutaService
+          .getTripOptions(query.get('origen') ?? '', query.get('destino') ?? '')
+          .pipe(catchError(() => of([] as TripOption[]))),
+      ),
+    ),
+    { initialValue: [] as TripOption[] },
+  );
+  private readonly selectedId = signal<string | null>(
+    this.route.snapshot.queryParamMap.get('option'),
+  );
+  /** Opción elegida, o la primera si no hay una elegida; `undefined` mientras no hay opciones. */
+  protected readonly selected = computed(() => {
+    const options = this.options();
+    return options.find((option) => option.id === this.selectedId()) ?? options[0];
   });
-
-  protected readonly tarifaSeleccion = computed(() => {
-    const costo = this.selected()?.costo_total;
-    return costo !== null && costo !== undefined ? `₡${costo.toFixed(2)}` : 'Tarifa no disponible';
-  });
-
-  protected readonly MetodoSeleccion = computed(() => {
-    const busTramos = this.selected()?.tramos.filter((t) => t.tipo === 'bus') ?? [];
-    if (busTramos.length === 0) return 'No aplica';
-    if (busTramos.every((t) => t.acepta_pago_electronico === true)) return 'Acepta pago electrónico';
-    if (busTramos.some((t) => t.acepta_pago_electronico === false)) return 'Solo efectivo en al menos un tramo';
-    return 'Información de pago no disponible';
-  });
-
-  protected readonly IdRutaPrimaria = computed(() => {
-    const firstBus = this.selected()?.tramos.find((t) => t.tipo === 'bus');
-    return firstBus?.codigo_ruta ?? '';
-  });
-
-  constructor() {
-    const snapshot = this.route.snapshot.queryParamMap;
-    const origenLat = Number(snapshot.get('origen_lat'));
-    const origenLon = Number(snapshot.get('origen_lon'));
-    const destinoLat = Number(snapshot.get('destino_lat'));
-    const destinoLon = Number(snapshot.get('destino_lon'));
-
-    if (Number.isFinite(origenLat) && Number.isFinite(origenLon) &&
-        Number.isFinite(destinoLat) && Number.isFinite(destinoLon)) {
-      this.cargando.set(true);
-      this.calculoViajeService
-        .buscarViaje({
-          origen: { lat: origenLat, lon: origenLon },
-          destino: { lat: destinoLat, lon: destinoLon },
-        })
-        .subscribe({
-          next: (res) => {
-            const withIds: OpcionesViajeResponseDTO[] = res.opciones.map((op, idx) => ({
-              ...op,
-              id: `opcion-${idx}`,
-            }));
-            this.options.set(withIds);
-
-            const preselectedId = snapshot.get('option');
-            const initial = withIds.find((o) => o.id === preselectedId) ?? withIds[0] ?? null;
-            this.selected.set(initial);
-            this.cargando.set(false);
-          },
-          error: (err) => {
-            this.error.set(err.error?.mensaje ?? 'No se pudieron calcular las rutas.');
-            this.cargando.set(false);
-          },
-        });
-    }
-  }
-
-  protected choose(option: OpcionesViajeResponseDTO) {
-    this.selected.set(option);
+  protected choose(option: TripOption) {
+    this.selectedId.set(option.id);
     const id = this.params().get('tripId');
     if (id) {
       this.history.actualizarOpcion(id, option.id);

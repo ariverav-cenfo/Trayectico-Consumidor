@@ -46,7 +46,13 @@
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -75,16 +81,12 @@
             },
             "coverageInclude": ["src/**/*.{ts,html}"],
             "coverageExclude": [
-                                "src/main.ts",
-                                "src/app/app.config.ts",
-                                "src/environments/**",
-                                "**/*.spec.ts"
-              ],
-            "coverageReporters": [
-              "text",
-              "html",
-              "lcov"
-            ]
+              "src/main.ts",
+              "src/app/app.config.ts",
+              "src/environments/**",
+              "**/*.spec.ts"
+            ],
+            "coverageReporters": ["text", "html", "lcov"]
           }
         }
       }

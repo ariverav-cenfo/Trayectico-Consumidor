@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { ResultadoPlanificador } from './resultado-planificador';
+import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideRouter, Router } from '@angular/router';
+import { ResultadoPlanificador } from './resultado-planificador';
 
 describe('ResultadoPlanificador', () => {
   let component: ResultadoPlanificador;
@@ -9,7 +11,11 @@ describe('ResultadoPlanificador', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ResultadoPlanificador],
-      providers: [provideRouter([])],
+      providers: [
+        provideRouter([]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ResultadoPlanificador);

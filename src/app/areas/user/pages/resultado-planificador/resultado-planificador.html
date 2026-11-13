@@ -11,25 +11,14 @@
       {{ params().get('origin') || '[Origen]' }} a {{ params().get('destination') || '[Destino]' }}
     </p>
   </header>
-
-  @if (cargando()) {
-    <p role="status">Calculando opciones de viaje...</p>
-  } @else if (error()) {
-    <p role="alert" class="error-message">{{ error() }}</p>
-  } @else if (selected(); as currentOption) {
-    <app-resultados
-      [options]="options()"
-      [selectedId]="currentOption.id"
-      (choose)="choose($event)"
-    />
-    <app-mapa-resultado [points]="PuntosSeleccion()" />
-    <app-paso-a-paso [steps]="currentOption.tramos" />
-    <app-tarifa [price]="tarifaSeleccion()" [payment]="MetodoSeleccion()" />
-    <app-enlace-detalle-ruta [routeId]="IdRutaPrimaria()" />
-  } @else {
-    <p>No se encontraron rutas disponibles para el trayecto seleccionado.</p>
-  }
-
+  <p class="example-note" role="note">
+    Vista de ejemplo. Las rutas, paradas y tarifas todavía no son datos de un viaje real.
+  </p>
+  <app-resultados [options]="options()" [selectedId]="selected()?.id ?? ''" (choose)="choose($event)" />
+  <app-mapa-resultado [points]="selected()?.points ?? ''" />
+  <app-paso-a-paso [steps]="selected()?.steps ?? []" />
+  <app-tarifa [price]="selected()?.price ?? ''" [payment]="selected()?.payment ?? ''" />
+  <app-enlace-detalle-ruta [routeId]="selected()?.routeId ?? ''" />
   <footer>
     Datos: Consejo de Transporte Público (CTP), Visor de Rutas. Tarifas: ARESEP. La aplicación no
     incluye horarios ni frecuencias.
