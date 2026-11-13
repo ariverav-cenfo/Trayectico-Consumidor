@@ -1,8 +1,51 @@
-<section aria-labelledby="steps-title">
-  <h2 id="steps-title">Paso a paso</h2>
-  <ol>
+<section aria-label="Indicaciones paso a paso">
+  <h2>Paso a paso</h2>
+  <ol class="steps-list">
     @for (step of steps(); track $index) {
-      <li><app-paso-viaje [step]="step" [number]="$index + 1" /></li>
+      <li>
+        <app-paso-viaje>
+          @if (step.tipo === 'caminata') {
+            <div class="step-walk">
+              <strong>Caminar</strong>
+              <span>{{ step.distancia_metros }} metros</span>
+            </div>
+          } @else {
+            <div class="step-bus">
+              <div class="bus-header">
+                <strong>Ruta {{ step.codigo_ruta }}</strong> — {{ step.nombre_ruta }}
+                @if (step.nombre_ramal) {
+                  <span class="ramal">({{ step.nombre_ramal }})</span>
+                }
+              </div>
+
+              <div class="bus-stops">
+                <p>
+                  <strong>Abordar en:</strong>
+                  {{ step.parada_abordaje?.nombre_parada }}
+                  <small>({{ step.parada_abordaje?.codigo_parada }})</small>
+                </p>
+                <p>
+                  <strong>Bajarse en:</strong>
+                  {{ step.parada_descenso?.nombre_parada }}
+                  <small>({{ step.parada_descenso?.codigo_parada }})</small>
+                </p>
+              </div>
+
+              <div class="bus-meta">
+                <span>Recorrido: {{ step.distancia_metros }} m</span>
+                @if (step.tarifa !== null && step.tarifa !== undefined) {
+                  <span> · Tarifa: {{ step.tarifa | currency:'CRC':'₡':'1.0-2' }}</span>
+                }
+                @if (step.acepta_pago_electronico === true) {
+                  <span> · Pago electrónico disponible</span>
+                } @else if (step.acepta_pago_electronico === false) {
+                  <span> · Solo efectivo</span>
+                }
+              </div>
+            </div>
+          }
+        </app-paso-viaje>
+      </li>
     }
   </ol>
 </section>
