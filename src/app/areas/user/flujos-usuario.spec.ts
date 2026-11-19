@@ -83,6 +83,29 @@ describe('User page interactions', () => {
     expect(harness.routeNativeElement!.textContent).toContain('Tarifa no disponible');
   });
 
+  it('informa el error al consultar la ruta sin mostrar ningún monto', async () => {
+    TestBed.configureTestingModule({
+      providers: [
+        provideRouter([{ path: 'rutas/:id', component: DetalleRuta }]),
+        provideHttpClient(),
+        provideHttpClientTesting(),
+      ],
+    });
+    const http = TestBed.inject(HttpTestingController);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+    const harness = await RouterTestingHarness.create('/rutas/0002');
+    await harness.fixture.whenStable();
+
+    http.expectOne((req) => req.url.endsWith('/rutas/0002'))
+      .flush(null, { status: 500, statusText: 'Internal Server Error' });
+    await harness.fixture.whenStable();
+
+    const element = harness.routeNativeElement!;
+    expect(element.textContent).toContain('No se pudo cargar la ruta');
+    expect(element.textContent).not.toContain('Ruta no encontrada');
+    expect(element.textContent).not.toContain('₡');
+  });
+
   it('loads more routes and filters by route code', async () => {
     TestBed.configureTestingModule({
       imports: [Rutas],
