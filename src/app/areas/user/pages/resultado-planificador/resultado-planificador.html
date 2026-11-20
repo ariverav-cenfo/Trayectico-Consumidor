@@ -3,7 +3,7 @@
     class="back"
     routerLink="/planificar"
     [queryParams]="paramsCambiarBusqueda()"
-  ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
+    ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
   >
   <header class="results-heading">
     <h1>Resultados</h1>
@@ -11,14 +11,25 @@
       {{ params().get('origin') || '[Origen]' }} a {{ params().get('destination') || '[Destino]' }}
     </p>
   </header>
-  <p class="example-note" role="note">
-    Vista de ejemplo. Las rutas, paradas y tarifas todavía no son datos de un viaje real.
-  </p>
-  <app-resultados [options]="options()" [selectedId]="selected()?.id ?? ''" (choose)="choose($event)" />
-  <app-mapa-resultado [points]="selected()?.points ?? ''" />
-  <app-paso-a-paso [steps]="selected()?.steps ?? []" />
-  <app-tarifa [price]="selected()?.price ?? ''" [payment]="selected()?.payment ?? ''" />
-  <app-enlace-detalle-ruta [routeId]="selected()?.routeId ?? ''" />
+
+  @if (cargando()) {
+    <p role="status">beep boop pensando...</p>
+  }@else if (error()) {
+    <p role="alert" class="error-message">{{error()}}</p>
+  }@else if (selected(); as currentOption) {
+    <app-resultados
+     [options]="options()"
+     [selectedId]="currentOption.id"
+     (choose)="choose($event)"
+    />
+    <app-mapa-resultado [points]="PuntosSeleccion()" />
+    <app-paso-a-paso [steps]="currentOption.tramos" />
+    <app-tarifa [price]="tarifaSeleccion()" [payment]="MetodoSeleccion()" />
+    <app-enlace-detalle-ruta [routeId]="IdRutaPrimaria()" />
+  }@else {
+    <p>No se encontraron rutas disponibles para el viaje deseado</p>
+  }
+
   <footer>
     Datos: Consejo de Transporte Público (CTP), Visor de Rutas. Tarifas: ARESEP. La aplicación no
     incluye horarios ni frecuencias.

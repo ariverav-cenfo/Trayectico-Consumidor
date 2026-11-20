@@ -81,6 +81,7 @@
             },
             "coverageInclude": ["src/**/*.{ts,html}"],
             "coverageExclude": [
+              "src/app/app.html",
               "src/main.ts",
               "src/app/app.config.ts",
               "src/environments/**",
