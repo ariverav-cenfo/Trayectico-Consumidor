@@ -1,4 +1,3 @@
-import type { TripStepData } from '../../../../../interfaces/trip-option';
 import { Component, input } from '@angular/core';
 import { TramoResponseDTO } from '../../../../../interfaces/api-calculo-viaje';
 import { CurrencyPipe } from '@angular/common';
