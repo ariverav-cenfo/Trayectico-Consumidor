@@ -8,7 +8,7 @@ export function MapperBackendOpcionesViaje(response: ViajeResponseDTO): TripOpti
     
     
     const points = op.tramos.flatMap((tramo) =>
-      tramo.geometria.coordenadas.map(([lon, lat]) => `${lon},${lat}`)
+      tramo.geometria.coordinates.map(([lon, lat]) => `${lon},${lat}`)
     ).join(' ');
 
     

@@ -1,6 +1,6 @@
 export interface LocalizacionRequestDTO{
-    lon:number;
     lat:number;
+    lon:number;
 }
 
 export interface ViajeRequestDTO{
@@ -10,7 +10,7 @@ export interface ViajeRequestDTO{
 
 export interface GeoJsonLineStringDTO{
     type: string,
-    coordenadas:[number, number][];
+    coordinates:[number, number][];
 }
 //TYPO en el backend y en el frontend, es parada pero asi se va por ahora
 export interface ParaResponseDTO{
@@ -32,7 +32,7 @@ export interface TramoResponseDTO{
         codigo_recorrido?: string;
         parada_abordaje?: ParaResponseDTO;
         parada_descenso?: ParaResponseDTO;
-        tarifa?: number;
+        tarifa?: number | null;
         acepta_pago_electronico?: Boolean | null;
 }
 

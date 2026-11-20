@@ -19,7 +19,7 @@ import { Observable, catchError, map, of, throwError } from 'rxjs';
 export class RutaService {
   private readonly baseUrl = environment.apiUrl;
 
-  private readonly rutasUrl = `${this.baseUrl}/rutas`;
+  private readonly rutasUrl = `${this.baseUrl}/api/rutas`;
 
   constructor(private http: HttpClient) {}
 
