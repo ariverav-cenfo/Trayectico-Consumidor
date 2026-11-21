@@ -1,5 +1,10 @@
 {
-  "/rutas": {
+  "/api": {
+    "target": "http://localhost:8080",
+    "secure": false,
+    "changeOrigin": true
+  },
+    "/usuarios": {
     "target": "http://localhost:8080",
     "secure": false,
     "changeOrigin": true
