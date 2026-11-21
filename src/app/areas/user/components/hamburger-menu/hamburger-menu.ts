@@ -1,5 +1,6 @@
 import type { NavigationLink } from '../../../../interfaces/navigation-link';
-import { Component, input } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { PwaService } from '../../../../services/pwa.service';
 import { RouterLink } from '@angular/router';
 import { LogoutButton } from '../../../../shared/ui/logout-button/logout-button';
 
@@ -10,6 +11,7 @@ import { LogoutButton } from '../../../../shared/ui/logout-button/logout-button'
   styleUrl: './hamburger-menu.css',
 })
 export class HamburgerMenu {
+  protected readonly pwa = inject(PwaService);
   readonly userName = input('Nombre de usuario');
   protected readonly links: NavigationLink[] = [
     {

@@ -28,6 +28,9 @@
       }
     </nav>
     <footer>
+      @if (!pwa.installed()) {
+        <button type="button" class="install-app" (click)="menu.close(); pwa.openHelp()">Instalar Trayectico</button>
+      }
       <app-logout-button />
     </footer>
   </div>
