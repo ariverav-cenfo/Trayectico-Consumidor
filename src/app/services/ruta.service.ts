@@ -5,7 +5,7 @@ import { EXAMPLE_OPTIONS } from '../data/demo-trip-options';
 import type { ValorFiltrosAvisos } from '../interfaces/valor-filtros-avisos';
 import type { ValorControlesRuta } from '../interfaces/valor-controles-ruta';
 import type { Ruta } from '../interfaces/ruta';
-import { environment } from '../../environments/environment';
+//import { environment } from '../../environments/environment';
 import type { ParadaRuta } from '../interfaces/parada-ruta';
 import type { Aviso } from '../interfaces/aviso';
 import type { TripOption } from '../interfaces/trip-option';
@@ -17,9 +17,9 @@ import { Observable, catchError, map, of, throwError } from 'rxjs';
  */
 @Injectable({ providedIn: 'root' })
 export class RutaService {
-  private readonly baseUrl = environment.apiUrl;
+  //private readonly baseUrl = environment.apiUrl;
 
-  private readonly rutasUrl = `${this.baseUrl}/rutas`;
+  private readonly rutasUrl = `/rutas`;
 
   constructor(private http: HttpClient) {}
 
