@@ -1,8 +1,8 @@
 import { inject } from '@angular/core';
-import { CanMatchFn, Router } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { RolService } from '../services/rol.service';
 
-function requiereRol(requerido: 'usuario' | 'admin'): CanMatchFn {
+function requiereRol(requerido: 'usuario' | 'admin'): CanActivateFn {
   return () => {
     const rol = inject(RolService).rol();
     if (rol === 'admin' || rol === requerido) {

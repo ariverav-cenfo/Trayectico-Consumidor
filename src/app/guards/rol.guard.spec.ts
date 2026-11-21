@@ -18,8 +18,8 @@ describe('Guards de rol', () => {
     const snapshot = router.routerState.snapshot;
 
     const resultados = TestBed.runInInjectionContext(() => [
-      usuarioGuard({ path: '' }, [], snapshot.root),
-      adminGuard({ path: 'admin' }, [], snapshot.root),
+      usuarioGuard(snapshot.root, snapshot),
+      adminGuard(snapshot.root, snapshot),
     ]);
 
     expect(resultados.map((resultado) =>

@@ -4,7 +4,8 @@ import { adminGuard, usuarioGuard } from './guards/rol.guard';
 export const routes: Routes = [
   {
     path: 'admin',
-    canMatch: [adminGuard],
+    canActivate: [adminGuard],
+    runGuardsAndResolvers: 'always',
     loadChildren: () => import('./areas/admin/admin.routes').then((m) => m.routes),
   },
   {
@@ -13,7 +14,8 @@ export const routes: Routes = [
   },
   {
     path: '',
-    canMatch: [usuarioGuard],
+    canActivate: [usuarioGuard],
+    runGuardsAndResolvers: 'always',
     loadChildren: () => import('./areas/user/user.routes').then((m) => m.routes),
   },
   { path: '**', redirectTo: '/pagina-no-encontrada' },
