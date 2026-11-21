@@ -1,9 +1,10 @@
 import { Component, inject, isDevMode } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
 import { RolService } from './services/rol.service';
+import { PwaStatus } from './shared/ui/pwa-status/pwa-status';
 
 @Component({
-  imports: [RouterLink, RouterOutlet],
+  imports: [RouterLink, RouterOutlet, PwaStatus],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',

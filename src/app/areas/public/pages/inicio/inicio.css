@@ -1,6 +1,8 @@
 :host {
   display: block;
 }
+.install-button { display: block; width: 100%; margin-top: 16px; min-height: 58px; padding: 12px 20px; border: 2px solid var(--color-trayectico-primary); border-radius: 10px; background: #ecf2ef; color: var(--color-trayectico-primary); font-size: 1.25rem; font-weight: 700; cursor: pointer; }
+.install-button:focus-visible { outline: 3px solid #307b67; outline-offset: 4px; }
 .home-content {
   max-width: 780px;
   margin-inline: auto;

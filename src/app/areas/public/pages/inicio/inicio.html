@@ -7,7 +7,9 @@
       dónde va, y le mostramos qué ruta tomar, dónde subir y bajar, y cuánto cuesta.
     </p>
     <a routerLink="/iniciar-sesion" class="sign-in-button">Iniciar sesión</a>
-    <app-inicio-sesion-google />
+    @if (!pwa.installed()) {
+      <button type="button" class="install-button" (click)="pwa.openHelp()">Instalar Trayectico</button>
+    }
     <p class="account-note">La primera vez que ingresa, su cuenta se crea automáticamente.</p>
   </section>
   <section aria-labelledby="features-title">

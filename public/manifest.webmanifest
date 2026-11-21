@@ -1,0 +1,17 @@
+{
+  "id": "/trayectico",
+  "name": "Trayectico",
+  "short_name": "Trayectico",
+  "description": "Planifique sus viajes en bus por la Gran Área Metropolitana de Costa Rica.",
+  "lang": "es-CR",
+  "start_url": "/trayectico",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1c3a34",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
