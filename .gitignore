@@ -46,7 +46,12 @@ __screenshots__/
 .DS_Store
 Thumbs.db
 
+<<<<<<< Updated upstream
 #vitest 
 .vitest
 coverage/*
 
+=======
+# Local project reference documents
+/knowledge/
+>>>>>>> Stashed changes
