@@ -136,7 +136,19 @@ El archivo `angular.json` configura el proxy y permite el dominio público de ng
 
 Estas configuraciones permiten que el navegador utilice el mismo dominio HTTPS para acceder al consumidor y a los endpoints del servidor, sin necesidad de configurar una URL pública del backend en los environments de Angular.
 
-### 6.3. Iniciar ngrok
+### 6.3. Configurar e iniciar ngrok
+
+1. Descargar e instalar ngrok siguiendo las instrucciones oficiales: [https://ngrok.com/](https://ngrok.com/).
+2. Solicitar `NGROK_AUTHTOKEN` al responsable del proyecto (Christian) mediante un medio privado y seguro.
+3. Registrar el authtoken localmente mediante el siguiente comando:
+
+```powershell
+ngrok config add-authtoken SU_AUTHTOKEN
+```
+
+Cada desarrollador debe realizar esta configuración una sola vez en su máquina.
+
+**Importante:** el authtoken es una credencial privada compartida por el equipo. Nunca debe publicarse, incluirse directamente en el código ni subirse a GitHub. El archivo `.env` tampoco debe subirse al repositorio.
 
 Con Angular ejecutándose, abrir una terminal adicional y ejecutar:
 
@@ -147,9 +159,7 @@ cd C:\ngrok
 
 ngrok expondrá el servidor de Angular mediante la siguiente dirección pública:
 
-```text
-https://babbling-oven-concerned.ngrok-free.dev
-```
+`https://babbling-oven-concerned.ngrok-free.dev`
 
 ### 6.4. Acceder a la aplicación
 
@@ -160,4 +170,4 @@ En el plan gratuito de ngrok puede aparecer una página de advertencia antes de 
 **Importante:**
 - PostgreSQL, Spring Boot, Angular y ngrok deben permanecer ejecutándose mientras se utiliza la aplicación.
 - El túnel deja de estar disponible cuando se detiene ngrok o se apaga el equipo que lo ejecuta.
-- El dominio fijo está asociado a la cuenta de ngrok utilizada para configurarlo.
+- El dominio fijo pertenece a la cuenta de ngrok compartida por el equipo. Solo debe existir una sesión de túnel activa utilizando ese dominio a la vez.
