@@ -37,7 +37,7 @@ describe('Demo application services', () => {
     const promiseRutas = firstValueFrom(transport.buscarRutas(' 0003 '));
 
     // Si RutaService realiza una llamada HTTP a /rutas o similar:
-    const reqs = httpMock.match((req) => req.url.includes('/rutas'));
+    const reqs = httpMock.match((req) => req.url.includes('/api/rutas'));
     reqs.forEach((req) =>
       req.flush([
         { codigo_ruta: '0003', nombre_ruta: 'Ruta 3' },
@@ -58,7 +58,7 @@ describe('Demo application services', () => {
 
     const promisePrimeraVez = firstValueFrom(transport.buscarRutas());
     httpMock
-      .match((req) => req.url.includes('/rutas'))
+      .match((req) => req.url.includes('/api/rutas'))
       .forEach((req) =>
         req.flush([
           { codigo_ruta: '0001', nombre_ruta: 'Original' },
@@ -73,7 +73,7 @@ describe('Demo application services', () => {
 
     const promiseSegundaVez = firstValueFrom(transport.buscarRutas());
     httpMock
-      .match((req) => req.url.includes('/rutas'))
+      .match((req) => req.url.includes('/api/rutas'))
       .forEach((req) =>
         req.flush([
           { codigo_ruta: '0001', nombre_ruta: 'Original' },
@@ -110,21 +110,21 @@ describe('Demo application services', () => {
 
     const promiseTarifa = firstValueFrom(assistant.responder('¿Cuánto cuesta la ruta 0003?'));
     httpMock
-      .expectOne((req) => req.url.endsWith('/rutas/0003'))
+      .expectOne((req) => req.url.endsWith('/api/rutas/0003'))
       .flush({ codigo_ruta: '0003', nombre_ruta: 'Ruta 3' });
     const tarifa = await promiseTarifa;
     expect(tarifa.link).toBe('/rutas/0003');
 
     const promiseSinTarifa = firstValueFrom(assistant.responder('Precio de la ruta 0004'));
     httpMock
-      .expectOne((req) => req.url.endsWith('/rutas/0004'))
+      .expectOne((req) => req.url.endsWith('/api/rutas/0004'))
       .flush({ codigo_ruta: '0004', nombre_ruta: 'Ruta 4' });
     const sinTarifa = await promiseSinTarifa;
     expect(sinTarifa.text).toContain('tarifa no disponible');
 
     const promiseNoExiste = firstValueFrom(assistant.responder('Precio de la ruta 9999'));
     httpMock
-      .expectOne((req) => req.url.endsWith('/rutas/9999'))
+      .expectOne((req) => req.url.endsWith('/api/rutas/9999'))
       .flush(null, { status: 404, statusText: 'Not Found' });
     const noExiste = await promiseNoExiste;
     expect(noExiste.link).toBeUndefined();
