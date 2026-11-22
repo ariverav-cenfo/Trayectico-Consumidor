@@ -2,8 +2,8 @@
  * Punto geográfico en WGS84 (EPSG:4326), en el formato acordado en SCRUM-89.
  */
 export interface Coordenada {
-  lon: number;
   lat: number;
+  lon: number;
 }
 
 /**

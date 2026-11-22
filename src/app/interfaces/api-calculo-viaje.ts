@@ -23,7 +23,7 @@ export interface ParaResponseDTO{
 export interface TramoResponseDTO{
         tipo: 'caminata' | 'bus';
         distancia_metros: number;
-        geometria: GeoJsonLineStringDTO;
+        geometria: GeoJsonLineStringDTO | null;
         //Campos especifcos de bus
         codigo_ruta?: string;
         nombre_ruta?: string;
@@ -33,14 +33,14 @@ export interface TramoResponseDTO{
         parada_abordaje?: ParaResponseDTO;
         parada_descenso?: ParaResponseDTO;
         tarifa?: number | null;
-        acepta_pago_electronico?: Boolean | null;
+        acepta_pago_electronico?: boolean | null;
 }
 
 export interface OpcionesViajeResponseDTO{
         id:string;
         transbordos: number;
         distancia_caminando_metros: number;
-        costo_total: number;
+        costo_total: number | null;
         tramos: TramoResponseDTO[];
 }
 

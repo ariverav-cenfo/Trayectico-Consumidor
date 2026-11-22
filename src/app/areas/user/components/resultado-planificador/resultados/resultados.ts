@@ -24,7 +24,6 @@ protected optionTitle(option: OpcionesViajeResponseDTO): string {
     return rutas.length > 0 ? `Ruta ${rutas.join(' → ')}` : 'Caminata directa';
   }
 
-  
   protected optionSummary(option: OpcionesViajeResponseDTO): string {
     const transbordosTexto =
       option.transbordos === 0
@@ -34,10 +33,4 @@ protected optionTitle(option: OpcionesViajeResponseDTO): string {
           : `${option.transbordos} transbordos`;
     return `${transbordosTexto} · Caminata: ${option.distancia_caminando_metros} m`;
   }
-
-  protected price(option: OpcionesViajeResponseDTO): string {
-    const costo = option.costo_total;
-    return costo !== null && costo !== undefined ? `₡${costo.toFixed(2)}` : 'No disponible';
-  }
-
 }

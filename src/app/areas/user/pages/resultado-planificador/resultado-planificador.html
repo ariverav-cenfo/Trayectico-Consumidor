@@ -13,7 +13,7 @@
   </header>
 
   @if (cargando()) {
-    <p role="status">beep boop pensando...</p>
+    <p role="status">Buscando opciones de viaje...</p>
   }@else if (error()) {
     <p role="alert" class="error-message">{{error()}}</p>
   }@else if (selected(); as currentOption) {

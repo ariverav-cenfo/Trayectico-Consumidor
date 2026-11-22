@@ -2,7 +2,6 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CalculoViajeService } from '../../../../services/calculo-viaje.service';
-import { MapperBackendOpcionesViaje } from '../../../../utils/viaje-adapter';
 import type { OpcionesViajeResponseDTO } from '../../../../interfaces/api-calculo-viaje';
 import { Resultados } from '../../components/resultado-planificador/resultados/resultados';
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
@@ -50,7 +49,7 @@ export class ResultadoPlanificador {
     const opt = this.selected();
     if (!opt) return '';
     return opt.tramos
-      .flatMap((t) => t.geometria.coordinates.map(([lon, lat]) => `${lon},${lat}`))
+      .flatMap((t) => (t.geometria?.coordinates ?? []).map(([lon, lat]) => `${lon},${lat}`))
       .join(' ');
   });
 
@@ -62,7 +61,7 @@ export class ResultadoPlanificador {
   protected readonly MetodoSeleccion = computed(() => {
     const busTramos = this.selected()?.tramos.filter((t) => t.tipo === 'bus') ?? [];
     if (busTramos.length === 0) return 'No aplica';
-    if (busTramos.every((t) => t.acepta_pago_electronico === true)) return 'Acepta pago electronico';
+    if (busTramos.every((t) => t.acepta_pago_electronico === true)) return 'Acepta pago electrónico';
     if (busTramos.some((t) => t.acepta_pago_electronico === false)) return 'Solo efectivo en al menos un tramo';
     return 'Información de pago no disponible';
   });
@@ -74,10 +73,16 @@ export class ResultadoPlanificador {
 
   constructor() {
     const snapshot = this.route.snapshot.queryParamMap;
-    const origenLat = Number(snapshot.get('origen_lat'));
-    const origenLon = Number(snapshot.get('origen_lon'));
-    const destinoLon = Number(snapshot.get('destino_lon'));
-    const destinoLat = Number(snapshot.get('destino_lat'));
+
+    const leer = (nombre: string) => {
+    const valor = snapshot.get(nombre);
+    return valor === null || valor.trim() === '' ? NaN : Number(valor);
+  };
+
+    const origenLat = leer('origen_lat');
+    const origenLon = leer('origen_lon');
+    const destinoLon = leer('destino_lon');
+    const destinoLat = leer('destino_lat');
     
     
 
@@ -107,6 +112,8 @@ export class ResultadoPlanificador {
             this.cargando.set(false);
           },
         });
+        } else {
+          this.error.set('Faltan las coordenadas de origen o destino.');
     }
   }
 
