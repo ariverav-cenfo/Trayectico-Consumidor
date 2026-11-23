@@ -1,4 +1,43 @@
 <section>
   <h2>Tarifas</h2>
-  <p class="muted" style="margin-bottom: 20px">Tarifa no disponible.</p>
+  <p class="muted" style="margin-bottom: 12px">Tarifa regular según ARESEP, en colones.</p>
+  <div class="table-wrap">
+    <table>
+      <caption class="sr-only">
+        Tarifa de cada ramal de la ruta {{ route().codigo_ruta }}
+      </caption>
+      <thead>
+      <tr>
+        <th scope="col">Ramal</th>
+        <th scope="col">Tarifa</th>
+      </tr>
+      </thead>
+      <tbody>
+      @for (ramal of route().ramales; track ramal.codigo_ramal) {
+      <tr>
+        <td>{{ ramal.nombre_ramal }}</td>
+        <td>
+          @if (ramal.tarifa; as tarifa) {
+          <strong>{{ formatearColones(tarifa.monto_colones) }}</strong>
+          @if (!tarifa.exacta) {
+          <span class="muted"> · viaje completo</span>
+          }
+          } @else {
+          <span class="muted">Tarifa no disponible</span>
+          }
+        </td>
+      </tr>
+      } @empty {
+      <tr>
+        <td colspan="2" class="muted">Tarifa no disponible</td>
+      </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+  @if (hayTarifaViajeCompleto()) {
+  <p class="muted" style="margin-top: 12px">
+    La tarifa de viaje completo es la más alta del ramal; puede pagar menos según dónde suba y baje.
+  </p>
+  }
 </section>
