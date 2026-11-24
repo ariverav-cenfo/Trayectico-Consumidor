@@ -115,3 +115,59 @@ npm start
 ```bash
 npm run build
 ```
+
+## 6. Exponer la aplicación mediante ngrok
+
+Esta configuración permite acceder a Trayectico desde dispositivos externos mediante una URL pública HTTPS. ngrok expone el servidor de desarrollo de Angular y el proxy configurado en Angular redirige las solicitudes al backend Spring Boot.
+
+### 6.1. Prerrequisitos
+
+Antes de iniciar ngrok, deben estar ejecutándose los siguientes servicios:
+
+- **PostgreSQL:** base de datos utilizada por el servidor.
+- **Spring Boot:** backend ejecutándose en `http://localhost:8080`.
+- **Angular:** consumidor ejecutándose en `http://localhost:4200`.
+
+### 6.2. Configuración del proxy
+
+El archivo `proxy.conf.json`, ubicado en la raíz del proyecto, contiene la configuración para redirigir las solicitudes de `/rutas` y `/health` al servidor Spring Boot.
+
+El archivo `angular.json` configura el proxy y permite el dominio público de ngrok mediante `allowedHosts`.
+
+Estas configuraciones permiten que el navegador utilice el mismo dominio HTTPS para acceder al consumidor y a los endpoints del servidor, sin necesidad de configurar una URL pública del backend en los environments de Angular.
+
+### 6.3. Configurar e iniciar ngrok
+
+1. Descargar e instalar ngrok siguiendo las instrucciones oficiales: [https://ngrok.com/](https://ngrok.com/).
+2. Solicitar `NGROK_AUTHTOKEN` al responsable del proyecto (Christian) mediante un medio privado y seguro.
+3. Registrar el authtoken localmente mediante el siguiente comando:
+
+```powershell
+ngrok config add-authtoken SU_AUTHTOKEN
+```
+
+Cada desarrollador debe realizar esta configuración una sola vez en su máquina.
+
+**Importante:** el authtoken es una credencial privada compartida por el equipo. Nunca debe publicarse, incluirse directamente en el código ni subirse a GitHub. El archivo `.env` tampoco debe subirse al repositorio.
+
+Con Angular ejecutándose, abrir una terminal adicional y ejecutar:
+
+```powershell
+cd C:\ngrok
+.\ngrok.exe http --url=babbling-oven-concerned.ngrok-free.dev 4200
+```
+
+ngrok expondrá el servidor de Angular mediante la siguiente dirección pública:
+
+`https://babbling-oven-concerned.ngrok-free.dev`
+
+### 6.4. Acceder a la aplicación
+
+Abrir la URL pública desde el navegador del dispositivo que utilizará la aplicación.
+
+En el plan gratuito de ngrok puede aparecer una página de advertencia antes de acceder al sitio. Seleccionar **Visit Site** para continuar.
+
+**Importante:**
+- PostgreSQL, Spring Boot, Angular y ngrok deben permanecer ejecutándose mientras se utiliza la aplicación.
+- El túnel deja de estar disponible cuando se detiene ngrok o se apaga el equipo que lo ejecuta.
+- El dominio fijo pertenece a la cuenta de ngrok compartida por el equipo. Solo debe existir una sesión de túnel activa utilizando ese dominio a la vez.

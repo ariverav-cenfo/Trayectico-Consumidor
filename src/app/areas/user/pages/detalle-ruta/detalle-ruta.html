@@ -1,22 +1,28 @@
 <main>
   @if (current(); as route) {
-    <app-encabezado-ruta [route]="route" />
-    <p class="example">Recorrido, paradas y tarifas de ejemplo.</p>
-    @if (activeAlert(); as alert) {
-      <app-aviso-ruta [alert]="alert" />
-    }
-    <app-controles-ruta (change)="controls.set($event)" /><app-mapa-resultado
-      [points]="points()"
-    /><app-paradas-ruta [stops]="stops()" /><app-tarifas-ruta [route]="route" /><a
-      appButton
-      variant="primary"
-      routerLink="/planificar"
-      >Planificar un viaje</a
-    ><app-data-footer />
+  <app-encabezado-ruta [route]="route" />
+  @if (activeAlert(); as alert) {
+  <app-aviso-ruta [alert]="alert" />
+  }
+
+  <app-controles-ruta [route]="route" (change)="controls.set($event)" />
+
+  <app-mapa-resultado
+    [points]="points()"
+  /><app-paradas-ruta [stops]="stops()" /><app-tarifas-ruta [route]="route" /><a
+  appButton
+  variant="primary"
+  routerLink="/planificar"
+>Planificar un viaje</a
+><app-data-footer />
+  } @else if (errorCarga()) {
+  <h1>No se pudo cargar la ruta</h1>
+  <p class="muted">Hubo un problema al consultar la ruta y sus tarifas. Intente de nuevo más tarde.</p>
+  <a routerLink="/rutas" appButton>Volver a rutas</a>
   } @else {
-    <h1>Ruta no encontrada</h1>
-    <p class="muted">No hay información para esta ruta.</p>
-    <a routerLink="/rutas" appButton>Volver a rutas</a>
+  <h1>Ruta no encontrada</h1>
+  <p class="muted">No hay información para esta ruta.</p>
+  <a routerLink="/rutas" appButton>Volver a rutas</a>
   }
 </main>
 <app-ai-message />
