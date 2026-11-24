@@ -43,17 +43,23 @@ export class DetalleRuta {
 
   protected readonly controls = signal<ValorControlesRuta>({ ramal: '', sentidoRecorrido: '1-2' });
 
-  // Petición de la ruta con manejo de error (devuelve undefined si falla)
+  /** Indica si la consulta de la ruta falló por un error distinto de que la ruta no exista. */
+  protected readonly errorCarga = signal(false);
+
+  // Petición de la ruta con manejo de error: si falla, no se muestra ningún dato ni monto.
   protected readonly current = toSignal(
     this.route.paramMap.pipe(
-      switchMap((params) => 
-        this.transport.obtenerRuta(params.get('id')).pipe(
-          catchError(() => of(undefined))
-        )
-      )
+      switchMap((params) => {
+        this.errorCarga.set(false);
+        return this.transport.obtenerRuta(params.get('id')).pipe(
+          catchError(() => {
+            this.errorCarga.set(true);
+            return of(undefined);
+          })
+        );
+      })
     )
   );
-
   // Petición del aviso activo (depende del ID de la URL)
   protected readonly activeAlert = toSignal(
     this.route.paramMap.pipe(
@@ -76,7 +82,7 @@ export class DetalleRuta {
         const id = params.get('id');
         // GUARDIA: Detiene la petición si no hay un id, ramal o sentido
         if (!id || !controls.ramal || !controls.sentidoRecorrido) {
-          return of([]); 
+          return of([]);
         }
         return this.transport.obtenerParadas(id, controls).pipe(
           catchError(() => of([]))
