@@ -2,9 +2,10 @@ import type { HomeFeature } from '../../../../interfaces/home-feature';
 import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
+import { AvisoSesion } from '../../../../shared/ui/aviso-sesion/aviso-sesion';
 
 @Component({
-  imports: [TopBar, RouterLink],
+  imports: [TopBar, RouterLink, AvisoSesion],
   selector: 'app-inicio',
   styleUrl: './inicio.css',
   templateUrl: './inicio.html',

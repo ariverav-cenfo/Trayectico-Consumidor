@@ -13,6 +13,13 @@ const URL_SCRIPT_GOOGLE = 'https://accounts.google.com/gsi/client';
 export const MENSAJE_SESION_CERRADA = 'Sesión cerrada.';
 /** Aviso cuando el token de Google venció o el Servidor lo rechazó. */
 export const MENSAJE_SESION_EXPIRADA = 'Su sesión venció. Inicie sesión de nuevo.';
+/** Aviso cuando la sesión se cierra por inactividad. */
+export const MENSAJE_SESION_INACTIVIDAD = 'Su sesión se cerró por inactividad.';
+/** Tiempo sin actividad tras el cual se cierra la sesión: 15 minutos. */
+export const TIEMPO_INACTIVIDAD_MS = 15 * 60 * 1000;
+
+/** Eventos que cuentan como actividad del usuario. */
+const EVENTOS_ACTIVIDAD = ['pointerdown', 'keydown', 'scroll', 'touchstart'] as const;
 
 /** Sesión que se guarda en sessionStorage para sobrevivir a una recarga de la página. */
 interface SesionGuardada {
@@ -25,6 +32,7 @@ interface SesionGuardada {
 /**
  * Sesión con Google: muestra el botón oficial, valida la credencial con el Servidor
  * y guarda el token y el rol mientras la pestaña esté abierta.
+ * La sesión se cierra sola tras 15 minutos sin actividad o cuando vence el token de Google.
  * El rol guardado solo decide lo que se muestra; la seguridad real la aplica el Servidor.
  */
 @Injectable({ providedIn: 'root' })
@@ -36,6 +44,9 @@ export class SesionService {
   private readonly sesion = signal<SesionGuardada | null>(leerSesionGuardada());
   private readonly mensajeCierreActual = signal<string | null>(null);
   private cargaGoogle?: Promise<GoogleIdentidad>;
+  private temporizadorInactividad?: ReturnType<typeof setTimeout>;
+  private temporizadorVencimiento?: ReturnType<typeof setTimeout>;
+  private readonly alHaberActividad = () => this.programarCierrePorInactividad();
 
   /** Usuario con sesión activa, o null si no hay sesión. */
   readonly usuario = computed(() => this.sesion()?.usuario ?? null);
@@ -45,6 +56,13 @@ export class SesionService {
   readonly esAdmin = computed(() => this.sesion()?.usuario.rol === 'ADMIN');
   /** Aviso pendiente de que la sesión se cerró, o null si no hay aviso. */
   readonly mensajeCierre = this.mensajeCierreActual.asReadonly();
+
+  constructor() {
+    // Si la sesión se recuperó de sessionStorage, se vuelve a vigilar
+    if (this.sesion()) {
+      this.vigilarSesion();
+    }
+  }
 
   /** Devuelve el id_token de la sesión activa, o null si no hay sesión. */
   token(): string | null {
@@ -99,6 +117,7 @@ export class SesionService {
    * @param mensaje aviso que se muestra al volver al inicio
    */
   cerrarSesion(mensaje = MENSAJE_SESION_CERRADA): void {
+    this.detenerVigilancia();
     this.sesion.set(null);
     borrarSesionGuardada();
     // Evita que Google vuelva a entrar solo con la misma cuenta
@@ -112,7 +131,7 @@ export class SesionService {
     this.mensajeCierreActual.set(null);
   }
 
-  /** Guarda la sesión en memoria y en sessionStorage. */
+  /** Guarda la sesión en memoria y en sessionStorage, y empieza a vigilarla. */
   private guardarSesion(sesion: SesionGuardada): void {
     this.mensajeCierreActual.set(null);
     this.sesion.set(sesion);
@@ -120,6 +139,50 @@ export class SesionService {
       sessionStorage.setItem(CLAVE_SESION, JSON.stringify(sesion));
     } catch {
       // Sin almacenamiento disponible la sesión dura solo hasta recargar
+    }
+    this.vigilarSesion();
+  }
+
+  /**
+   * Programa los dos cierres automáticos de la sesión:
+   * por 15 minutos de inactividad y por el vencimiento del token de Google (1 hora).
+   */
+  private vigilarSesion(): void {
+    this.detenerVigilancia();
+    const sesion = this.sesion();
+    if (!sesion) {
+      return;
+    }
+    const restante = Math.max(0, sesion.expira - Date.now());
+    this.temporizadorVencimiento = setTimeout(
+      () => this.cerrarSesion(MENSAJE_SESION_EXPIRADA),
+      restante,
+    );
+    for (const evento of EVENTOS_ACTIVIDAD) {
+      // capture: también cuenta el scroll dentro de cualquier elemento
+      this.documento.addEventListener(evento, this.alHaberActividad, {
+        capture: true,
+        passive: true,
+      });
+    }
+    this.programarCierrePorInactividad();
+  }
+
+  /** Reinicia la cuenta de 15 minutos; se llama con cada actividad del usuario. */
+  private programarCierrePorInactividad(): void {
+    clearTimeout(this.temporizadorInactividad);
+    this.temporizadorInactividad = setTimeout(
+      () => this.cerrarSesion(MENSAJE_SESION_INACTIVIDAD),
+      TIEMPO_INACTIVIDAD_MS,
+    );
+  }
+
+  /** Cancela los cierres automáticos y deja de escuchar la actividad. */
+  private detenerVigilancia(): void {
+    clearTimeout(this.temporizadorInactividad);
+    clearTimeout(this.temporizadorVencimiento);
+    for (const evento of EVENTOS_ACTIVIDAD) {
+      this.documento.removeEventListener(evento, this.alHaberActividad, { capture: true });
     }
   }
 
