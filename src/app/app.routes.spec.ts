@@ -112,7 +112,7 @@ describe('Acceso a las áreas por rol', () => {
     await harness.navigateByUrl('/no-existe');
 
     expect(TestBed.inject(Router).url).toBe('/');
-    expect(harness.routeNativeElement?.textContent).toContain('Planifique su viaje en bus');
+    expect(harness.routeNativeElement?.textContent).toContain('Conocer Trayectico');
   });
 
   it('vuelve a comprobar la ruta actual cuando cambia el selector', async () => {
