@@ -60,12 +60,17 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": ["babbling-oven-concerned.ngrok-free.dev"],
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "trayectico-consumidor:build:production"
             },
             "development": {
-              "buildTarget": "trayectico-consumidor:build:development"
+              "buildTarget": "trayectico-consumidor:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"
