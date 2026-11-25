@@ -1,17 +1,17 @@
 @if (desarrollo) {
-  <div class="selector-rol">
-    <label for="rol-simulado">Rol simulado (desarrollo)</label>
-    <select id="rol-simulado" #selectorRol (change)="cambiarRol(selectorRol.value)">
-      <option value="publico" [selected]="rol() === 'publico'">Público (sin sesión)</option>
-      <option value="usuario" [selected]="rol() === 'usuario'">Usuario</option>
-      <option value="admin" [selected]="rol() === 'admin'">Admin</option>
-    </select>
-    <nav class="enlaces-rol" aria-label="Áreas para probar el rol simulado">
-      <a routerLink="/">Inicio</a>
-      <a routerLink="/planificar">Área de usuario</a>
-      <a routerLink="/admin">Área de admin</a>
-    </nav>
-  </div>
+<div class="selector-rol">
+  <label for="rol-simulado">Rol simulado (desarrollo)</label>
+  <select id="rol-simulado" #selectorRol (change)="cambiarRol(selectorRol.value)">
+    <option value="publico" [selected]="rol() === 'publico'">Público (sin sesión)</option>
+    <option value="usuario" [selected]="rol() === 'usuario'">Usuario</option>
+    <option value="admin" [selected]="rol() === 'admin'">Admin</option>
+  </select>
+  <nav class="enlaces-rol" aria-label="Áreas para probar el rol simulado">
+    <a routerLink="/">Inicio</a>
+    <a routerLink="/planificar">Área de usuario</a>
+    <a routerLink="/admin">Área de admin</a>
+  </nav>
+</div>
 }
 <app-pwa-status />
 <router-outlet />

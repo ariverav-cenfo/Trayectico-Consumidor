@@ -1,11 +1,11 @@
 import type { HomeFeature } from '../../../../interfaces/home-feature';
 import { Component, inject } from '@angular/core';
 import { PwaService } from '../../../../services/pwa.service';
-import { RouterLink } from '@angular/router';
 import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
+import { InicioSesionGoogle } from '../../components/inicio-sesion-google/inicio-sesion-google';
 
 @Component({
-  imports: [TopBar, RouterLink],
+  imports: [TopBar, InicioSesionGoogle],
   selector: 'app-inicio',
   styleUrl: './inicio.css',
   templateUrl: './inicio.html',

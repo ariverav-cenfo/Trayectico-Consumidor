@@ -105,6 +105,16 @@ describe('Acceso a las áreas por rol', () => {
     expect(router.url).toBe(destinoAdmin);
   });
 
+  it('redirige al inicio una URL inexistente con rol publico mediante canMatch', async () => {
+    TestBed.inject(RolService).simular('publico');
+    const harness = await RouterTestingHarness.create();
+
+    await harness.navigateByUrl('/no-existe');
+
+    expect(TestBed.inject(Router).url).toBe('/');
+    expect(harness.routeNativeElement?.textContent).toContain('Planifique su viaje en bus');
+  });
+
   it('vuelve a comprobar la ruta actual cuando cambia el selector', async () => {
     TestBed.inject(RolService).simular('admin');
     const fixture = TestBed.createComponent(App);
