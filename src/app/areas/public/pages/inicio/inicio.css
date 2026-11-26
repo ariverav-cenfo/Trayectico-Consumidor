@@ -125,32 +125,3 @@ footer {
     padding-top: 20px;
   }
 }
-
-.sign-in-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 88px;
-  padding: 16px;
-  border-radius: 16px;
-  background: var(--color-trayectico-primary);
-  color: white;
-  font-size: 34px;
-  font-weight: 700;
-  text-decoration: none;
-}
-.sign-in-button:hover {
-  filter: brightness(1.1);
-}
-.sign-in-button:focus-visible {
-  outline: 3px solid var(--color-trayectico-primary);
-  outline-offset: 4px;
-}
-@media (max-width: 600px) {
-  .sign-in-button {
-    min-height: 58px;
-    padding: 10px;
-    border-radius: 10px;
-    font-size: 20px;
-  }
-}

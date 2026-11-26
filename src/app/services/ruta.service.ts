@@ -4,7 +4,7 @@ import { AVISOS_DEMO, PARADAS_DEMO } from '../data/datos-demo';
 import { EXAMPLE_OPTIONS } from '../data/demo-trip-options';
 import type { ValorFiltrosAvisos } from '../interfaces/valor-filtros-avisos';
 import type { ValorControlesRuta } from '../interfaces/valor-controles-ruta';
-import type { Ruta } from '../interfaces/ruta';
+import type { Ruta, RutaConRamales } from '../interfaces/ruta';
 import { environment } from '../../environments/environment';
 import type { ParadaRuta } from '../interfaces/parada-ruta';
 import type { Aviso } from '../interfaces/aviso';
@@ -19,7 +19,7 @@ import { Observable, catchError, map, of, throwError } from 'rxjs';
 export class RutaService {
   private readonly baseUrl = environment.apiUrl;
 
-  private readonly rutasUrl = `${this.baseUrl}/rutas`;
+  private readonly rutasUrl = `${this.baseUrl}/api/rutas`;
 
   constructor(private http: HttpClient) {}
 
@@ -50,14 +50,17 @@ export class RutaService {
   }
 
   /**
-   * Obtiene una ruta por su código.
+   * Obtiene una ruta por su código, con sus ramales, recorridos y la tarifa de cada ramal.
+   *
+   * @param codigo Código de la ruta en el CTP, por ejemplo "0002".
+   * @returns La ruta, o `undefined` si no existe (404). Cualquier otro error se propaga.
    */
-  obtenerRuta(codigo: string | null): Observable<Ruta | undefined> {
+  obtenerRuta(codigo: string | null): Observable<RutaConRamales | undefined> {
     if (!codigo) {
       return of(undefined);
     }
 
-    return this.http.get<Ruta>(`${this.rutasUrl}/${encodeURIComponent(codigo)}`).pipe(
+    return this.http.get<RutaConRamales>(`${this.rutasUrl}/${encodeURIComponent(codigo)}`).pipe(
       catchError((error) => {
         if (error.status === 404) {
           return of(undefined);

@@ -2,37 +2,22 @@
   display: block;
 }
 
-.google-button {
-  width: 100%;
-  min-height: 88px;
+/* Google dibuja su propio botón dentro de este contenedor */
+.boton-google {
   display: flex;
   justify-content: center;
-  align-items: center;
-  gap: 16px;
-  border: 2px solid var(--color-trayectico-primary);
-  border-radius: 16px;
-  background: white;
-  color: var(--color-trayectico-primary);
-  font-size: 34px;
-  font-weight: 700;
-  padding: 16px;
-}
-.google-button svg {
-  width: 44px;
-  height: 44px;
-  flex-shrink: 0;
+  min-height: 44px;
 }
 
-@media (max-width: 600px) {
-  .google-button {
-    min-height: 58px;
-    border-radius: 10px;
-    font-size: 20px;
-    gap: 10px;
-    padding: 10px;
-  }
-  .google-button svg {
-    width: 28px;
-    height: 28px;
-  }
+.estado {
+  margin-top: 12px;
+  text-align: center;
+  color: var(--color-trayectico-primary);
+}
+
+.error {
+  margin-top: 12px;
+  text-align: center;
+  color: #b42318;
+  font-weight: 700;
 }
