@@ -85,7 +85,7 @@ describe('Acceso a las áreas por rol', () => {
     const router = TestBed.inject(Router);
 
     await harness.navigateByUrl('/');
-    expect(harness.routeNativeElement?.textContent).toContain('Continuar con Google');
+    expect(harness.routeNativeElement?.querySelector('app-inicio-sesion-google')).not.toBeNull();
 
     await harness.navigateByUrl('/asistente');
     expect(router.url).toBe(destinoUsuario);
