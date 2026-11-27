@@ -9,5 +9,6 @@ import { PaymentMethod } from '../../../../../shared/ui/payment-method/payment-m
 export class Tarifa {
   readonly price = input.required<string>();
   readonly payment = input.required<string>();
-  readonly updatedAt = input('[fecha]');
+  /** Aclaración bajo el total: tramo sin tarifa o tarifa de viaje completo. Vacía si no aplica. */
+  readonly nota = input('');
 }

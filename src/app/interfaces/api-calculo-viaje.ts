@@ -33,6 +33,8 @@ export interface TramoResponseDTO{
         parada_abordaje?: ParaResponseDTO;
         parada_descenso?: ParaResponseDTO;
         tarifa?: number | null;
+        /** false si la tarifa es la del viaje completo (el ramal tiene varias fracciones). */
+        tarifa_exacta?: boolean | null;
         acepta_pago_electronico?: boolean | null;
 }
 

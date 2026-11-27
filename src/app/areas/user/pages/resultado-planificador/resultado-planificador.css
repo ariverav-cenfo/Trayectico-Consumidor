@@ -28,6 +28,17 @@ main {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
+.retry {
+  align-self: flex-start;
+  padding: 12px 24px;
+  border: 2px solid var(--color-trayectico-primary);
+  border-radius: 12px;
+  background: none;
+  color: var(--color-trayectico-primary);
+  font-size: 22px;
+  font-weight: 700;
+  cursor: pointer;
+}
 .example-note {
   color: #5d6e68;
   background: #ecf2ef;
