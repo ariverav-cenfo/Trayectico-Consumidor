@@ -85,7 +85,7 @@ describe('ResultadoPlanificador', () => {
 
     await TestBed.inject(Router).navigateByUrl(
       '/?origin=Hospital&destination=Paseo' +
-        `&${COORDS}`,
+      `&${COORDS}`,
     );
 
     fixture = TestBed.createComponent(ResultadoPlanificador);
@@ -183,7 +183,7 @@ describe('ResultadoPlanificador', () => {
   it('vuelve al planificador con los nombres y las coordenadas, sin el tripId', async () => {
     await TestBed.inject(Router).navigateByUrl(
       '/?origin=Hospital&destination=Paseo&tripId=abc' +
-        `&${COORDS}`,
+      `&${COORDS}`,
     );
 
     await fixture.whenStable();
@@ -239,6 +239,93 @@ describe('ResultadoPlanificador', () => {
     await estabilizar(otro);
 
     expect(leerError(otro)).toBe('Fuera de cobertura');
+  });
+
+  it('muestra la tarifa de cada tramo y el costo total en colones (SCRUM-92)', () => {
+    const element = fixture.nativeElement as HTMLElement;
+    const tarifas = Array.from(element.querySelectorAll('app-paso-a-paso .tarifa-tramo'))
+      .map((e) => e.textContent!.trim());
+
+    // Normaliza el espacio duro que pone Intl entre el símbolo y el monto.
+    expect(tarifas.map((t) => t.replace(/\s/g, ' '))).toEqual([
+      '· Tarifa: ₡250,00',
+      '· Tarifa: ₡250,00',
+    ]);
+    expect(element.querySelector('app-tarifa')!.textContent!.replace(/\s/g, ' '))
+      .toContain('Costo total del viaje');
+    expect(element.querySelector('app-tarifa strong')!.textContent!.replace(/\s/g, ' '))
+      .toBe('₡250,00');
+  });
+
+  it('si un tramo no tiene tarifa, lo dice y no muestra un total (SCRUM-92)', async () => {
+    const otro = await crearOtro(COORDS);
+
+    httpMock.expectOne(URL_BUSCAR).flush({
+      opciones: [
+        {
+          transbordos: 1,
+          distancia_caminando_metros: 100,
+          costo_total: null,
+          tramos: [
+            crearTramo('caminata'),
+            crearTramo('bus', '0004'),
+            { ...crearTramo('bus', '0005'), tarifa: null },
+          ],
+        },
+      ],
+    } satisfies ViajeResponseDTO);
+
+    await estabilizar(otro);
+    const element = otro.nativeElement as HTMLElement;
+
+    const tarifas = Array.from(element.querySelectorAll('app-paso-a-paso .tarifa-tramo'))
+      .map((e) => e.textContent!.trim());
+    expect(tarifas[1]).toBe('· Tarifa no disponible');
+    expect(element.querySelector('app-tarifa strong')!.textContent).toBe('Tarifa no disponible');
+    expect(element.querySelector('app-tarifa .nota')!.textContent)
+      .toContain('no tiene tarifa registrada en ARESEP');
+  });
+
+  it('avisa cuando el total usa la tarifa de viaje completo (SCRUM-92)', async () => {
+    const otro = await crearOtro(COORDS);
+
+    httpMock.expectOne(URL_BUSCAR).flush({
+      opciones: [
+        {
+          transbordos: 0,
+          distancia_caminando_metros: 100,
+          costo_total: 650,
+          tramos: [
+            crearTramo('caminata'),
+            { ...crearTramo('bus', '0006'), tarifa: 650, tarifa_exacta: false },
+          ],
+        },
+      ],
+    } satisfies ViajeResponseDTO);
+
+    await estabilizar(otro);
+    const element = otro.nativeElement as HTMLElement;
+
+    expect(element.querySelector('app-paso-a-paso')!.textContent).toContain('(viaje completo)');
+    expect(element.querySelector('app-tarifa .nota')!.textContent)
+      .toContain('puede pagar menos');
+  });
+
+  it('permite reintentar la búsqueda cuando falla (SCRUM-92)', async () => {
+    const otro = await crearOtro(COORDS);
+
+    httpMock.expectOne(URL_BUSCAR).flush(null, { status: 500, statusText: 'Server Error' });
+    await estabilizar(otro);
+
+    const boton = (otro.nativeElement as HTMLElement).querySelector<HTMLButtonElement>('button.retry')!;
+    expect(boton.textContent).toContain('Reintentar');
+
+    boton.click();
+    httpMock.expectOne(URL_BUSCAR).flush(MOCK_VIAJE);
+    await estabilizar(otro);
+
+    expect(leerError(otro)).toBeNull();
+    expect((otro.nativeElement as HTMLElement).querySelector('app-tarifa')).not.toBeNull();
   });
 
   it('usa el mensaje genérico cuando el error no trae cuerpo', async () => {

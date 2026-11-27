@@ -2,50 +2,55 @@
   <h2>Paso a paso</h2>
   <ol class="steps-list">
     @for (tramo of steps(); track $index) {
-      <li class="step-item">
-        
-          @if (tramo.tipo === 'caminata') {
-            <div class="step-walk">
-              <strong>Caminar</strong>
-              <span>{{ tramo.distancia_metros }} metros</span>
-            </div>
-          } @else {
-            <div class="step-bus">
-              <div class="bus-header">
-                <strong>Ruta {{ tramo.codigo_ruta }}</strong> — {{ tramo.nombre_ruta }}
-                @if (tramo.nombre_ramal) {
-                  <span class="ramal">({{ tramo.nombre_ramal }})</span>
-                }
-              </div>
+    <li class="step-item">
 
-              <div class="bus-stops">
-                <p>
-                  <strong>Abordar en:</strong>
-                  {{ tramo.parada_abordaje?.nombre_parada }}
-                  <small>({{ tramo.parada_abordaje?.codigo_parada }})</small>
-                </p>
-                <p>
-                  <strong>Bajarse en:</strong>
-                  {{ tramo.parada_descenso?.nombre_parada }}
-                  <small>({{ tramo.parada_descenso?.codigo_parada }})</small>
-                </p>
-              </div>
-
-              <div class="bus-meta">
-                <span>Recorrido: {{ tramo.distancia_metros }} m</span>
-                @if (tramo.tarifa !== null && tramo.tarifa !== undefined) {
-                  <span> · Tarifa: {{ tramo.tarifa | currency:'CRC':'₡':'1.0-2' }}</span>
-                }
-                @if (tramo.acepta_pago_electronico === true) {
-                  <span> · Pago electrónico disponible</span>
-                } @else if (tramo.acepta_pago_electronico === false) {
-                  <span> · Solo efectivo</span>
-                }
-              </div>
-            </div>
+      @if (tramo.tipo === 'caminata') {
+      <div class="step-walk">
+        <strong>Caminar</strong>
+        <span>{{ tramo.distancia_metros }} metros</span>
+      </div>
+      } @else {
+      <div class="step-bus">
+        <div class="bus-header">
+          <strong>Ruta {{ tramo.codigo_ruta }}</strong> — {{ tramo.nombre_ruta }}
+          @if (tramo.nombre_ramal) {
+          <span class="ramal">({{ tramo.nombre_ramal }})</span>
           }
-        
-      </li>
+        </div>
+
+        <div class="bus-stops">
+          <p>
+            <strong>Abordar en:</strong>
+            {{ tramo.parada_abordaje?.nombre_parada }}
+            <small>({{ tramo.parada_abordaje?.codigo_parada }})</small>
+          </p>
+          <p>
+            <strong>Bajarse en:</strong>
+            {{ tramo.parada_descenso?.nombre_parada }}
+            <small>({{ tramo.parada_descenso?.codigo_parada }})</small>
+          </p>
+        </div>
+
+        <div class="bus-meta">
+          <span>Recorrido: {{ tramo.distancia_metros }} m</span>
+          @if (tramo.tarifa !== null && tramo.tarifa !== undefined) {
+          <span class="tarifa-tramo"> · Tarifa: {{ formatearColones(tramo.tarifa) }}</span>
+          @if (tramo.tarifa_exacta === false) {
+          <span> (viaje completo)</span>
+          }
+          } @else {
+          <span class="tarifa-tramo"> · Tarifa no disponible</span>
+          }
+          @if (tramo.acepta_pago_electronico === true) {
+          <span> · Pago electrónico disponible</span>
+          } @else if (tramo.acepta_pago_electronico === false) {
+          <span> · Solo efectivo</span>
+          }
+        </div>
+      </div>
+      }
+
+    </li>
     }
   </ol>
 </section>

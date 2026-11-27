@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CalculoViajeService } from '../../../../services/calculo-viaje.service';
-import type { OpcionesViajeResponseDTO } from '../../../../interfaces/api-calculo-viaje';
+import type { OpcionesViajeResponseDTO, ViajeRequestDTO } from '../../../../interfaces/api-calculo-viaje';
 import { Resultados } from '../../components/resultado-planificador/resultados/resultados';
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
 import { PasoAPaso } from '../../components/resultado-planificador/paso-a-paso/paso-a-paso';
@@ -19,6 +19,9 @@ const PARAMS_BUSQUEDA = [
   'destino_lon',
   'destino_lat',
 ] as const;
+
+/** Formato de colones costarricenses, por ejemplo "₡240,00" (igual que en el detalle de la ruta). */
+const COLONES = new Intl.NumberFormat('es-CR', { style: 'currency', currency: 'CRC' });
 
 @Component({
   imports: [RouterLink, Resultados, MapaResultado, PasoAPaso, Tarifa, EnlaceDetalleRuta, AiMessage],
@@ -39,6 +42,8 @@ export class ResultadoPlanificador {
   protected readonly selected = signal<OpcionesViajeResponseDTO | null>(null);
   protected readonly cargando = signal<boolean>(false);
   protected readonly error = signal<string | null>(null);
+  /** Última búsqueda enviada; se reusa en "Reintentar". Es null si faltan coordenadas. */
+  private solicitud: ViajeRequestDTO | null = null;
 
   protected readonly paramsCambiarBusqueda = computed(() => {
     const params = this.params();
@@ -55,7 +60,19 @@ export class ResultadoPlanificador {
 
   protected readonly tarifaSeleccion = computed(() => {
     const costo = this.selected()?.costo_total;
-    return costo !== null && costo !== undefined ? `₡${costo.toFixed(2)}` : 'Tarifa no disponible';
+    return costo !== null && costo !== undefined ? COLONES.format(costo) : 'Tarifa no disponible';
+  });
+
+  /** Explica por qué no hay total o por qué el total puede ser menor (RF-TP-04). */
+  protected readonly notaTarifa = computed(() => {
+    const busTramos = this.selected()?.tramos.filter((t) => t.tipo === 'bus') ?? [];
+    if (busTramos.some((t) => t.tarifa === null || t.tarifa === undefined)) {
+      return 'Al menos un tramo no tiene tarifa registrada en ARESEP, así que no se muestra un total.';
+    }
+    if (busTramos.some((t) => t.tarifa_exacta === false)) {
+      return 'Incluye la tarifa de viaje completo de al menos un ramal; puede pagar menos según dónde suba y baje.';
+    }
+    return '';
   });
 
   protected readonly MetodoSeleccion = computed(() => {
@@ -75,46 +92,58 @@ export class ResultadoPlanificador {
     const snapshot = this.route.snapshot.queryParamMap;
 
     const leer = (nombre: string) => {
-    const valor = snapshot.get(nombre);
-    return valor === null || valor.trim() === '' ? NaN : Number(valor);
-  };
+      const valor = snapshot.get(nombre);
+      return valor === null || valor.trim() === '' ? NaN : Number(valor);
+    };
 
     const origenLat = leer('origen_lat');
     const origenLon = leer('origen_lon');
     const destinoLon = leer('destino_lon');
     const destinoLat = leer('destino_lat');
-    
-    
 
     if (Number.isFinite(origenLat) && Number.isFinite(origenLon) &&
-        Number.isFinite(destinoLon) && Number.isFinite(destinoLat)) {
-      this.cargando.set(true);
-      this.calculoViajeService
-        .buscarViaje({
-          origen: { lat: origenLat, lon: origenLon },
-          destino: { lon: destinoLon, lat: destinoLat },
-        })
-        .subscribe({
-          next: (res) => {
-            const withIds: OpcionesViajeResponseDTO[] = res.opciones.map((op, idx) => ({
-              ...op,
-              id: `opcion-${idx}`,
-            }));
-            this.options.set(withIds);
-
-            const preselectedId = snapshot.get('option');
-            const initial = withIds.find((o) => o.id === preselectedId) ?? withIds[0] ?? null;
-            this.selected.set(initial);
-            this.cargando.set(false);
-          },
-          error: (err) => {
-            this.error.set(err.error?.mensaje ?? 'No se pudieron calcular las rutas.');
-            this.cargando.set(false);
-          },
-        });
-        } else {
-          this.error.set('Faltan las coordenadas de origen o destino.');
+      Number.isFinite(destinoLon) && Number.isFinite(destinoLat)) {
+      this.solicitud = {
+        origen: { lat: origenLat, lon: origenLon },
+        destino: { lon: destinoLon, lat: destinoLat },
+      };
+      this.buscar();
+    } else {
+      this.error.set('Faltan las coordenadas de origen o destino.');
     }
+  }
+
+  /** Indica si se puede volver a intentar la búsqueda (hay coordenadas válidas). */
+  protected puedeReintentar(): boolean {
+    return this.solicitud !== null;
+  }
+
+  /** Pide las opciones de viaje al Servidor. También lo usa el botón "Reintentar". */
+  protected buscar() {
+    if (!this.solicitud) return;
+    const snapshot = this.route.snapshot.queryParamMap;
+    this.error.set(null);
+    this.cargando.set(true);
+    this.calculoViajeService
+      .buscarViaje(this.solicitud)
+      .subscribe({
+        next: (res) => {
+          const withIds: OpcionesViajeResponseDTO[] = res.opciones.map((op, idx) => ({
+            ...op,
+            id: `opcion-${idx}`,
+          }));
+          this.options.set(withIds);
+
+          const preselectedId = snapshot.get('option');
+          const initial = withIds.find((o) => o.id === preselectedId) ?? withIds[0] ?? null;
+          this.selected.set(initial);
+          this.cargando.set(false);
+        },
+        error: (err) => {
+          this.error.set(err.error?.mensaje ?? 'No se pudieron calcular las rutas.');
+          this.cargando.set(false);
+        },
+      });
   }
 
   protected choose(option: OpcionesViajeResponseDTO) {
@@ -124,6 +153,4 @@ export class ResultadoPlanificador {
       this.history.actualizarOpcion(id, option.id);
     }
   }
-
-
 }

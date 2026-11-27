@@ -1,8 +1,11 @@
 <section aria-label="Tarifa y método de pago">
   <div class="fare">
-    <p>Tarifa regular desde</p>
+    <p>Costo total del viaje</p>
     <strong>{{ price() }}</strong>
-    <p>Fuente: ARESEP · actualizada el {{ updatedAt() }}</p>
+    @if (nota()) {
+    <p class="nota">{{ nota() }}</p>
+    }
+    <p>Tarifa regular. Fuente: ARESEP</p>
   </div>
   <app-payment-method [method]="payment()" />
 </section>

@@ -3,7 +3,7 @@
     class="back"
     routerLink="/planificar"
     [queryParams]="paramsCambiarBusqueda()"
-    ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
+  ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 4-8 8 8 8" /></svg>Cambiar búsqueda</a
   >
   <header class="results-heading">
     <h1>Resultados</h1>
@@ -13,21 +13,24 @@
   </header>
 
   @if (cargando()) {
-    <p role="status">Buscando opciones de viaje...</p>
+  <p role="status">Buscando opciones de viaje...</p>
   }@else if (error()) {
-    <p role="alert" class="error-message">{{error()}}</p>
+  <p role="alert" class="error-message">{{error()}}</p>
+  @if (puedeReintentar()) {
+  <button type="button" class="retry" (click)="buscar()">Reintentar</button>
+  }
   }@else if (selected(); as currentOption) {
-    <app-resultados
-     [options]="options()"
-     [selectedId]="currentOption.id"
-     (choose)="choose($event)"
-    />
-    <app-mapa-resultado [points]="PuntosSeleccion()" />
-    <app-paso-a-paso [steps]="currentOption.tramos" />
-    <app-tarifa [price]="tarifaSeleccion()" [payment]="MetodoSeleccion()" />
-    <app-enlace-detalle-ruta [routeId]="IdRutaPrimaria()" />
+  <app-resultados
+    [options]="options()"
+    [selectedId]="currentOption.id"
+    (choose)="choose($event)"
+  />
+  <app-mapa-resultado [points]="PuntosSeleccion()" />
+  <app-paso-a-paso [steps]="currentOption.tramos" />
+  <app-tarifa [price]="tarifaSeleccion()" [payment]="MetodoSeleccion()" [nota]="notaTarifa()" />
+  <app-enlace-detalle-ruta [routeId]="IdRutaPrimaria()" />
   }@else {
-    <p>No se encontraron rutas disponibles para el viaje deseado</p>
+  <p>No se encontraron rutas disponibles para el viaje deseado</p>
   }
 
   <footer>
