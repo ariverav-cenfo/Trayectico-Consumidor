@@ -1,0 +1,45 @@
+<div aria-live="polite" aria-atomic="true">
+  @if (!pwa.online()) {
+    <p class="offline" role="status">Sin conexión a internet. Puede ver el contenido guardado, pero las consultas al servidor necesitan conexión. Vuelva a intentarlo cuando se conecte.</p>
+  }
+</div>
+<dialog #installDialog aria-labelledby="install-title" (close)="pwa.helpOpen.set(false)" (cancel)="pwa.helpOpen.set(false)" (click)="closeBackdrop($event, installDialog)">
+  <div class="dialog-content">
+    <header>
+      <img src="icons/icon-192.png" width="48" height="48" alt="" />
+      <h2 id="install-title">Instalar Trayectico</h2>
+      <button class="close" type="button" aria-label="Cerrar instrucciones de instalación" autofocus (click)="pwa.helpOpen.set(false)">×</button>
+    </header>
+    @if (pwa.installed()) {
+      <p>Ya está usando Trayectico como aplicación. Puede abrirlo desde la pantalla de inicio o sus aplicaciones.</p>
+    } @else {
+      <p>Tenga Trayectico a mano desde su pantalla de inicio, sin escribir la dirección web.</p>
+      @if (pwa.available()) {
+        <button type="button" class="primary" [disabled]="pwa.installing()" (click)="pwa.install()">Instalar ahora</button>
+      } @else if (pwa.installing()) {
+        <p>Complete la instalación en la ventana del navegador.</p>
+      } @else {
+        <p class="notice">La instalación directa no está disponible en este momento. Revise las opciones de su navegador:</p>
+      }
+      <details open>
+        <summary>Android · Chrome o Edge</summary>
+        <p>Abra el menú ⋮ y busque «Instalar aplicación» o «Agregar a la pantalla principal». Confirme la instalación.</p>
+      </details>
+      <details>
+        <summary>iPhone o iPad · Safari</summary>
+        <p>Abra esta página en Safari, toque «Compartir» y luego «Agregar a inicio». Si aparece «Abrir como app web», actívelo y toque «Agregar».</p>
+      </details>
+      <details>
+        <summary>Computadora · Chrome o Edge</summary>
+        <p>Busque el ícono de instalación en la barra de direcciones o la opción de instalar esta página en el menú del navegador. Confirme con «Instalar».</p>
+      </details>
+      <details>
+        <summary>Mac · Safari</summary>
+        <p>Si su versión lo permite, abra «Archivo», seleccione «Agregar al Dock» y confirme.</p>
+      </details>
+      <p class="note">Si no encuentra estas opciones, puede seguir usando Trayectico desde el navegador con las mismas funciones. No necesita instalarlo.</p>
+    }
+    <p role="status" aria-live="polite">{{ pwa.message() }}</p>
+    <button type="button" class="secondary" (click)="pwa.helpOpen.set(false)">Continuar en Trayectico</button>
+  </div>
+</dialog>

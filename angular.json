@@ -29,6 +29,7 @@
           },
           "configurations": {
             "production": {
+              "serviceWorker": "ngsw-config.json",
               "budgets": [
                 {
                   "type": "initial",
@@ -59,12 +60,17 @@
         },
         "serve": {
           "builder": "@angular/build:dev-server",
+          "options": {
+            "allowedHosts": ["unruffled-murkiness-drainable.ngrok-free.dev"],
+            "proxyConfig": "proxy.conf.json"
+          },
           "configurations": {
             "production": {
               "buildTarget": "trayectico-consumidor:build:production"
             },
             "development": {
-              "buildTarget": "trayectico-consumidor:build:development"
+              "buildTarget": "trayectico-consumidor:build:development",
+              "proxyConfig": "proxy.conf.json"
             }
           },
           "defaultConfiguration": "development"

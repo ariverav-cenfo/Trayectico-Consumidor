@@ -1,6 +1,0 @@
-<button type="button" [class.selected]="selected()" [attr.aria-pressed]="selected()" (click)="choose.emit(option())">
-  <strong>{{ option().title }}</strong>
-  <span class="summary">{{ option().summary }}</span>
-  <span>Tarifa desde {{ option().price }}</span>
-  @if (selected()) { <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m4 12 5 5L21 5"/></svg> }
-</button>

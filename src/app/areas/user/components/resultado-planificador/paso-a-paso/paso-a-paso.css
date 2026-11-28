@@ -12,9 +12,49 @@ ol {
 li {
   border-top: 2px solid #c7d5d0;
 }
+.step-walk,
+.step-bus {
+  display: grid;
+  gap: 8px;
+  padding: 20px 4px;
+  font-size: 22px;
+  line-height: 1.4;
+}
+.step-walk span,
+.bus-stops,
+.bus-meta {
+  color: #5d6e68;
+}
+.bus-header {
+  font-size: 24px;
+  font-weight: 600;
+}
+.bus-stops p {
+  margin: 8px 0;
+}
+.bus-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-size: 18px;
+}
+.arrival .step-walk {
+  color: var(--color-trayectico-primary);
+}
 @media (max-width: 600px) {
   h2 {
     font-size: 26px;
     margin-bottom: 12px;
+  }
+  .step-walk,
+  .step-bus {
+    font-size: 17px;
+    padding-block: 16px;
+  }
+  .bus-header {
+    font-size: 19px;
+  }
+  .bus-meta {
+    font-size: 15px;
   }
 }

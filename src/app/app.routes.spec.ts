@@ -1,15 +1,19 @@
 import { TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
 import { RouterTestingHarness } from '@angular/router/testing';
+import { App } from './app';
 import { routes } from './app.routes';
+import { RolService } from './services/rol.service';
 
 describe('Area navigation', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({ providers: [provideRouter(routes)] });
+    TestBed.inject(RolService).simular('admin');
   });
 
   it.each([
-    ['/', 'Planifique su viaje en bus'],
+    ['/', 'Software con raíces firmes'],
+    ['/trayectico', 'Planifique su viaje en bus'],
     ['/iniciar-sesion', 'Iniciar sesión'],
     ['/acceso-denegado', 'Acceso denegado'],
     ['/planificar', 'Planificar viaje'],
@@ -36,6 +40,16 @@ describe('Area navigation', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl(url);
     expect(harness.routeNativeElement?.textContent).toContain(text);
+  });
+
+  it('abre Trayectico desde el botón del nuevo inicio', async () => {
+    const harness = await RouterTestingHarness.create('/');
+    const enlace = harness.routeNativeElement?.querySelector<HTMLAnchorElement>('.primary-link');
+    expect(enlace?.textContent).toContain('Conocer Trayectico');
+    enlace!.click();
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/trayectico');
+    expect(harness.routeNativeElement?.textContent).toContain('Planifique su viaje en bus');
   });
 
   it.each([
@@ -65,4 +79,55 @@ describe('Area navigation', () => {
       expect(TestBed.inject(Router).url).toBe('/pagina-no-encontrada');
     },
   );
+});
+
+describe('Acceso a las áreas por rol', () => {
+  beforeEach(() => {
+    TestBed.configureTestingModule({ providers: [provideRouter(routes)] });
+  });
+
+  it.each([
+    ['publico', '/', '/'],
+    ['usuario', '/asistente', '/acceso-denegado'],
+    ['admin', '/asistente', '/admin/rutas/nueva'],
+  ] as const)('aplica los permisos de %s al navegar', async (rol, destinoUsuario, destinoAdmin) => {
+    TestBed.inject(RolService).simular(rol);
+    const harness = await RouterTestingHarness.create();
+    const router = TestBed.inject(Router);
+
+    await harness.navigateByUrl('/');
+    expect(harness.routeNativeElement?.textContent).toContain('Conocer Trayectico');
+
+    await harness.navigateByUrl('/asistente');
+    expect(router.url).toBe(destinoUsuario);
+
+    await harness.navigateByUrl('/admin/rutas/nueva');
+    expect(router.url).toBe(destinoAdmin);
+  });
+
+  it('redirige al inicio una URL inexistente con rol publico mediante canMatch', async () => {
+    TestBed.inject(RolService).simular('publico');
+    const harness = await RouterTestingHarness.create();
+
+    await harness.navigateByUrl('/no-existe');
+
+    expect(TestBed.inject(Router).url).toBe('/');
+    expect(harness.routeNativeElement?.textContent).toContain('Conocer Trayectico');
+  });
+
+  it('vuelve a comprobar la ruta actual cuando cambia el selector', async () => {
+    TestBed.inject(RolService).simular('admin');
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+    const router = TestBed.inject(Router);
+    await router.navigateByUrl('/admin');
+    expect(router.url).toBe('/admin');
+
+    const selector: HTMLSelectElement = fixture.nativeElement.querySelector('#rol-simulado');
+    selector.value = 'usuario';
+    selector.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+
+    expect(router.url).toBe('/acceso-denegado');
+  });
 });

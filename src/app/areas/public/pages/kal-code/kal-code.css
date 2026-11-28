@@ -1,0 +1,73 @@
+:host {
+  display: block;
+  color: #242b28;
+  font-family: Arial, Helvetica, sans-serif;
+  --kal-green: #1c3a34;
+  --kal-muted: #6b7b75;
+}
+.content, .brand { max-width: 780px; margin-inline: auto; padding-inline: 32px; }
+.brand-bar { background: var(--kal-green); color: white; }
+.brand { flex-wrap: nowrap; padding-block: 16px; }
+.brand > span { white-space: nowrap; }
+.brand app-header-auth { margin-left: auto; }
+.brand { display: flex; align-items: center; gap: 24px; min-height: 112px; font-size: 40px; font-weight: 700; }
+.brand svg { flex-shrink: 0; width: 48px; height: 56px; stroke: #f8b52d; fill: none; stroke-width: 4; stroke-linecap: round; stroke-linejoin: round; }
+.hero { background: #ecf2ef; padding-block: 62px 64px; }
+.eyebrow { color: #2c7161; font-size: 28px; font-weight: 700; margin: 0 0 20px; }
+h1 { font-size: 48px; line-height: 1.2; font-weight: 700; margin: 0 0 30px; }
+.intro, .product-body p { font-size: 32px; line-height: 1.5; margin: 0; }
+.primary-link { display: flex; align-items: center; justify-content: center; background: var(--kal-green); color: white; min-height: 88px; border-radius: 16px; font-size: 32px; font-weight: 700; text-decoration: none; padding: 16px; margin-top: 42px; }
+a:focus-visible { outline: 3px solid #2c7161; outline-offset: 5px; }
+a:hover { filter: brightness(1.15); }
+.details { padding-block: 46px; }
+section + section { margin-top: 46px; }
+h2 { font-size: 40px; line-height: 1.25; font-weight: 700; margin: 0 0 26px; }
+.product-card, .contact { border: 2px solid #cbd8d3; border-radius: 16px; }
+.product-name { background: var(--kal-green); color: white; padding: 22px 32px; font-size: 40px; line-height: 1.25; font-weight: 700; margin: -1px -1px 0; }
+.product-name span { color: #f8b52d; }
+.product-body { padding: 32px; }
+.install-product { display: block; width: 100%; min-height: 48px; padding: 12px 20px; border: 2px solid var(--kal-green); border-radius: 10px; background: #ecf2ef; color: var(--kal-green); font-size: 1.125rem; font-weight: 700; cursor: pointer; }
+.install-product:focus-visible { outline: 3px solid #307b67; outline-offset: 4px; }
+.product-link { display: inline-block; font-size: 28px; font-weight: 700; color: var(--kal-green); text-decoration: underline; text-underline-offset: 3px; margin-top: 44px; margin-bottom: 24px; }
+.services, .team { list-style: none; padding: 0; margin: 0; display: grid; gap: 26px; }
+li { display: flex; align-items: flex-start; gap: 24px; }
+li h3 { font-size: 32px; line-height: 1.25; font-weight: 700; margin: 0 0 8px; }
+li p, footer { font-size: 28px; line-height: 1.4; color: var(--kal-muted); margin: 0; }
+.service-icon, .avatar { display: grid; place-items: center; flex: 0 0 88px; height: 88px; border-radius: 50%; }
+.service-icon { background: #ecf2ef; color: var(--kal-green); }
+svg { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.service-icon svg, .contact svg { width: 44px; height: 44px; }
+.avatar { background: var(--kal-green); color: white; font-size: 30px; font-weight: 700; }
+.team li { align-items: center; }
+.contact { padding: 28px 32px 32px; }
+.contact h2 { margin-bottom: 20px; }
+.contact p { display: flex; align-items: center; gap: 28px; font-size: 32px; line-height: 1.4; margin: 0; }
+.contact svg { color: var(--kal-green); flex-shrink: 0; }
+footer { margin-top: 46px; padding-top: 26px; border-top: 2px solid #cbd8d3; }
+@media (max-width: 600px) {
+  .content { padding-inline: 22px; }
+  .brand { padding-inline: 16px; min-height: 78px; font-size: 24px; gap: 8px; }
+  .brand svg { width: 28px; height: 36px; }
+  .hero { padding-block: 44px; }
+  .eyebrow { font-size: 20px; margin-bottom: 14px; }
+  h1 { font-size: 34px; margin-bottom: 20px; }
+  .intro, .product-body p { font-size: 23px; line-height: 1.45; }
+  .primary-link { min-height: 62px; padding: 12px; font-size: 23px; margin-top: 30px; border-radius: 11px; }
+  .details { padding-block: 32px; }
+  section + section { margin-top: 32px; }
+  h2 { font-size: 28px; margin-bottom: 20px; }
+  .product-name { font-size: 28px; padding: 16px 22px; }
+  .product-card, .contact { border-radius: 11px; }
+  .product-body { padding: 22px; }
+  .product-link { font-size: 20px; margin-top: 30px; margin-bottom: 16px; }
+  .services, .team { gap: 20px; }
+  li { gap: 16px; }
+  li h3 { font-size: 23px; margin-bottom: 6px; }
+  li p, footer { font-size: 20px; }
+  .service-icon, .avatar { flex-basis: 62px; height: 62px; }
+  .service-icon svg, .contact svg { width: 30px; height: 30px; }
+  .avatar { font-size: 22px; }
+  .contact { padding: 22px; }
+  .contact p { font-size: 23px; gap: 20px; }
+  footer { margin-top: 32px; padding-top: 20px; }
+}

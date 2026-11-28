@@ -1,0 +1,62 @@
+<header class="brand-bar">
+  <div class="brand">
+    <svg viewBox="0 0 40 48" aria-hidden="true"><path d="M20 44V23M20 30C7 30 4 21 4 10c11 0 16 6 16 20ZM20 23C20 10 27 4 36 4c0 11-6 19-16 19Z" /></svg>
+    <span>Kál Code</span>
+    <app-header-auth />
+  </div>
+</header>
+<main>
+  <section class="hero" aria-labelledby="kal-title">
+    <div class="content">
+      <p class="eyebrow">Equipo de desarrollo de software</p>
+      <h1 id="kal-title">Software con raíces firmes</h1>
+      <p class="intro">Kál significa árbol en bribri. Como un árbol, construimos soluciones con bases sólidas que crecen junto a las personas que las usan.</p>
+      <a routerLink="/trayectico" class="primary-link">Conocer Trayectico</a>
+    </div>
+  </section>
+  <div class="content details">
+    <section aria-labelledby="product-title">
+      <h2 id="product-title">Nuestro producto</h2>
+      <article class="product-card">
+        <h3 class="product-name">Trayec<span>Tico</span></h3>
+        <div class="product-body">
+          <p>Planificador de viajes en bus para la Gran Área Metropolitana: le indica qué ruta tomar, dónde subir y bajar, cuánto cuesta según la ARESEP y si acepta pago electrónico.</p>
+          <a routerLink="/trayectico" class="product-link">Ir a Trayectico</a>
+          @if (!pwa.installed()) {
+            <button type="button" class="install-product" (click)="pwa.openHelp()">Instalar Trayectico</button>
+          }
+        </div>
+      </article>
+    </section>
+    <section aria-labelledby="services-title">
+      <h2 id="services-title">Qué hacemos</h2>
+      <ul class="services">
+        <li>
+          <span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m8 6-6 6 6 6m8-12 6 6-6 6" /></svg></span>
+          <div><h3>Aplicaciones web progresivas</h3><p>Se usan desde el navegador y se pueden instalar en el teléfono.</p></div>
+        </li>
+        <li>
+          <span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3" /><path d="M3 5v14c0 4 18 4 18 0V5M3 12c0 4 18 4 18 0" /></svg></span>
+          <div><h3>Datos abiertos</h3><p>Integramos datos públicos, como los del CTP y la ARESEP, para ofrecer información confiable.</p></div>
+        </li>
+        <li>
+          <span class="service-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3h18v14H8l-5 5Z" /></svg></span>
+          <div><h3>Asistentes con inteligencia artificial</h3><p>Asistentes que realizan acciones dentro de la aplicación a partir de instrucciones en lenguaje natural.</p></div>
+        </li>
+      </ul>
+    </section>
+    <section aria-labelledby="team-title">
+      <h2 id="team-title">Nuestro equipo</h2>
+      <ul class="team">
+        @for (persona of equipo; track persona.iniciales) {
+          <li><span class="avatar" aria-hidden="true">{{ persona.iniciales }}</span><div><h3>{{ persona.nombre }}</h3><p>{{ persona.cargo }}</p></div></li>
+        }
+      </ul>
+    </section>
+    <section class="contact" aria-labelledby="contact-title">
+      <h2 id="contact-title">Contacto</h2>
+      <p><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="3" width="20" height="18" rx="1" /><path d="m2 4 10 8L22 4" /></svg><span>[correo del equipo]</span></p>
+    </section>
+    <footer>Kál Code · Universidad CENFOTEC · 2026</footer>
+  </div>
+</main>

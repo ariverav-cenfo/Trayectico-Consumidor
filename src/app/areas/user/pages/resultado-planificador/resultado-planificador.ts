@@ -1,27 +1,25 @@
-import { RutaService } from '../../../../services/ruta.service';
-import type { TripOption } from '../../../../interfaces/trip-option';
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, of, switchMap } from 'rxjs';
+import { CalculoViajeService } from '../../../../services/calculo-viaje.service';
+import type { OpcionesViajeResponseDTO } from '../../../../interfaces/api-calculo-viaje';
 import { Resultados } from '../../components/resultado-planificador/resultados/resultados';
-
 import { MapaResultado } from '../../components/resultado-planificador/mapa-resultado/mapa-resultado';
 import { PasoAPaso } from '../../components/resultado-planificador/paso-a-paso/paso-a-paso';
 import { Tarifa } from '../../components/resultado-planificador/tarifa/tarifa';
 import { EnlaceDetalleRuta } from '../../components/resultado-planificador/enlace-detalle-ruta/enlace-detalle-ruta';
 import { HistorialViajesService } from '../../../../services/historial-viajes.service';
-
 import { AiMessage } from '../../../../shared/ui/ai-message/ai-message';
+import { RutaService } from '../../../../services/ruta.service';
+import { forkJoin, map } from 'rxjs';
 
-/** Query params de la búsqueda que se devuelven al planificador: nombres y coordenadas. */
 const PARAMS_BUSQUEDA = [
   'origin',
   'destination',
   'origen_lat',
   'origen_lon',
-  'destino_lat',
   'destino_lon',
+  'destino_lat',
 ] as const;
 
 @Component({
@@ -33,41 +31,184 @@ const PARAMS_BUSQUEDA = [
 export class ResultadoPlanificador {
   private readonly route = inject(ActivatedRoute);
   private readonly history = inject(HistorialViajesService);
+  private readonly calculoViajeService = inject(CalculoViajeService);
+  private readonly rutaService = inject(RutaService);
+  private readonly destroyRef = inject(DestroyRef);
+
   protected readonly params = toSignal(this.route.queryParamMap, {
     initialValue: this.route.snapshot.queryParamMap,
   });
-  /**
-   * Query params del enlace "Cambiar búsqueda". Llevan las coordenadas para que el
-   * planificador restaure los lugares como reconocidos y no haya que elegirlos de nuevo.
-   * Los que no vienen quedan en null y el router los omite.
-   */
+
+  protected readonly options = signal<OpcionesViajeResponseDTO[]>([]);
+  protected readonly selected = signal<OpcionesViajeResponseDTO | null>(null);
+  protected readonly cargando = signal<boolean>(false);
+  protected readonly error = signal<string | null>(null);
+  protected readonly rutaDesactivada = signal(false);
+  protected readonly recalculando = signal(false);
+  private validacionTimer?: ReturnType<typeof setInterval>;
+  private validacionSecuencia = 0;
+
   protected readonly paramsCambiarBusqueda = computed(() => {
     const params = this.params();
     return Object.fromEntries(PARAMS_BUSQUEDA.map((nombre) => [nombre, params.get(nombre)]));
   });
-  private readonly rutaService = inject(RutaService);
-  /** Opciones de viaje del backend; se recargan si cambian origen o destino en la URL. */
-  protected readonly options = toSignal(
-    this.route.queryParamMap.pipe(
-      switchMap((query) =>
-        this.rutaService
-          .getTripOptions(query.get('origen') ?? '', query.get('destino') ?? '')
-          .pipe(catchError(() => of([] as TripOption[]))),
-      ),
-    ),
-    { initialValue: [] as TripOption[] },
-  );
-  private readonly selectedId = signal<string | null>(
-    this.route.snapshot.queryParamMap.get('option'),
-  );
-  /** Opción elegida, o la primera si no hay una elegida; `undefined` mientras no hay opciones. */
-  protected readonly selected = computed(() => {
-    const options = this.options();
-    return options.find((option) => option.id === this.selectedId()) ?? options[0];
+
+  protected readonly PuntosSeleccion = computed(() => {
+    const opt = this.selected();
+    if (!opt) return '';
+    return opt.tramos
+      .flatMap((t) => (t.geometria?.coordinates ?? []).map(([lon, lat]) => `${lon},${lat}`))
+      .join(' ');
   });
-  protected choose(option: TripOption) {
-    this.selectedId.set(option.id);
-    const id = this.params().get('tripId');
-    if (id) this.history.actualizarOpcion(id, option.id);
+
+  protected readonly tarifaSeleccion = computed(() => {
+    const costo = this.selected()?.costo_total;
+    return costo !== null && costo !== undefined ? `₡${costo.toFixed(2)}` : 'Tarifa no disponible';
+  });
+
+  protected readonly MetodoSeleccion = computed(() => {
+    const busTramos = this.selected()?.tramos.filter((t) => t.tipo === 'bus') ?? [];
+    if (busTramos.length === 0) return 'No aplica';
+    if (busTramos.every((t) => t.acepta_pago_electronico === true)) return 'Acepta pago electrónico';
+    if (busTramos.some((t) => t.acepta_pago_electronico === false)) return 'Solo efectivo en al menos un tramo';
+    return 'Información de pago no disponible';
+  });
+
+  protected readonly IdRutaPrimaria = computed(() => {
+    const firstBus = this.selected()?.tramos.find((t) => t.tipo === 'bus');
+    return firstBus?.codigo_ruta ?? '';
+  });
+
+  constructor() {
+    const snapshot = this.route.snapshot.queryParamMap;
+
+    const leer = (nombre: string) => {
+    const valor = snapshot.get(nombre);
+    return valor === null || valor.trim() === '' ? NaN : Number(valor);
+  };
+
+    const origenLat = leer('origen_lat');
+    const origenLon = leer('origen_lon');
+    const destinoLon = leer('destino_lon');
+    const destinoLat = leer('destino_lat');
+    
+    
+
+    if (Number.isFinite(origenLat) && Number.isFinite(origenLon) &&
+        Number.isFinite(destinoLon) && Number.isFinite(destinoLat)) {
+      this.cargando.set(true);
+      this.calculoViajeService
+        .buscarViaje({
+          origen: { lat: origenLat, lon: origenLon },
+          destino: { lon: destinoLon, lat: destinoLat },
+        })
+        .subscribe({
+          next: (res) => {
+            const withIds: OpcionesViajeResponseDTO[] = res.opciones.map((op, idx) => ({
+              ...op,
+              id: `opcion-${idx}`,
+            }));
+            this.options.set(withIds);
+
+            const preselectedId = snapshot.get('option');
+            const initial = withIds.find((o) => o.id === preselectedId) ?? withIds[0] ?? null;
+            this.selected.set(initial);
+            this.validarDisponibilidad(initial);
+            this.validacionTimer = setInterval(() => {
+              this.validarDisponibilidad(this.selected());
+            }, 30_000);
+            this.cargando.set(false);
+          },
+          error: (err) => {
+            this.error.set(err.error?.mensaje ?? 'No se pudieron calcular las rutas.');
+            this.cargando.set(false);
+          },
+        });
+        } else {
+          this.error.set('Faltan las coordenadas de origen o destino.');
+    }
+    this.destroyRef.onDestroy(this.limpiarValidacion);
   }
+
+  protected choose(option: OpcionesViajeResponseDTO) {
+    this.selected.set(option);
+    this.rutaDesactivada.set(false);
+    this.validarDisponibilidad(option);
+    const id = this.params().get('tripId');
+    if (id) {
+      this.history.actualizarOpcion(id, option.id);
+    }
+  }
+
+  protected recalcular(): void {
+    const params = this.params();
+    const leer = (nombre: string) => {
+      const value = params.get(nombre);
+      return value === null || value.trim() === '' ? NaN : Number(value);
+    };
+    const origenLat = leer('origen_lat');
+    const origenLon = leer('origen_lon');
+    const destinoLat = leer('destino_lat');
+    const destinoLon = leer('destino_lon');
+    if (![origenLat, origenLon, destinoLat, destinoLon].every(Number.isFinite)) return;
+
+    this.recalculando.set(true);
+    this.error.set(null);
+    this.rutaDesactivada.set(false);
+    this.calculoViajeService.buscarViaje({
+      origen: { lat: origenLat, lon: origenLon },
+      destino: { lat: destinoLat, lon: destinoLon },
+    }).subscribe({
+      next: (res) => {
+        const updated = res.opciones.map((option, index) => ({ ...option, id: `opcion-${index}` }));
+        this.options.set(updated);
+        this.selected.set(updated[0] ?? null);
+        this.validarDisponibilidad(updated[0] ?? null);
+        this.recalculando.set(false);
+      },
+      error: (err) => {
+        this.error.set(err.error?.mensaje ?? 'No se pudieron recalcular las rutas.');
+        this.recalculando.set(false);
+      },
+    });
+  }
+
+  private validarDisponibilidad(option: OpcionesViajeResponseDTO | null): void {
+    const secuencia = ++this.validacionSecuencia;
+    if (!option) return;
+    const recorridos = new Map<string, string>();
+    for (const tramo of option.tramos) {
+      if (tramo.tipo === 'bus' && tramo.codigo_ruta && tramo.codigo_recorrido) {
+        recorridos.set(`${tramo.codigo_ruta}:${tramo.codigo_recorrido}`, tramo.codigo_ruta);
+      }
+    }
+    if (recorridos.size === 0) return;
+
+    const checks = [...recorridos.entries()].map(([key, codigoRuta]) => {
+      const codigoRecorrido = key.slice(codigoRuta.length + 1);
+      return this.rutaService.obtenerRuta(codigoRuta).pipe(
+        map((ruta) => ruta?.ramales.some((ramal) =>
+          ramal.recorridos.some((recorrido) =>
+            recorrido.codigo_recorrido === codigoRecorrido && recorrido.activo,
+          ),
+        ) ?? false),
+      );
+    });
+
+    forkJoin(checks).subscribe({
+      next: (estados) => {
+        if (secuencia === this.validacionSecuencia && this.selected()?.id === option.id) {
+          this.rutaDesactivada.set(estados.some((activo) => !activo));
+        }
+      },
+      // Un fallo de conexión no confirma que el recorrido esté desactivado.
+      error: () => undefined,
+    });
+  }
+
+  private readonly limpiarValidacion = (): void => {
+    if (this.validacionTimer) clearInterval(this.validacionTimer);
+  };
+
+
 }
