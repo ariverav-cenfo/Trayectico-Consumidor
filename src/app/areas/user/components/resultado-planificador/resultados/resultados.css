@@ -1,5 +1,66 @@
-:host { display: block; }
-h2 { font-size: 40px; font-weight: 700; margin-bottom: 20px; line-height: 1.25; }
-.options { border: 2px solid #c7d5d0; border-radius: 16px; overflow: hidden; }
-app-result-options + app-result-options { border-top: 2px solid #c7d5d0; }
-@media (max-width: 600px) { h2 { font-size: 26px; margin-bottom: 14px; } .options { border-radius: 10px; } }
+:host {
+  display: block;
+}
+
+section {
+  display: grid;
+  gap: 12px;
+}
+
+button {
+  display: grid;
+  gap: 8px;
+  width: 100%;
+  padding: 20px 24px;
+  border: 2px solid #c7d5d0;
+  border-radius: 14px;
+  background: white;
+  color: #202724;
+  text-align: left;
+}
+
+button[aria-pressed='true'] {
+  border-color: var(--color-trayectico-primary);
+  background: #ecf2ef;
+}
+
+.option-title {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.option-summary,
+.option-price {
+  font-size: 18px;
+  line-height: 1.4;
+}
+
+.option-summary {
+  color: #5d6e68;
+}
+
+.option-price {
+  font-weight: 600;
+}
+
+button:focus-visible {
+  outline: 3px solid var(--color-trayectico-primary);
+  outline-offset: 3px;
+}
+
+@media (max-width: 600px) {
+  button {
+    padding: 16px;
+    border-radius: 10px;
+  }
+
+  .option-title {
+    font-size: 20px;
+  }
+
+  .option-summary,
+  .option-price {
+    font-size: 16px;
+  }
+}

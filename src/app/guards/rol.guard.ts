@@ -1,4 +1,4 @@
-import { inject } from '@angular/core';
+import { inject, isDevMode } from '@angular/core';
 import { CanMatchFn, Router } from '@angular/router';
 import { RolService } from '../services/rol.service';
 
@@ -11,6 +11,13 @@ import { RolService } from '../services/rol.service';
  */
 function requiereRol(requerido: 'usuario' | 'admin'): CanMatchFn {
   return () => {
+    // Acceso temporal en desarrollo para capturar las pantallas de usuario sin login.
+    const devUser =
+      requerido === 'usuario' &&
+      isDevMode() &&
+      new URLSearchParams(globalThis.location.search).get('devUser') === '1';
+    if (devUser) return true;
+
     const rol = inject(RolService).rol();
     if (rol === 'admin' || rol === requerido) {
       return true;

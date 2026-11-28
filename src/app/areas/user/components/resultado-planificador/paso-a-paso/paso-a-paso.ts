@@ -10,4 +10,5 @@ import { CurrencyPipe } from '@angular/common';
 })
 export class PasoAPaso {
   readonly steps = input.required<TramoResponseDTO[]>();
+  readonly destination = input('tu destino');
 }

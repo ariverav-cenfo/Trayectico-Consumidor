@@ -150,7 +150,7 @@ describe('ResultadoPlanificador', () => {
 
     expect(
       element.querySelectorAll('app-paso-a-paso .step-item'),
-    ).toHaveLength(5);
+    ).toHaveLength(MOCK_VIAJE.opciones[0].tramos.length + 1);
 
     expect(options[0].getAttribute('aria-pressed')).toBe('true');
 
@@ -164,7 +164,7 @@ describe('ResultadoPlanificador', () => {
 
     expect(
       element.querySelectorAll('app-paso-a-paso .step-item'),
-    ).toHaveLength(6);
+    ).toHaveLength(MOCK_VIAJE.opciones[1].tramos.length + 1);
 
     expect(
       element.querySelector('polyline')!.getAttribute('points'),
