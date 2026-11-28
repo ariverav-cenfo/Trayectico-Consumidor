@@ -130,7 +130,7 @@ Antes de iniciar ngrok, deben estar ejecutándose los siguientes servicios:
 
 ### 6.2. Configuración del proxy
 
-El archivo `proxy.conf.json`, ubicado en la raíz del proyecto, contiene la configuración para redirigir las solicitudes de `/rutas` y `/health` al servidor Spring Boot.
+El archivo `proxy.conf.json`, ubicado en la raíz del proyecto, contiene la configuración para redirigir las solicitudes de `/api` y `/health` al servidor Spring Boot.
 
 El archivo `angular.json` configura el proxy y permite el dominio público de ngrok mediante `allowedHosts`.
 

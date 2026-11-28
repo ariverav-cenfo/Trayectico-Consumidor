@@ -97,6 +97,7 @@ describe('Acceso a las áreas por rol', () => {
 
     await harness.navigateByUrl('/');
     expect(harness.routeNativeElement?.textContent).toContain('Conocer Trayectico');
+    expect(harness.routeNativeElement?.querySelector('app-inicio-sesion-google')).not.toBeNull();
 
     await harness.navigateByUrl('/asistente');
     expect(router.url).toBe(destinoUsuario);

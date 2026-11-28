@@ -2,10 +2,11 @@ import type { HomeFeature } from '../../../../interfaces/home-feature';
 import { Component, inject } from '@angular/core';
 import { PwaService } from '../../../../services/pwa.service';
 import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
+import { AvisoSesion } from '../../../../shared/ui/aviso-sesion/aviso-sesion';
 import { InicioSesionGoogle } from '../../components/inicio-sesion-google/inicio-sesion-google';
 
 @Component({
-  imports: [TopBar, InicioSesionGoogle],
+  imports: [TopBar, AvisoSesion, InicioSesionGoogle],
   selector: 'app-inicio',
   styleUrl: './inicio.css',
   templateUrl: './inicio.html',
