@@ -8,10 +8,11 @@ import { AdminAvisos } from './pages/admin-avisos/admin-avisos';
 import { AdminFormularioAviso } from './pages/admin-formulario-aviso/admin-formulario-aviso';
 import { AdminTarifas } from './pages/admin-tarifas/admin-tarifas';
 import { AdminUsuarios } from './pages/admin-usuarios/admin-usuarios';
+import { GestionRutasComponent } from './pages/gestion-rutas/gestionrutas';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', component: AdminPanel },
-  { path: 'rutas', component: AdminRutas },
+  { path: 'rutas', component: GestionRutasComponent },
   { path: 'rutas/nueva', component: AdminFormularioRuta },
   { path: 'rutas/:id', component: AdminFormularioRuta },
   { path: 'paradas', component: AdminParadas },
@@ -23,4 +24,3 @@ export const routes: Routes = [
   { path: 'tarifas', component: AdminTarifas },
   { path: 'usuarios', component: AdminUsuarios },
 ];
-

@@ -1,2 +1,24 @@
-<p>admin-panel works!</p>
+<main class="home-content">
+  <section aria-labelledby="welcome-title">
+    <h1 id="welcome-title">Panel administrador</h1>
+    <p class="intro">
+      Admin panel, gestión de rutas, paradas y otras opciones de la app
+    </p>
+  </section>
+
+  <section aria-labelledby="features-title" class="admin-grid">
+    <h2 id="features-title" class="sr-only">Opciones de administración</h2>
+
+    <a routerLink="rutas" class="admin-card">
+      <h3>Gestión de Rutas</h3>
+      <p>Habilitar o deshabilitar rutas y sus recorridos asociados.</p>
+    </a>
+
+    <!-- Future cards (e.g. Paradas) go here -->
+  </section>
+
+  <footer>
+    Trayectico — Administración
+  </footer>
+</main>
 <app-logout-button />
