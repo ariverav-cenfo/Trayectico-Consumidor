@@ -1,0 +1,138 @@
+<main class="gestion-container">
+  <header class="page-header">
+    <div>
+      <a routerLink=".." class="back-link">← Volver al panel</a>
+      <h1>Gestión de Rutas</h1>
+      <p class="subtitle">Habilita o deshabilita rutas y sus recorridos asociados en el sistema.</p>
+    </div>
+  </header>
+
+  <section class="toolbar" aria-label="Filtros de búsqueda">
+    <input
+      type="search"
+      class="search-input"
+      placeholder="Buscar por código CTP, ID CTP o nombre..."
+      [value]="filtro()"
+      (input)="onBuscar($event)"
+    />
+
+    <div class="filter-group" role="group" aria-label="Filtrar por estado">
+      <button
+        type="button"
+        [class.active]="estadoFiltro() === 'todas'"
+        (click)="estadoFiltro.set('todas')">
+        Todas ({{ rutas().length }})
+      </button>
+      <button
+        type="button"
+        [class.active]="estadoFiltro() === 'activas'"
+        (click)="estadoFiltro.set('activas')">
+        Activas
+      </button>
+      <button
+        type="button"
+        [class.active]="estadoFiltro() === 'inactivas'"
+        (click)="estadoFiltro.set('inactivas')">
+        Inactivas
+      </button>
+    </div>
+  </section>
+
+  @if (error()) {
+    <div class="alert-error" role="alert">
+      <span>{{ error() }}</span>
+      <button type="button" (click)="cargarRutas()">Reintentar</button>
+    </div>
+  }
+
+  @if (cargando()) {
+    <div class="loading-state">Cargando rutas...</div>
+  } @else {
+    <div class="table-wrapper">
+      <table class="rutas-table">
+        <thead>
+          <tr>
+            <th>Código CTP</th>
+            <th>ID CTP</th>
+            <th>Recorridos</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (ruta of rutasFiltradas(); track ruta.id) {
+            <tr [class.row-inactive]="!ruta.activo">
+              <td class="code-cell">
+                <strong>{{ ruta.codigo_ctp }}</strong>
+                @if (ruta.nombre) {
+                  <span class="route-name">{{ ruta.nombre }}</span>
+                }
+              </td>
+              <td>{{ ruta.id_ctp }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn-link"
+                  (click)="toggleDetalles(ruta.codigo_ctp)">
+                  {{ ruta.recorridos.length }} recorrido(s)
+                  {{ rutaExpandida() === ruta.codigo_ctp ? '▲' : '▼' }}
+                </button>
+              </td>
+              <td>
+                <span class="badge" [class.badge-active]="ruta.activo" [class.badge-inactive]="!ruta.activo">
+                  {{ ruta.activo ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn-toggle"
+                  [class.btn-disable]="ruta.activo"
+                  [class.btn-enable]="!ruta.activo"
+                  [disabled]="actualizandoCodigo() === ruta.codigo_ctp"
+                  (click)="toggleEstadoRuta(ruta)">
+                  @if (actualizandoCodigo() === ruta.codigo_ctp) {
+                    Guardando...
+                  } @else {
+                    {{ ruta.activo ? 'Deshabilitar' : 'Habilitar' }}
+                  }
+                </button>
+              </td>
+            </tr>
+
+            @if (rutaExpandida() === ruta.codigo_ctp) {
+              <tr class="details-row">
+                <td colspan="5">
+                  <div class="recorridos-panel">
+                    <h4>Recorridos asociados a {{ ruta.codigo_ctp }}</h4>
+                    @if (ruta.recorridos.length === 0) {
+                      <p class="empty-sub">Esta ruta no tiene recorridos registrados.</p>
+                    } @else {
+                      <ul class="recorridos-list">
+                        @for (rec of ruta.recorridos; track rec.id) {
+                          <li>
+                            <span><strong>Dirección:</strong> {{ rec.direccion || 'N/A' }}</span>
+                            <span><strong>Ramal ID:</strong> {{ rec.ramal_id }}</span>
+                            <span><strong>Longitud:</strong> {{ rec.longitud_m }} m</span>
+                            <span><strong>Estado CTP:</strong> {{ rec.estado_ctp }}</span>
+                            <span class="mini-badge" [class.active]="rec.activo">
+                              {{ rec.activo ? 'Activo' : 'Inactivo' }}
+                            </span>
+                          </li>
+                        }
+                      </ul>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-state">No se encontraron rutas con los filtros actuales.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</main>

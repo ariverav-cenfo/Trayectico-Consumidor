@@ -1,0 +1,218 @@
+:host{
+    display: block;
+}
+
+.gestion-container {
+  max-width: 960px;
+  margin-inline: auto;
+  padding: 36px 24px 100px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: #2f5d50;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.back-link:hover {
+  text-decoration: underline;
+}
+
+.page-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.subtitle {
+  color: #5d6e68;
+  margin: 0 0 28px;
+}
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.search-input {
+  flex: 1 1 280px;
+  padding: 10px 14px;
+  border: 1.5px solid #c7d5d0;
+  border-radius: 8px;
+  font-size: 15px;
+}
+
+.filter-group {
+  display: flex;
+  gap: 6px;
+}
+
+.filter-group button {
+  padding: 8px 14px;
+  border: 1.5px solid #c7d5d0;
+  background: #fff;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.filter-group button.active {
+  background: #2f5d50;
+  color: #fff;
+  border-color: #2f5d50;
+}
+
+.table-wrapper {
+  overflow-x: auto;
+  border: 1px solid #c7d5d0;
+  border-radius: 10px;
+}
+
+.rutas-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.rutas-table th,
+.rutas-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid #e3ebe8;
+}
+
+.rutas-table th {
+  background-color: #f4f7f6;
+  font-weight: 600;
+  color: #2c3a35;
+}
+
+.row-inactive {
+  background-color: #fafafa;
+  color: #6b7280;
+}
+
+.route-name {
+  display: block;
+  font-size: 13px;
+  color: #5d6e68;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.badge-active {
+  background-color: #dcfce7;
+  color: #166534;
+}
+
+.badge-inactive {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-toggle {
+  padding: 7px 14px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.btn-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-disable {
+  background-color: #dc2626;
+  color: #fff;
+}
+
+.btn-enable {
+  background-color: #16a34a;
+  color: #fff;
+}
+
+.btn-link {
+  background: none;
+  border: none;
+  color: #2f5d50;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+}
+
+.details-row td {
+  background-color: #f9fbfa;
+  padding: 16px 24px;
+}
+
+.recorridos-panel h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  color: #2c3a35;
+}
+
+.recorridos-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.recorridos-list li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+  padding: 8px 12px;
+  background: #fff;
+  border: 1px solid #dce6e2;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.mini-badge {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #fee2e2;
+  color: #991b1b;
+  font-weight: 600;
+}
+
+.mini-badge.active {
+  background: #dcfce7;
+  color: #166534;
+}
+
+.alert-error {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  background: #fee2e2;
+  color: #991b1b;
+  border-radius: 8px;
+}
+
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 32px;
+  color: #5d6e68;
+}
