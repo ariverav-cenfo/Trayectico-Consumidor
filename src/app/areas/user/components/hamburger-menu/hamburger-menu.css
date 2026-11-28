@@ -4,6 +4,21 @@
 button {
   cursor: pointer;
 }
+.install-app {
+  width: 100%;
+  min-height: 48px;
+  margin-bottom: 16px;
+  padding: 12px;
+  border: 1px solid var(--color-trayectico-primary);
+  border-radius: 10px;
+  color: var(--color-trayectico-primary);
+  font-size: 18px;
+  font-weight: 700;
+}
+.install-app:focus-visible {
+  outline: 3px solid #307b67;
+  outline-offset: 4px;
+}
 svg {
   width: 32px;
   height: 32px;

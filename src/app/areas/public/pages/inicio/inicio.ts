@@ -1,5 +1,6 @@
 import type { HomeFeature } from '../../../../interfaces/home-feature';
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
+import { PwaService } from '../../../../services/pwa.service';
 import { TopBar } from '../../../../shared/layout/top-bar/top-bar';
 import { AvisoSesion } from '../../../../shared/ui/aviso-sesion/aviso-sesion';
 import { InicioSesionGoogle } from '../../components/inicio-sesion-google/inicio-sesion-google';
@@ -11,6 +12,7 @@ import { InicioSesionGoogle } from '../../components/inicio-sesion-google/inicio
   templateUrl: './inicio.html',
 })
 export class Inicio {
+  protected readonly pwa = inject(PwaService);
   protected readonly features: HomeFeature[] = [
     {
       title: 'Planificar un viaje',

@@ -29,6 +29,7 @@
           },
           "configurations": {
             "production": {
+              "serviceWorker": "ngsw-config.json",
               "budgets": [
                 {
                   "type": "initial",
@@ -60,7 +61,7 @@
         "serve": {
           "builder": "@angular/build:dev-server",
           "options": {
-            "allowedHosts": ["babbling-oven-concerned.ngrok-free.dev"],
+            "allowedHosts": ["unruffled-murkiness-drainable.ngrok-free.dev"],
             "proxyConfig": "proxy.conf.json"
           },
           "configurations": {

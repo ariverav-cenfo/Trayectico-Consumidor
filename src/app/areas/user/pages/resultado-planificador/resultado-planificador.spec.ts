@@ -150,7 +150,7 @@ describe('ResultadoPlanificador', () => {
 
     expect(
       element.querySelectorAll('app-paso-a-paso .step-item'),
-    ).toHaveLength(4);
+    ).toHaveLength(5);
 
     expect(options[0].getAttribute('aria-pressed')).toBe('true');
 
@@ -164,7 +164,7 @@ describe('ResultadoPlanificador', () => {
 
     expect(
       element.querySelectorAll('app-paso-a-paso .step-item'),
-    ).toHaveLength(5);
+    ).toHaveLength(6);
 
     expect(
       element.querySelector('polyline')!.getAttribute('points'),

@@ -12,7 +12,8 @@ describe('Area navigation', () => {
   });
 
   it.each([
-    ['/', 'Planifique su viaje en bus'],
+    ['/', 'Software con raíces firmes'],
+    ['/trayectico', 'Planifique su viaje en bus'],
     ['/iniciar-sesion', 'Iniciar sesión'],
     ['/acceso-denegado', 'Acceso denegado'],
     ['/planificar', 'Planificar viaje'],
@@ -39,6 +40,16 @@ describe('Area navigation', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl(url);
     expect(harness.routeNativeElement?.textContent).toContain(text);
+  });
+
+  it('abre Trayectico desde el botón del nuevo inicio', async () => {
+    const harness = await RouterTestingHarness.create('/');
+    const enlace = harness.routeNativeElement?.querySelector<HTMLAnchorElement>('.primary-link');
+    expect(enlace?.textContent).toContain('Conocer Trayectico');
+    enlace!.click();
+    await harness.fixture.whenStable();
+    expect(TestBed.inject(Router).url).toBe('/trayectico');
+    expect(harness.routeNativeElement?.textContent).toContain('Planifique su viaje en bus');
   });
 
   it.each([
@@ -85,7 +96,7 @@ describe('Acceso a las áreas por rol', () => {
     const router = TestBed.inject(Router);
 
     await harness.navigateByUrl('/');
-    expect(harness.routeNativeElement?.querySelector('app-inicio-sesion-google')).not.toBeNull();
+    expect(harness.routeNativeElement?.textContent).toContain('Conocer Trayectico');
 
     await harness.navigateByUrl('/asistente');
     expect(router.url).toBe(destinoUsuario);
@@ -101,7 +112,7 @@ describe('Acceso a las áreas por rol', () => {
     await harness.navigateByUrl('/no-existe');
 
     expect(TestBed.inject(Router).url).toBe('/');
-    expect(harness.routeNativeElement?.textContent).toContain('Planifique su viaje en bus');
+    expect(harness.routeNativeElement?.textContent).toContain('Conocer Trayectico');
   });
 
   it('vuelve a comprobar la ruta actual cuando cambia el selector', async () => {
